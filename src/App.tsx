@@ -125,8 +125,7 @@ export default function App() {
           {error}
         </div>
         <div className="text-xs mt-4" style={{ color: "var(--text-muted)" }}>
-          Make sure <code>shadow-slave.epub</code> is placed in{" "}
-          <code>public/books/</code>
+          Check <code>VITE_EPUB_URL</code> or the default blob URL.
         </div>
       </div>
     );

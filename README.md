@@ -121,12 +121,3 @@ bun run lint
 | Variable | Purpose | Default |
 |----------|---------|---------|
 | `VITE_EPUB_URL` | Override EPUB source URL | Vercel Blob URL in constants.ts |
-| `BLOB_READ_WRITE_TOKEN` | Vercel Blob upload token (in .env.local) | — |
-
-## Upload Script
-
-`scripts/upload-epub.mjs` — uploads an EPUB from `public/books/` to Vercel Blob. Requires `BLOB_READ_WRITE_TOKEN` in `.env.local`.
-
-```bash
-node scripts/upload-epub.mjs
-```
