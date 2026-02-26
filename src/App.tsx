@@ -19,7 +19,7 @@ import { ThemePanel } from "./components/ThemePanel";
 type Panel = "none" | "chapters" | "settings" | "bookmarks" | "theme";
 
 export default function App() {
-  const { isLoading, error, chapters, totalChapters } =
+  const { isLoading, error, chapters, totalChapters, bookTitle } =
     useEpubReader(EPUB_URL);
   const { theme, setTheme } = useTheme();
   const {
@@ -80,6 +80,12 @@ export default function App() {
     if (chapters.length === 0) return;
     const ch = chapters[currentChapter];
     if (!ch) return;
+    const existing = bookmarks.find((bm) => bm.chapterIndex === currentChapter);
+    if (existing) {
+      removeBookmark(existing.id);
+      setActivePanel("none");
+      return;
+    }
     const div = document.createElement("div");
     div.innerHTML = ch.html;
     const text = div.textContent || "";
@@ -88,7 +94,14 @@ export default function App() {
     const excerpt = text.slice(start, start + 120).trim();
     addBookmark(currentChapter, ch.title, scrollPercent, excerpt || ch.title);
     setActivePanel("none");
-  }, [chapters, currentChapter, scrollPercent, addBookmark]);
+  }, [
+    chapters,
+    currentChapter,
+    scrollPercent,
+    addBookmark,
+    bookmarks,
+    removeBookmark,
+  ]);
 
   const handleSelectBookmark = useCallback(
     (bookmark: Bookmark) => {
@@ -165,12 +178,13 @@ export default function App() {
 
 
       <TopBar
-        chapterTitle={currentChapterData.title}
-        visible={uiVisible}
+        chapterTitle={bookTitle}
+        visible={true}
         onMenuClick={() => openPanel("chapters")}
         onBookmarkClick={handleAddBookmark}
         theme={theme}
         onThemeClick={() => openPanel("theme")}
+        isBookmarked={bookmarks.some((bm) => bm.chapterIndex === currentChapter)}
       />
 
       <BottomBar
@@ -186,6 +200,7 @@ export default function App() {
         open={activePanel === "chapters"}
         onClose={closePanel}
         chapters={chapters}
+        bookmarks={bookmarks}
         currentChapter={currentChapter}
         totalChapters={totalChapters}
         query={chapterQuery}

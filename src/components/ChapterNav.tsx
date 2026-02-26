@@ -1,10 +1,11 @@
 import { useMemo } from "react";
-import type { ChapterData } from "../lib/constants";
+import type { Bookmark, ChapterData } from "../lib/constants";
 
 interface ChapterNavProps {
   open: boolean;
   onClose: () => void;
   chapters: ChapterData[];
+  bookmarks: Bookmark[];
   currentChapter: number;
   totalChapters: number;
   onSelectChapter: (index: number) => void;
@@ -19,6 +20,7 @@ export function ChapterNav({
   open,
   onClose,
   chapters,
+  bookmarks,
   currentChapter,
   totalChapters,
   onSelectChapter,
@@ -55,6 +57,10 @@ export function ChapterNav({
     const end = Math.min(start + rangeSize, chapters.length);
     return chapters.slice(start, end);
   }, [chapters, selectedRange, rangeSize, filteredChapters, query]);
+
+  const bookmarkedSet = useMemo(() => {
+    return new Set(bookmarks.map((bm) => bm.chapterIndex));
+  }, [bookmarks]);
 
   return (
     <>
@@ -135,6 +141,7 @@ export function ChapterNav({
                 : selectedRange * rangeSize + idx;
               const chapterNumber = chapterIndex + 1;
               const isActive = chapterIndex === currentChapter;
+              const isBookmarked = bookmarkedSet.has(chapterIndex);
               return (
                 <button
                   key={`${chapter.href}-${chapterIndex}`}
@@ -149,7 +156,21 @@ export function ChapterNav({
                     fontWeight: isActive ? 600 : 400,
                   }}
                 >
-                  Chapter {chapterNumber}
+                  <div className="flex items-center justify-between gap-2">
+                    <span>Chapter {chapterNumber}</span>
+                    {isBookmarked && (
+                      <span
+                        className="text-[10px] uppercase tracking-wide px-2 py-0.5 rounded-full"
+                        style={{
+                          color: "var(--text-secondary)",
+                          backgroundColor: "var(--bg-surface)",
+                          border: "1px solid var(--border)",
+                        }}
+                      >
+                        saved
+                      </span>
+                    )}
+                  </div>
                 </button>
               );
             })

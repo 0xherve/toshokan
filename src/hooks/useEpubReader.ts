@@ -10,6 +10,7 @@ interface UseEpubReaderReturn {
   chapters: ChapterData[];
   toc: TocItem[];
   totalChapters: number;
+  bookTitle: string;
 }
 
 export function useEpubReader(url: string): UseEpubReaderReturn {
@@ -17,6 +18,7 @@ export function useEpubReader(url: string): UseEpubReaderReturn {
   const [error, setError] = useState<string | null>(null);
   const [chapters, setChapters] = useState<ChapterData[]>([]);
   const [toc, setToc] = useState<TocItem[]>([]);
+  const [bookTitle, setBookTitle] = useState("");
   const bookRef = useRef<Book | null>(null);
 
   const loadBook = useCallback(async () => {
@@ -28,6 +30,11 @@ export function useEpubReader(url: string): UseEpubReaderReturn {
       bookRef.current = book;
 
       await book.ready;
+
+      const metadata = (book as unknown as { packaging?: { metadata?: unknown } })
+        .packaging?.metadata as { title?: string } | undefined;
+      const title = metadata?.title?.trim();
+      setBookTitle(title || "Untitled Book");
 
       const tocItems: TocItem[] = [];
       const navigation = book.navigation;
@@ -134,5 +141,6 @@ export function useEpubReader(url: string): UseEpubReaderReturn {
     chapters,
     toc,
     totalChapters: chapters.length,
+    bookTitle,
   };
 }

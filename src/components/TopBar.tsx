@@ -7,6 +7,7 @@ interface TopBarProps {
   onBookmarkClick: () => void;
   theme: ThemeName;
   onThemeClick: () => void;
+  isBookmarked: boolean;
 }
 
 export function TopBar({
@@ -16,6 +17,7 @@ export function TopBar({
   onBookmarkClick,
   theme,
   onThemeClick,
+  isBookmarked,
 }: TopBarProps) {
   return (
     <div
@@ -50,7 +52,7 @@ export function TopBar({
         </button>
 
         <span
-          className="text-sm font-medium truncate mx-4 flex-1 text-center"
+          className="text-sm font-bold truncate mx-4 flex-1 text-center"
           style={{ color: "var(--text-primary)" }}
         >
           {chapterTitle}
@@ -80,14 +82,17 @@ export function TopBar({
           <button
             onClick={onBookmarkClick}
             className="p-2 -mr-2 rounded-lg transition-colors cursor-pointer"
-            style={{ color: "var(--text-primary)" }}
+            style={{
+              color: "var(--text-primary)",
+            }}
             aria-label="Bookmarks"
+            aria-pressed={isBookmarked}
           >
             <svg
               width="20"
               height="20"
               viewBox="0 0 24 24"
-              fill="none"
+              fill={isBookmarked ? "var(--bg-primary)" : "none"}
               stroke="currentColor"
               strokeWidth="2"
               strokeLinecap="round"
