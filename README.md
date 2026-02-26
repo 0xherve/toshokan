@@ -2,7 +2,7 @@
 
 ## What is this?
 
-A mobile-first Progressive Web App for reading EPUB files. Built because existing online readers and mobile apps have terrible UX. Designed for comfortable, distraction-free reading of **Shadow Slave**.
+A mobile-first Progressive Web App for better `Light novel` reading UX. Initially designed for comfortable, distraction-free reading of **Shadow Slave**.
 
 ## Tech Stack
 
@@ -113,8 +113,6 @@ bun run preview
 # Lint
 bun run lint
 ```
-
-**Important:** If you install from Windows but run from WSL (or vice versa), rollup's native binaries won't match. Delete `node_modules` and `bun.lockb` and reinstall from the environment you'll run in.
 
 ## Environment Variables
 
