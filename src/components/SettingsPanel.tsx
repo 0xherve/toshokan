@@ -1,26 +1,15 @@
-import type { ThemeName } from "../lib/constants";
 import { MIN_FONT_SIZE, MAX_FONT_SIZE, FONT_SIZE_STEP } from "../lib/constants";
 
 interface SettingsPanelProps {
   open: boolean;
   onClose: () => void;
-  theme: ThemeName;
-  onThemeChange: (theme: ThemeName) => void;
   fontSize: number;
   onFontSizeChange: (size: number) => void;
 }
 
-const themes: { name: ThemeName; label: string; bg: string; fg: string }[] = [
-  { name: "light", label: "Light", bg: "#fafaf8", fg: "#1a1a1a" },
-  { name: "sepia", label: "Sepia", bg: "#f4ecd8", fg: "#5b4636" },
-  { name: "dark", label: "Dark", bg: "#111111", fg: "#d4d4d4" },
-];
-
 export function SettingsPanel({
   open,
   onClose,
-  theme,
-  onThemeChange,
   fontSize,
   onFontSizeChange,
 }: SettingsPanelProps) {
@@ -49,36 +38,6 @@ export function SettingsPanel({
         </div>
 
         <div className="px-6 pb-8">
-          <div className="mb-6">
-            <label
-              className="text-xs font-medium uppercase tracking-wider block mb-3"
-              style={{ color: "var(--text-muted)" }}
-            >
-              Theme
-            </label>
-            <div className="flex gap-3">
-              {themes.map((t) => (
-                <button
-                  key={t.name}
-                  onClick={() => onThemeChange(t.name)}
-                  className="flex-1 py-3 rounded-xl text-sm font-medium transition-all"
-                  style={{
-                    backgroundColor: t.bg,
-                    color: t.fg,
-                    border:
-                      theme === t.name
-                        ? "2px solid var(--accent)"
-                        : "2px solid transparent",
-                    boxShadow:
-                      theme === t.name ? "0 0 0 1px var(--accent)" : "none",
-                  }}
-                >
-                  {t.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
           <div>
             <label
               className="text-xs font-medium uppercase tracking-wider block mb-3"

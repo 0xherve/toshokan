@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import { useEpubReader } from "./hooks/useEpubReader";
 import { useTheme } from "./hooks/useTheme";
 import { useReadingProgress } from "./hooks/useReadingProgress";
@@ -14,11 +14,12 @@ import { BottomBar } from "./components/BottomBar";
 import { ChapterNav } from "./components/ChapterNav";
 import { SettingsPanel } from "./components/SettingsPanel";
 import { BookmarkList } from "./components/BookmarkList";
+import { ThemePanel } from "./components/ThemePanel";
 
-type Panel = "none" | "chapters" | "settings" | "bookmarks";
+type Panel = "none" | "chapters" | "settings" | "bookmarks" | "theme";
 
 export default function App() {
-  const { isLoading, error, chapters, toc, totalChapters } =
+  const { isLoading, error, chapters, totalChapters } =
     useEpubReader(EPUB_URL);
   const { theme, setTheme } = useTheme();
   const {
@@ -27,7 +28,6 @@ export default function App() {
     goNext,
     goPrev,
     scrollPercent,
-    bookProgress,
     handleScroll,
     scrollContainerRef,
   } = useReadingProgress(totalChapters);
@@ -37,6 +37,19 @@ export default function App() {
   const [uiVisible, setUiVisible] = useState(false);
   const [activePanel, setActivePanel] = useState<Panel>("none");
   const [fontSize, setFontSizeState] = useState(() => getSettings().fontSize);
+  const [chapterQuery, setChapterQuery] = useState("");
+  const [chapterRange, setChapterRange] = useState(0);
+
+  const chapterRangesCount = useMemo(() => {
+    if (totalChapters === 0) return 1;
+    return Math.ceil(totalChapters / 100);
+  }, [totalChapters]);
+
+  useEffect(() => {
+    if (totalChapters === 0) return;
+    const currentRange = Math.floor(currentChapter / 100);
+    setChapterRange(Math.min(currentRange, Math.max(0, chapterRangesCount - 1)));
+  }, [currentChapter, totalChapters, chapterRangesCount]);
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
@@ -55,11 +68,13 @@ export default function App() {
     setActivePanel("none");
   }, []);
 
+
   const handleFontSizeChange = useCallback((size: number) => {
     setFontSizeState(size);
     const settings = getSettings();
     saveSettings({ ...settings, fontSize: size });
   }, []);
+
 
   const handleAddBookmark = useCallback(() => {
     if (chapters.length === 0) return;
@@ -148,11 +163,14 @@ export default function App() {
         onToggleUI={toggleUI}
       />
 
+
       <TopBar
         chapterTitle={currentChapterData.title}
         visible={uiVisible}
         onMenuClick={() => openPanel("chapters")}
         onBookmarkClick={handleAddBookmark}
+        theme={theme}
+        onThemeClick={() => openPanel("theme")}
       />
 
       <BottomBar
@@ -160,16 +178,20 @@ export default function App() {
         chapterTitle={currentChapterData.title}
         chapterIndex={currentChapter}
         totalChapters={totalChapters}
-        bookProgress={bookProgress}
+        chapterProgress={scrollPercent}
         onSettingsClick={() => openPanel("settings")}
       />
 
       <ChapterNav
         open={activePanel === "chapters"}
         onClose={closePanel}
-        toc={toc}
+        chapters={chapters}
         currentChapter={currentChapter}
         totalChapters={totalChapters}
+        query={chapterQuery}
+        onQueryChange={setChapterQuery}
+        selectedRange={chapterRange}
+        onRangeChange={setChapterRange}
         onSelectChapter={(index) => {
           const chapterIdx = chapters.findIndex((ch) => ch.index === index);
           if (chapterIdx >= 0) {
@@ -187,10 +209,15 @@ export default function App() {
       <SettingsPanel
         open={activePanel === "settings"}
         onClose={closePanel}
-        theme={theme}
-        onThemeChange={setTheme}
         fontSize={fontSize}
         onFontSizeChange={handleFontSizeChange}
+      />
+
+      <ThemePanel
+        open={activePanel === "theme"}
+        onClose={closePanel}
+        theme={theme}
+        onThemeChange={setTheme}
       />
 
       <BookmarkList

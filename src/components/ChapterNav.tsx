@@ -1,22 +1,61 @@
-import type { TocItem } from "../lib/constants";
+import { useMemo } from "react";
+import type { ChapterData } from "../lib/constants";
 
 interface ChapterNavProps {
   open: boolean;
   onClose: () => void;
-  toc: TocItem[];
+  chapters: ChapterData[];
   currentChapter: number;
   totalChapters: number;
   onSelectChapter: (index: number) => void;
+  query: string;
+  onQueryChange: (value: string) => void;
+  rangeSize?: number;
+  selectedRange: number;
+  onRangeChange: (rangeIndex: number) => void;
 }
 
 export function ChapterNav({
   open,
   onClose,
-  toc,
+  chapters,
   currentChapter,
   totalChapters,
   onSelectChapter,
+  query,
+  onQueryChange,
+  rangeSize = 100,
+  selectedRange,
+  onRangeChange,
 }: ChapterNavProps) {
+  const rangeCount = Math.max(1, Math.ceil(chapters.length / rangeSize));
+  const ranges = useMemo(
+    () =>
+      Array.from({ length: rangeCount }, (_, i) => {
+        const start = i * rangeSize + 1;
+        const end = Math.min((i + 1) * rangeSize, chapters.length);
+        return { index: i, label: `${start}-${end}` };
+      }),
+    [rangeCount, rangeSize, chapters.length],
+  );
+
+  const filteredChapters = useMemo(() => {
+    const normalizedQuery = query.trim().toLowerCase();
+    if (!normalizedQuery) return chapters;
+    return chapters.filter((chapter, idx) => {
+      const chapterNumber = idx + 1;
+      if (String(chapterNumber).includes(normalizedQuery)) return true;
+      return chapter.title.toLowerCase().includes(normalizedQuery);
+    });
+  }, [chapters, query]);
+
+  const visibleChapters = useMemo(() => {
+    if (query.trim()) return filteredChapters;
+    const start = selectedRange * rangeSize;
+    const end = Math.min(start + rangeSize, chapters.length);
+    return chapters.slice(start, end);
+  }, [chapters, selectedRange, rangeSize, filteredChapters, query]);
+
   return (
     <>
       {open && (
@@ -47,53 +86,73 @@ export function ChapterNav({
           >
             {totalChapters} chapters
           </p>
+          <div className="mt-3">
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => onQueryChange(e.target.value)}
+              placeholder="Search chapter number or title"
+              className="w-full rounded-lg px-3 py-2 text-sm outline-none"
+              style={{
+                backgroundColor: "var(--bg-app)",
+                color: "var(--text-primary)",
+                border: "1px solid var(--border)",
+              }}
+            />
+          </div>
+          <div className="mt-2">
+            <select
+              value={selectedRange}
+              onChange={(e) => onRangeChange(Number(e.target.value))}
+              className="w-full rounded-lg px-3 py-2 text-sm outline-none"
+              style={{
+                backgroundColor: "var(--bg-app)",
+                color: "var(--text-primary)",
+                border: "1px solid var(--border)",
+              }}
+            >
+              {ranges.map((range) => (
+                <option key={range.index} value={range.index}>
+                  Chapters {range.label}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         <nav className="pb-8">
-          {toc.length > 0 ? (
-            toc.map((item) => (
-              <button
-                key={item.href + item.spineIndex}
-                onClick={() => {
-                  onSelectChapter(item.spineIndex);
-                  onClose();
-                }}
-                className="w-full text-left px-4 py-3 text-sm transition-colors block"
-                style={{
-                  color:
-                    item.spineIndex === currentChapter
-                      ? "var(--accent)"
-                      : "var(--text-primary)",
-                  backgroundColor:
-                    item.spineIndex === currentChapter
-                      ? "var(--bg-app)"
-                      : "transparent",
-                  fontWeight: item.spineIndex === currentChapter ? 600 : 400,
-                }}
-              >
-                {item.label}
-              </button>
-            ))
+          {visibleChapters.length === 0 ? (
+            <div
+              className="px-4 py-6 text-sm"
+              style={{ color: "var(--text-muted)" }}
+            >
+              No chapters found.
+            </div>
           ) : (
-            Array.from({ length: totalChapters }, (_, i) => (
-              <button
-                key={i}
-                onClick={() => {
-                  onSelectChapter(i);
-                  onClose();
-                }}
-                className="w-full text-left px-4 py-3 text-sm transition-colors block"
-                style={{
-                  color:
-                    i === currentChapter ? "var(--accent)" : "var(--text-primary)",
-                  backgroundColor:
-                    i === currentChapter ? "var(--bg-app)" : "transparent",
-                  fontWeight: i === currentChapter ? 600 : 400,
-                }}
-              >
-                Chapter {i + 1}
-              </button>
-            ))
+            visibleChapters.map((chapter, idx) => {
+              const chapterIndex = query.trim()
+                ? chapters.findIndex((c) => c.index === chapter.index)
+                : selectedRange * rangeSize + idx;
+              const chapterNumber = chapterIndex + 1;
+              const isActive = chapterIndex === currentChapter;
+              return (
+                <button
+                  key={`${chapter.href}-${chapterIndex}`}
+                  onClick={() => {
+                    onSelectChapter(chapterIndex);
+                    onClose();
+                  }}
+                  className="w-full text-left px-4 py-3 text-sm transition-colors block cursor-pointer"
+                  style={{
+                    color: "var(--text-primary)",
+                    backgroundColor: isActive ? "var(--bg-app)" : "transparent",
+                    fontWeight: isActive ? 600 : 400,
+                  }}
+                >
+                  Chapter {chapterNumber}
+                </button>
+              );
+            })
           )}
         </nav>
       </div>

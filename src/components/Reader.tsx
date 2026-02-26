@@ -75,7 +75,7 @@ export function Reader({
                 e.stopPropagation();
                 onPrev();
               }}
-              className="flex-1 py-3 rounded-xl text-sm font-medium transition-colors"
+              className="flex-1 py-3 rounded-xl text-sm font-medium transition-colors cursor-pointer"
               style={{
                 backgroundColor: "var(--bg-surface)",
                 color: "var(--text-primary)",
@@ -90,10 +90,11 @@ export function Reader({
                 e.stopPropagation();
                 onNext();
               }}
-              className="flex-1 py-3 rounded-xl text-sm font-medium transition-colors"
+              className="flex-1 py-3 rounded-xl text-sm font-medium transition-colors cursor-pointer"
               style={{
-                backgroundColor: "var(--accent)",
-                color: "#ffffff",
+                backgroundColor: "var(--bg-primary)",
+                color: "var(--text-on-primary)",
+                border: "1px solid var(--border)",
               }}
             >
               Next &rarr;
