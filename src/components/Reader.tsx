@@ -1,4 +1,4 @@
-import type { MouseEvent, RefObject } from "react";
+import type { MouseEvent, RefObject, TouchEvent } from "react";
 import { useRef, useCallback } from "react";
 import type { ChapterData } from "../lib/constants";
 
@@ -26,6 +26,10 @@ export function Reader({
   onToggleUI,
 }: ReaderProps) {
   const lastTapRef = useRef(0);
+  const touchStartRef = useRef<{ x: number; y: number; width: number } | null>(
+    null,
+  );
+  const touchLastRef = useRef<{ x: number; y: number } | null>(null);
 
   const handleTap = useCallback(
     (e: MouseEvent) => {
@@ -44,6 +48,47 @@ export function Reader({
     [onToggleUI],
   );
 
+  const handleTouchStart = useCallback((e: TouchEvent) => {
+    if (e.touches.length !== 1) return;
+    const touch = e.touches[0];
+    const point = {
+      x: touch.clientX,
+      y: touch.clientY,
+      width: e.currentTarget.clientWidth,
+    };
+    touchStartRef.current = point;
+    touchLastRef.current = point;
+  }, []);
+
+  const handleTouchMove = useCallback((e: TouchEvent) => {
+    if (!touchStartRef.current) return;
+    const touch = e.touches[0];
+    touchLastRef.current = { x: touch.clientX, y: touch.clientY };
+  }, []);
+
+  const handleTouchEnd = useCallback(() => {
+    const start = touchStartRef.current;
+    const last = touchLastRef.current;
+    touchStartRef.current = null;
+    touchLastRef.current = null;
+    if (!start || !last) return;
+
+    const dx = last.x - start.x;
+    const dy = last.y - start.y;
+    const absDx = Math.abs(dx);
+    const absDy = Math.abs(dy);
+    const edgeThreshold = start.width * 0.3;
+    const isEdge = start.x <= edgeThreshold || start.x >= start.width - edgeThreshold;
+    if (!isEdge) return;
+    if (absDx < 60 || absDx < absDy * 1.5) return;
+
+    if (dx < 0) {
+      onNext();
+    } else {
+      onPrev();
+    }
+  }, [onNext, onPrev]);
+
   return (
     <div
       ref={scrollContainerRef}
@@ -51,6 +96,9 @@ export function Reader({
       style={{ backgroundColor: "var(--bg-reader)" }}
       onScroll={onScroll}
       onClick={handleTap}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
     >
       <article
         className="reader-content mx-auto px-5 py-16 max-w-[38em]"
