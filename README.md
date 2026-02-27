@@ -1,8 +1,10 @@
-# Toshokan - EPUB Reader PWA
+# Watashi - EPUB Reader PWA
 
 ## What is this?
 
-A mobile-first Progressive Web App for better `Light novel` reading UX. Initially designed for comfortable, distraction-free reading of **Shadow Slave**.
+A tasteful, personal light novel library. Initially designed for comfortable, distraction-free reading of **Shadow Slave**.
+
+Production: https://watashi.fun
 
 ## Tech Stack
 

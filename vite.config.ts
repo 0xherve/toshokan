@@ -9,22 +9,22 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["favicon.svg", "mask-icon.svg"],
+      includeAssets: ["logo.svg", "favicon.svg", "mask-icon.svg"],
       manifest: {
-        name: "Toshokan",
-        short_name: "Toshokan",
-        description: "Mobile-first EPUB reader",
+        name: "Watashi",
+        short_name: "Watashi",
+        description: "A tasteful, personal light novel library",
         theme_color: "#111111",
         background_color: "#111111",
         display: "standalone",
         scope: "/",
         start_url: "/",
         icons: [
-          {
-            src: "/favicon.svg",
-            sizes: "128x128",
-            type: "image/svg+xml",
-          },
+            {
+              src: "/logo.svg",
+              sizes: "any",
+              type: "image/svg+xml",
+            },
           {
             src: "/mask-icon.svg",
             sizes: "128x128",

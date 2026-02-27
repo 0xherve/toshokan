@@ -15,8 +15,14 @@ import { ChapterNav } from "./components/ChapterNav";
 import { SettingsPanel } from "./components/SettingsPanel";
 import { BookmarkList } from "./components/BookmarkList";
 import { ThemePanel } from "./components/ThemePanel";
+import { InstallToast } from "./components/InstallToast";
 
 type Panel = "none" | "chapters" | "settings" | "bookmarks" | "theme";
+
+type BeforeInstallPromptEvent = Event & {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: "accepted" | "dismissed"; platform: string }>;
+};
 
 export default function App() {
   const { isLoading, error, chapters, totalChapters, bookTitle } =
@@ -39,6 +45,10 @@ export default function App() {
   const [fontSize, setFontSizeState] = useState(() => getSettings().fontSize);
   const [chapterQuery, setChapterQuery] = useState("");
   const [chapterRange, setChapterRange] = useState(0);
+  const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(
+    null,
+  );
+  const [showInstallToast, setShowInstallToast] = useState(false);
 
   const chapterRangesCount = useMemo(() => {
     if (totalChapters === 0) return 1;
@@ -55,6 +65,31 @@ export default function App() {
     document.documentElement.setAttribute("data-theme", theme);
   }, [theme]);
 
+  useEffect(() => {
+    const dismissed = localStorage.getItem("sr-install-dismissed") === "1";
+    if (dismissed) return;
+
+    const onBeforeInstallPrompt = (event: Event) => {
+      event.preventDefault();
+      setInstallPrompt(event as BeforeInstallPromptEvent);
+      setShowInstallToast(true);
+    };
+
+    const onAppInstalled = () => {
+      localStorage.setItem("sr-install-dismissed", "1");
+      setShowInstallToast(false);
+      setInstallPrompt(null);
+    };
+
+    window.addEventListener("beforeinstallprompt", onBeforeInstallPrompt);
+    window.addEventListener("appinstalled", onAppInstalled);
+
+    return () => {
+      window.removeEventListener("beforeinstallprompt", onBeforeInstallPrompt);
+      window.removeEventListener("appinstalled", onAppInstalled);
+    };
+  }, []);
+
   const toggleUI = useCallback(() => {
     setUiVisible((v) => !v);
   }, []);
@@ -66,6 +101,22 @@ export default function App() {
 
   const closePanel = useCallback(() => {
     setActivePanel("none");
+  }, []);
+
+  const handleInstall = useCallback(async () => {
+    if (!installPrompt) return;
+    await installPrompt.prompt();
+    const choice = await installPrompt.userChoice;
+    localStorage.setItem("sr-install-dismissed", "1");
+    setShowInstallToast(false);
+    setInstallPrompt(null);
+    if (choice.outcome === "dismissed") return;
+  }, [installPrompt]);
+
+  const handleInstallDismiss = useCallback(() => {
+    localStorage.setItem("sr-install-dismissed", "1");
+    setShowInstallToast(false);
+    setInstallPrompt(null);
   }, []);
 
 
@@ -241,6 +292,12 @@ export default function App() {
         bookmarks={bookmarks}
         onSelectBookmark={handleSelectBookmark}
         onRemoveBookmark={removeBookmark}
+      />
+
+      <InstallToast
+        open={showInstallToast && !!installPrompt}
+        onInstall={handleInstall}
+        onDismiss={handleInstallDismiss}
       />
     </>
   );

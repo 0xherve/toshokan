@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "toshokan",
+      "name": "watashi",
       "dependencies": {
         "epubjs": "^0.3.93",
         "react": "^19.0.0",

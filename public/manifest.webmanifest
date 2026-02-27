@@ -1,13 +1,18 @@
 {
-  "name": "Toshokan",
-  "short_name": "Toshokan",
-  "description": "Mobile-first EPUB reader",
+  "name": "Watashi",
+  "short_name": "Watashi",
+  "description": "A tasteful, personal light novel library",
   "theme_color": "#111111",
   "background_color": "#111111",
   "display": "standalone",
   "scope": "/",
   "start_url": "/",
   "icons": [
+    {
+      "src": "/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
     {
       "src": "/pwa-192.png",
       "sizes": "192x192",
