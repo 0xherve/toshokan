@@ -77,7 +77,7 @@ export function Reader({
     const dy = last.y - start.y;
     const absDx = Math.abs(dx);
     const absDy = Math.abs(dy);
-    const edgeThreshold = start.width * 0.3;
+    const edgeThreshold = start.width * 0.5;
     const isEdge = start.x <= edgeThreshold || start.x >= start.width - edgeThreshold;
     if (!isEdge) return;
     if (absDx < 60 || absDx < absDy * 1.5) return;
