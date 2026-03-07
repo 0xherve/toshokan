@@ -4,76 +4,37 @@ import { adminMetrics, libraryBooks } from "../lib/mockData";
 
 export function AdminDashboardPage() {
   return (
-    <AdminScaffold
-      title="Admin Overview"
-      subtitle="Live operational summary for reader activity and catalog health."
-    >
-      <section className="grid gap-3">
+    <AdminScaffold title="Overview" subtitle="Operational summary.">
+      <section className="grid grid-cols-2 gap-3">
         {adminMetrics.map((metric) => (
-          <article
-            key={metric.label}
-            className="rounded-xl border p-4"
-            style={{
-              borderColor: "var(--border)",
-              backgroundColor: "var(--bg-surface)",
-            }}
-          >
-            <p className="text-xs" style={{ color: "var(--text-muted)" }}>
-              {metric.label}
-            </p>
-            <p className="text-2xl font-bold mt-2" style={{ color: "var(--text-primary)" }}>
-              {metric.value}
-            </p>
+          <article key={metric.label} className="rounded-xl border border-border bg-surface p-4">
+            <p className="text-xs text-muted">{metric.label}</p>
+            <p className="text-2xl font-bold mt-1 text-foreground">{metric.value}</p>
           </article>
         ))}
       </section>
 
-      <section
-        className="mt-4 rounded-2xl border overflow-hidden"
-        style={{ borderColor: "var(--border)" }}
-      >
-        <div
-          className="px-4 py-3 border-b flex items-center justify-between"
-          style={{
-            borderColor: "var(--border)",
-            backgroundColor: "var(--bg-surface)",
-          }}
-        >
-          <h2 className="text-sm font-bold" style={{ color: "var(--text-primary)" }}>
-            Most opened books (7d)
-          </h2>
-          <Link
-            to="/admin/books"
-            className="text-xs"
-            style={{ color: "var(--text-secondary)" }}
-          >
-            Manage books
+      <section className="mt-6">
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-xs font-medium uppercase tracking-wider text-muted">Most opened (7d)</h2>
+          <Link to="/admin/books" className="text-xs text-muted hover:text-secondary transition-colors">
+            All books
           </Link>
         </div>
 
-        {libraryBooks.map((book, index) => (
-          <div
-            key={book.id}
-            className="px-4 py-3 flex items-center justify-between gap-3"
-            style={{
-              backgroundColor: "var(--bg-surface)",
-              borderBottom:
-                index < libraryBooks.length - 1 ? "1px solid var(--border)" : "none",
-            }}
-          >
-            <div>
-              <p className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>
-                {book.title}
-              </p>
-              <p className="text-xs mt-1" style={{ color: "var(--text-secondary)" }}>
-                {book.author}
+        <div className="divide-y divide-border">
+          {libraryBooks.map((book) => (
+            <div key={book.id} className="py-3 flex items-center justify-between gap-3">
+              <div>
+                <p className="text-sm font-medium text-foreground">{book.title}</p>
+                <p className="text-xs mt-0.5 text-secondary">{book.author}</p>
+              </div>
+              <p className="text-xs text-muted shrink-0">
+                {Math.round(book.completion * 100)}%
               </p>
             </div>
-            <p className="text-xs" style={{ color: "var(--text-muted)" }}>
-              {Math.round(book.completion * 100)}% avg completion
-            </p>
-          </div>
-        ))}
+          ))}
+        </div>
       </section>
     </AdminScaffold>
   );

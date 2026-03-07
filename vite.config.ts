@@ -1,6 +1,7 @@
 import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
+import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import { VitePWA } from "vite-plugin-pwa";
+import tsconfigPaths from "vite-tsconfig-paths";
 import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
@@ -9,7 +10,8 @@ export default defineConfig({
     port: 3000,
   },
   plugins: [
-    react(),
+    tsconfigPaths(),
+    ...tanstackStart(),
     tailwindcss(),
     VitePWA({
       registerType: "autoUpdate",
@@ -24,11 +26,11 @@ export default defineConfig({
         scope: "/",
         start_url: "/",
         icons: [
-            {
-              src: "/logo.svg",
-              sizes: "any",
-              type: "image/svg+xml",
-            },
+          {
+            src: "/logo.svg",
+            sizes: "any",
+            type: "image/svg+xml",
+          },
           {
             src: "/mask-icon.svg",
             sizes: "128x128",
@@ -38,7 +40,6 @@ export default defineConfig({
         ],
       },
       workbox: {
-        navigateFallback: "/index.html",
         runtimeCaching: [
           {
             urlPattern: /^https?:\/\/.*\.epub$/i,

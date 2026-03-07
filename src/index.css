@@ -126,6 +126,7 @@ a,
   padding-bottom: env(safe-area-inset-bottom);
 }
 
+/* Reader typography */
 .reader-content {
   font-family: var(--font-reading);
   font-size: var(--font-size-reading);
@@ -147,17 +148,9 @@ a,
   margin-bottom: 0.5em;
 }
 
-.reader-content h1 {
-  font-size: 1.6em;
-}
-
-.reader-content h2 {
-  font-size: 1.3em;
-}
-
-.reader-content h3 {
-  font-size: 1.1em;
-}
+.reader-content h1 { font-size: 1.6em; }
+.reader-content h2 { font-size: 1.3em; }
+.reader-content h3 { font-size: 1.1em; }
 
 .reader-content a {
   color: var(--accent);

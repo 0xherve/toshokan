@@ -8,10 +8,12 @@ Production: https://watashi.fun
 
 ## Tech Stack
 
-- **React 19 + TypeScript + TanStack Router** — app + routing framework
+- **TanStack Start + React 19 + TypeScript** — SSR/app runtime + routing
 - **Better Auth (server + client)** — app-owned authentication model
+- **Google OAuth (optional)** — social sign-in through Better Auth
 - **Supabase Postgres + Storage** — book metadata/chapters and EPUB uploads
-- **Vite 7** — build tool, dev server, HMR
+- **Drizzle ORM + drizzle-kit** — typed schema and SQL migrations
+- **Vite 7** — build pipeline/dev runtime (via TanStack Start plugin)
 - **Tailwind CSS v4** + `@tailwindcss/typography` — styling
 - **epub.js v0.3** — EPUB parsing (used directly, NOT the react-reader wrapper)
 - **vite-plugin-pwa** — service worker, offline caching, installable PWA
@@ -36,8 +38,11 @@ Each chapter is a full scrollable page. User scrolls through it, then hits "Next
 ```
 src/
 ├── App.tsx                    # Root — wires hooks + components together
-├── main.tsx                   # Entry — theme pre-load, TanStack Router mount
-├── router.tsx                 # TanStack Router route tree (`/`, `/reader/$bookId`, `/admin/*`)
+├── client.tsx                 # Start client entry — hydration + SW registration
+├── start.ts                   # Start request middleware (Better Auth route handling)
+├── router.tsx                 # Start router factory using generated route tree
+├── routes/                    # File routes (`/`, `/auth`, `/reader/*`, `/admin/*`)
+├── routeTree.gen.ts           # Auto-generated route tree (do not edit)
 ├── index.css                  # Tailwind imports, themes, reader typography
 ├── components/
 │   ├── Reader.tsx             # Scrollable chapter content + tap zones
@@ -59,6 +64,11 @@ src/
     ├── supabase.ts            # Supabase client for book storage
     ├── constants.ts           # Types, theme/font defaults
     └── storage.ts             # localStorage helpers (settings, position, bookmarks)
+
+server/
+├── auth.ts                   # Better Auth config + providers + role hooks
+├── db.ts                     # Drizzle pg connection for auth runtime
+└── set-admin.ts              # Promote a user to admin
 ```
 
 ### Data Flow
@@ -92,7 +102,7 @@ Three themes defined as CSS custom properties on `[data-theme]`:
 - **Sepia** — warm tan, brown text (classic e-reader)
 - **Dark** — near-black, gray text (default)
 
-Theme is applied to `<html>` before React renders (in main.tsx) to prevent flash.
+Theme is applied to `<html>` before React hydrates (in `client.tsx`) to prevent flash.
 
 ## Key Decisions
 
@@ -108,11 +118,11 @@ Theme is applied to `<html>` before React renders (in main.tsx) to prevent flash
 # Install (run from the SAME environment you'll use for dev)
 bun install
 
-# Better Auth server (required for real sign-in/sign-up)
-bun run auth:dev
-
-# Frontend dev server
+# Full TanStack Start app (UI + auth runtime in one process)
 bun run dev
+
+# Drizzle migrations
+bun run db:migrate
 
 # Build
 bun run build
@@ -127,3 +137,6 @@ bun run lint
 ## Environment Variables
 
 See [BACKEND_SETUP.md](./BACKEND_SETUP.md) for complete backend/frontend env setup.
+
+Google OAuth redirect URI:
+`http://localhost:3000/api/auth/callback/google`

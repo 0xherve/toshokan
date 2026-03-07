@@ -26,9 +26,7 @@ export function Reader({
   onToggleUI,
 }: ReaderProps) {
   const lastTapRef = useRef(0);
-  const touchStartRef = useRef<{ x: number; y: number; width: number } | null>(
-    null,
-  );
+  const touchStartRef = useRef<{ x: number; y: number; width: number } | null>(null);
   const touchLastRef = useRef<{ x: number; y: number } | null>(null);
 
   const handleTap = useCallback(
@@ -51,11 +49,7 @@ export function Reader({
   const handleTouchStart = useCallback((e: TouchEvent) => {
     if (e.touches.length !== 1) return;
     const touch = e.touches[0];
-    const point = {
-      x: touch.clientX,
-      y: touch.clientY,
-      width: e.currentTarget.clientWidth,
-    };
+    const point = { x: touch.clientX, y: touch.clientY, width: e.currentTarget.clientWidth };
     touchStartRef.current = point;
     touchLastRef.current = point;
   }, []);
@@ -82,11 +76,8 @@ export function Reader({
     if (!isEdge) return;
     if (absDx < 60 || absDx < absDy * 1.5) return;
 
-    if (dx < 0) {
-      onNext();
-    } else {
-      onPrev();
-    }
+    if (dx < 0) onNext();
+    else onPrev();
   }, [onNext, onPrev]);
 
   return (
@@ -112,10 +103,7 @@ export function Reader({
         <div className="flex gap-4 mt-16 mb-8 pt-8 border-t border-border">
           {currentChapter > 0 && (
             <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onPrev();
-              }}
+              onClick={(e) => { e.stopPropagation(); onPrev(); }}
               className="flex-1 py-3 rounded-xl text-sm font-medium transition-colors bg-surface text-foreground"
             >
               &larr; Previous
@@ -123,10 +111,7 @@ export function Reader({
           )}
           {currentChapter < totalChapters - 1 && (
             <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onNext();
-              }}
+              onClick={(e) => { e.stopPropagation(); onNext(); }}
               className="flex-1 py-3 rounded-xl text-sm font-medium transition-colors bg-primary text-on-primary border border-border"
             >
               Next &rarr;

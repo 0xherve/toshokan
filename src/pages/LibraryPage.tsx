@@ -3,211 +3,103 @@ import { SiteHeader } from "../components/SiteHeader";
 import { useAuth } from "../lib/auth";
 import { useBooks } from "../hooks/useBooks";
 
-const statusLabels = {
-  draft: "Draft",
-  published: "Published",
-  archived: "Archived",
-} as const;
-
 export function LibraryPage() {
   const { role, email } = useAuth();
   const { books, isLoading, error } = useBooks();
   const currentBook = books[0];
 
   return (
-    <div className="min-h-dvh" style={{ backgroundColor: "var(--bg-app)" }}>
+    <div className="min-h-dvh bg-app">
       <SiteHeader />
 
-      <main className="px-4 py-4 safe-area-bottom max-w-[48rem] mx-auto">
-        <section
-          className="rounded-2xl border p-4"
-          style={{
-            borderColor: "var(--border)",
-            backgroundColor: "var(--bg-surface)",
-          }}
-        >
-          <p
-            className="text-xs uppercase tracking-wider"
-            style={{ color: "var(--text-muted)" }}
-          >
-            Continue Reading
-          </p>
-          <h1 className="text-lg font-bold mt-1" style={{ color: "var(--text-primary)" }}>
-            {currentBook?.title ?? "No active book"}
-          </h1>
-          <p className="text-sm mt-1" style={{ color: "var(--text-secondary)" }}>
-            {currentBook
-              ? `${currentBook.chapterCount} chapters available`
-              : "Upload or add a book from the admin panel"}
-          </p>
-          <div className="mt-4 h-1 rounded-full" style={{ backgroundColor: "var(--border)" }}>
-            <div
-              className="h-full rounded-full"
-              style={{ width: "67%", backgroundColor: "var(--text-primary)" }}
-            />
-          </div>
-          <div className="mt-4 flex gap-3">
-            {currentBook ? (
+      <main className="px-4 py-6 safe-area-bottom max-w-2xl mx-auto">
+        {/* Continue reading */}
+        {currentBook && (
+          <section className="pb-6 border-b border-border">
+            <p className="text-[10px] uppercase tracking-widest text-muted">Continue reading</p>
+            <h1 className="text-lg font-bold mt-1 text-foreground">{currentBook.title}</h1>
+            <p className="text-xs mt-1 text-secondary">
+              {currentBook.author} &middot; {currentBook.chapterCount} chapters
+            </p>
+
+            <div className="mt-3 h-px bg-border relative">
+              <div className="absolute inset-y-0 left-0 bg-foreground" style={{ width: "67%" }} />
+            </div>
+
+            <div className="mt-4 flex items-center gap-3">
               <Link
                 to="/reader/$bookId"
                 params={{ bookId: currentBook.id }}
-                className="px-4 py-2 rounded-xl text-sm font-medium transition-colors"
-                style={{
-                  backgroundColor: "var(--bg-primary)",
-                  color: "var(--text-on-primary)",
-                  border: "1px solid var(--border)",
-                }}
+                className="px-4 py-2.5 rounded-xl text-sm font-medium bg-primary text-on-primary transition-colors"
               >
-                Open reader
+                Continue
               </Link>
-            ) : (
-              <Link
-                to="/admin/books"
-                className="px-4 py-2 rounded-xl text-sm font-medium transition-colors"
-                style={{
-                  backgroundColor: "var(--bg-primary)",
-                  color: "var(--text-on-primary)",
-                  border: "1px solid var(--border)",
-                }}
-              >
-                Add first book
-              </Link>
-            )}
-            {role === "guest" ? (
-              <Link
-                to="/auth"
-                className="px-4 py-2 rounded-xl text-sm transition-colors"
-                style={{
-                  backgroundColor: "var(--bg-app)",
-                  color: "var(--text-secondary)",
-                  border: "1px solid var(--border)",
-                }}
-              >
-                Sign in to sync
-              </Link>
-            ) : (
-              <p className="text-xs self-center" style={{ color: "var(--text-muted)" }}>
-                Sync enabled for {email}
-              </p>
-            )}
-          </div>
-        </section>
+              {role === "guest" && (
+                <Link to="/auth" className="text-xs text-muted hover:text-secondary transition-colors">
+                  Sign in to sync
+                </Link>
+              )}
+              {role !== "guest" && (
+                <span className="text-xs text-muted">Syncing as {email}</span>
+              )}
+            </div>
+          </section>
+        )}
 
-        <section className="mt-4">
-          <div className="flex items-center justify-between px-1">
-            <h2 className="text-sm font-bold" style={{ color: "var(--text-primary)" }}>
-              Your Library
-            </h2>
-            <button
-              className="px-3 py-2 rounded-lg text-xs transition-colors cursor-pointer"
-              style={{
-                backgroundColor: "var(--bg-surface)",
-                color: "var(--text-primary)",
-                border: "1px solid var(--border)",
-              }}
+        {!currentBook && !isLoading && (
+          <section className="pb-6 border-b border-border">
+            <h1 className="text-lg font-bold text-foreground">Your library is empty</h1>
+            <p className="text-sm mt-1 text-secondary">Upload a book to get started.</p>
+            <Link
+              to="/admin/books"
+              className="inline-block mt-4 px-4 py-2.5 rounded-xl text-sm font-medium bg-primary text-on-primary transition-colors"
             >
-              Add book
-            </button>
-          </div>
+              Add first book
+            </Link>
+          </section>
+        )}
 
-          <div
-            className="mt-2 rounded-2xl border overflow-hidden"
-            style={{ borderColor: "var(--border)" }}
-          >
-            {isLoading && (
-              <div
-                className="p-4 text-sm"
-                style={{
-                  backgroundColor: "var(--bg-surface)",
-                  color: "var(--text-secondary)",
-                }}
-              >
-                Loading books...
-              </div>
-            )}
-            {error && (
-              <div
-                className="p-4 text-sm"
-                style={{
-                  backgroundColor: "var(--bg-surface)",
-                  color: "var(--text-secondary)",
-                }}
-              >
-                {error}
-              </div>
-            )}
-            {!isLoading && books.length === 0 && (
-              <div
-                className="p-4 text-sm"
-                style={{
-                  backgroundColor: "var(--bg-surface)",
-                  color: "var(--text-secondary)",
-                }}
-              >
-                No books found yet.
-              </div>
-            )}
+        {/* Book list */}
+        <section className="mt-6">
+          <h2 className="text-xs font-medium uppercase tracking-wider text-muted">Library</h2>
+
+          {isLoading && (
+            <p className="mt-4 text-sm text-muted">Loading...</p>
+          )}
+
+          {error && (
+            <p className="mt-4 text-sm text-secondary">{error}</p>
+          )}
+
+          {!isLoading && books.length === 0 && (
+            <p className="mt-4 text-sm text-muted">No books yet.</p>
+          )}
+
+          <div className="mt-3 space-y-0 divide-y divide-border">
             {books.map((book) => (
-              <div
-                key={book.id}
-                className="p-4 border-b last:border-b-0"
-                style={{
-                  borderColor: "var(--border)",
-                  backgroundColor: "var(--bg-surface)",
-                }}
-              >
+              <div key={book.id} className="py-4 first:pt-0">
                 <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <h3 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
-                      {book.title}
-                    </h3>
-                    <p className="text-xs mt-1" style={{ color: "var(--text-secondary)" }}>
-                      {book.author}
-                    </p>
+                  <div className="min-w-0">
+                    <h3 className="text-sm font-semibold text-foreground truncate">{book.title}</h3>
+                    <p className="text-xs mt-0.5 text-secondary">{book.author}</p>
                   </div>
-                  <span
-                    className="text-[10px] uppercase tracking-wide px-2 py-0.5 rounded-full"
-                    style={{
-                      color: "var(--text-secondary)",
-                      backgroundColor: "var(--bg-app)",
-                      border: "1px solid var(--border)",
-                    }}
-                  >
-                    {statusLabels[book.status]}
+                  <span className="shrink-0 text-[10px] uppercase tracking-wide text-muted">
+                    {book.chapterCount} ch
                   </span>
                 </div>
 
-                <div className="mt-2 flex items-center justify-between">
-                  <p className="text-xs" style={{ color: "var(--text-muted)" }}>
-                    {book.chapterCount} chapters . Updated {book.updatedAt}
-                  </p>
-                  <p className="text-xs" style={{ color: "var(--text-muted)" }}>
-                    {Math.round(book.completion * 100)}%
-                  </p>
-                </div>
-
-                <div className="mt-3 flex gap-2">
+                <div className="mt-2 flex items-center gap-2">
                   <Link
                     to="/reader/$bookId"
                     params={{ bookId: book.id }}
-                    className="px-3 py-2 rounded-lg text-xs transition-colors"
-                    style={{
-                      backgroundColor: "var(--bg-app)",
-                      color: "var(--text-primary)",
-                      border: "1px solid var(--border)",
-                    }}
+                    className="px-3 py-1.5 rounded-lg text-xs font-medium bg-surface text-foreground transition-colors hover:bg-primary hover:text-on-primary"
                   >
                     Read
                   </Link>
                   {role === "admin" && (
                     <Link
                       to="/admin/books"
-                      className="px-3 py-2 rounded-lg text-xs transition-colors"
-                      style={{
-                        backgroundColor: "var(--bg-app)",
-                        color: "var(--text-secondary)",
-                        border: "1px solid var(--border)",
-                      }}
+                      className="px-3 py-1.5 rounded-lg text-xs text-muted hover:text-secondary transition-colors"
                     >
                       Manage
                     </Link>

@@ -51,9 +51,7 @@ export default function App({ bookId, epubUrl }: ReaderAppProps) {
   const [fontSize, setFontSizeState] = useState(() => getSettings().fontSize);
   const [chapterQuery, setChapterQuery] = useState("");
   const [chapterRange, setChapterRange] = useState(0);
-  const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(
-    null,
-  );
+  const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [showInstallToast, setShowInstallToast] = useState(false);
 
   const chapterRangesCount = useMemo(() => {
@@ -89,34 +87,28 @@ export default function App({ bookId, epubUrl }: ReaderAppProps) {
 
     window.addEventListener("beforeinstallprompt", onBeforeInstallPrompt);
     window.addEventListener("appinstalled", onAppInstalled);
-
     return () => {
       window.removeEventListener("beforeinstallprompt", onBeforeInstallPrompt);
       window.removeEventListener("appinstalled", onAppInstalled);
     };
   }, []);
 
-  const toggleUI = useCallback(() => {
-    setUiVisible((v) => !v);
-  }, []);
+  const toggleUI = useCallback(() => setUiVisible((v) => !v), []);
 
   const openPanel = useCallback((panel: Panel) => {
     setActivePanel(panel);
     setUiVisible(false);
   }, []);
 
-  const closePanel = useCallback(() => {
-    setActivePanel("none");
-  }, []);
+  const closePanel = useCallback(() => setActivePanel("none"), []);
 
   const handleInstall = useCallback(async () => {
     if (!installPrompt) return;
     await installPrompt.prompt();
-    const choice = await installPrompt.userChoice;
+    await installPrompt.userChoice;
     localStorage.setItem("sr-install-dismissed", "1");
     setShowInstallToast(false);
     setInstallPrompt(null);
-    if (choice.outcome === "dismissed") return;
   }, [installPrompt]);
 
   const handleInstallDismiss = useCallback(() => {
@@ -125,13 +117,11 @@ export default function App({ bookId, epubUrl }: ReaderAppProps) {
     setInstallPrompt(null);
   }, []);
 
-
   const handleFontSizeChange = useCallback((size: number) => {
     setFontSizeState(size);
     const settings = getSettings();
     saveSettings({ ...settings, fontSize: size });
   }, []);
-
 
   const handleAddBookmark = useCallback(() => {
     if (chapters.length === 0) return;
@@ -151,14 +141,7 @@ export default function App({ bookId, epubUrl }: ReaderAppProps) {
     const excerpt = text.slice(start, start + 120).trim();
     addBookmark(currentChapter, ch.title, scrollPercent, excerpt || ch.title);
     setActivePanel("none");
-  }, [
-    chapters,
-    currentChapter,
-    scrollPercent,
-    addBookmark,
-    bookmarks,
-    removeBookmark,
-  ]);
+  }, [chapters, currentChapter, scrollPercent, addBookmark, bookmarks, removeBookmark]);
 
   const handleSelectBookmark = useCallback(
     (bookmark: Bookmark) => {
@@ -179,18 +162,14 @@ export default function App({ bookId, epubUrl }: ReaderAppProps) {
   const handleGoNext = useCallback(() => {
     goNext();
     requestAnimationFrame(() => {
-      if (scrollContainerRef.current) {
-        scrollContainerRef.current.scrollTop = 0;
-      }
+      if (scrollContainerRef.current) scrollContainerRef.current.scrollTop = 0;
     });
   }, [goNext, scrollContainerRef]);
 
   const handleGoPrev = useCallback(() => {
     goPrev();
     requestAnimationFrame(() => {
-      if (scrollContainerRef.current) {
-        scrollContainerRef.current.scrollTop = 0;
-      }
+      if (scrollContainerRef.current) scrollContainerRef.current.scrollTop = 0;
     });
   }, [goPrev, scrollContainerRef]);
 
@@ -198,12 +177,9 @@ export default function App({ bookId, epubUrl }: ReaderAppProps) {
 
   if (error) {
     return (
-      <div className="fixed inset-0 flex flex-col items-center justify-center gap-4 px-8 text-center bg-app text-foreground">
-        <div className="text-xl font-bold">Failed to load book</div>
+      <div className="fixed inset-0 flex flex-col items-center justify-center gap-4 px-8 text-center bg-app">
+        <div className="text-xl font-bold text-foreground">Failed to load book</div>
         <div className="text-sm text-secondary">{error}</div>
-        <div className="text-xs mt-4 text-muted">
-          Verify the book upload and EPUB URL in Supabase.
-        </div>
       </div>
     );
   }
@@ -224,7 +200,6 @@ export default function App({ bookId, epubUrl }: ReaderAppProps) {
         scrollContainerRef={scrollContainerRef}
         onToggleUI={toggleUI}
       />
-
 
       <TopBar
         chapterTitle={bookTitle}
@@ -262,9 +237,7 @@ export default function App({ bookId, epubUrl }: ReaderAppProps) {
           if (chapterIdx >= 0) {
             setCurrentChapter(chapterIdx);
             requestAnimationFrame(() => {
-              if (scrollContainerRef.current) {
-                scrollContainerRef.current.scrollTop = 0;
-              }
+              if (scrollContainerRef.current) scrollContainerRef.current.scrollTop = 0;
             });
           }
           closePanel();

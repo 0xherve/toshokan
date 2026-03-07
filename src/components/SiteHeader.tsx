@@ -12,79 +12,51 @@ export function SiteHeader() {
   ] as const;
 
   return (
-    <header
-      className="sticky top-0 z-40 border-b safe-area-top"
-      style={{
-        borderColor: "var(--border)",
-        backgroundColor: "var(--bg-surface)",
-      }}
-    >
-      <div className="px-4 py-3">
-        <div className="flex items-center justify-between gap-3">
-          <div>
-            <p
-              className="text-[10px] uppercase tracking-wide"
-              style={{ color: "var(--text-muted)" }}
-            >
-              Watashi
-            </p>
-            <p className="text-sm font-bold" style={{ color: "var(--text-primary)" }}>
-              Personal Reading Space
-            </p>
-          </div>
-          {role === "guest" ? (
-            <Link
-              to="/auth"
-              className="px-3 py-2 rounded-lg text-xs transition-colors"
-              style={{
-                backgroundColor: "var(--bg-app)",
-                color: "var(--text-primary)",
-                border: "1px solid var(--border)",
-              }}
-            >
-              Sign in
-            </Link>
-          ) : (
-            <button
-              onClick={() => {
-                void signOut();
-              }}
-              disabled={isLoading}
-              className="px-3 py-2 rounded-lg text-xs transition-colors cursor-pointer"
-              style={{
-                backgroundColor: "var(--bg-app)",
-                color: "var(--text-secondary)",
-                border: "1px solid var(--border)",
-              }}
-            >
-              {isLoading ? "..." : "Sign out"}
-            </button>
-          )}
+    <header className="sticky top-0 z-40 border-b border-border bg-surface safe-area-top">
+      <div className="flex items-center justify-between px-4 h-12">
+        <div className="flex items-center gap-4">
+          <span className="text-sm font-bold text-foreground tracking-tight">
+            Watashi
+          </span>
+          <nav className="flex items-center gap-1">
+            {navItems.map((item) => {
+              const isActive =
+                item.to === "/"
+                  ? location.pathname === "/"
+                  : location.pathname.startsWith(item.to);
+              return (
+                <Link
+                  key={item.to}
+                  to={item.to}
+                  className={`px-2.5 py-1.5 rounded-lg text-xs transition-colors ${
+                    isActive
+                      ? "bg-app text-foreground font-medium"
+                      : "text-muted hover:text-secondary"
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
+          </nav>
         </div>
 
-        <nav className="mt-3 flex gap-2 overflow-x-auto pb-1">
-          {navItems.map((item) => {
-            const isActive =
-              item.to === "/"
-                ? location.pathname === "/"
-                : location.pathname.startsWith(item.to);
-            return (
-              <Link
-                key={item.to}
-                to={item.to}
-                className="px-3 py-2 rounded-lg text-xs whitespace-nowrap transition-colors"
-                style={{
-                  backgroundColor: isActive ? "var(--bg-app)" : "transparent",
-                  color: "var(--text-primary)",
-                  border: isActive ? "1px solid var(--border)" : "1px solid transparent",
-                  fontWeight: isActive ? 600 : 400,
-                }}
-              >
-                {item.label}
-              </Link>
-            );
-          })}
-        </nav>
+        {role === "guest" ? (
+          <Link
+            to="/auth"
+            className="px-3 py-1.5 rounded-lg text-xs text-muted hover:text-secondary transition-colors"
+          >
+            Sign in
+          </Link>
+        ) : (
+          <button
+            onClick={() => { void signOut(); }}
+            disabled={isLoading}
+            className="px-3 py-1.5 rounded-lg text-xs text-muted hover:text-secondary transition-colors"
+          >
+            Sign out
+          </button>
+        )}
       </div>
     </header>
   );

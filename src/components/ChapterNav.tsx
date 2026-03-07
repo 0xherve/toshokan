@@ -31,29 +31,25 @@ export function ChapterNav({
   onRangeChange,
 }: ChapterNavProps) {
   const rangeCount = Math.max(1, Math.ceil(chapters.length / rangeSize));
+
   const ranges = useMemo(
     () =>
       Array.from({ length: rangeCount }, (_, i) => {
         const start = i * rangeSize + 1;
         const end = Math.min((i + 1) * rangeSize, chapters.length);
-        return { index: i, label: `${start}-${end}` };
+        return { index: i, label: `${start}\u2013${end}` };
       }),
     [rangeCount, rangeSize, chapters.length],
   );
 
   const filteredChapters = useMemo(() => {
-    const normalize = (value: string) =>
-      value
-        .toLowerCase()
-        .replace(/[^\p{L}\p{N}\s]/gu, " ")
-        .replace(/\s+/g, " ")
-        .trim();
-    const normalizedQuery = normalize(query);
-    if (!normalizedQuery) return chapters;
-    return chapters.filter((chapter, idx) => {
-      const chapterNumber = idx + 1;
-      if (String(chapterNumber).includes(normalizedQuery)) return true;
-      return normalize(chapter.title).includes(normalizedQuery);
+    const normalize = (v: string) =>
+      v.toLowerCase().replace(/[^\p{L}\p{N}\s]/gu, " ").replace(/\s+/g, " ").trim();
+    const q = normalize(query);
+    if (!q) return chapters;
+    return chapters.filter((ch, idx) => {
+      if (String(idx + 1).includes(q)) return true;
+      return normalize(ch.title).includes(q);
     });
   }, [chapters, query]);
 
@@ -64,69 +60,59 @@ export function ChapterNav({
     return chapters.slice(start, end);
   }, [chapters, selectedRange, rangeSize, filteredChapters, query]);
 
-  const bookmarkedSet = useMemo(() => {
-    return new Set(bookmarks.map((bm) => bm.chapterIndex));
-  }, [bookmarks]);
+  const bookmarkedSet = useMemo(
+    () => new Set(bookmarks.map((bm) => bm.chapterIndex)),
+    [bookmarks],
+  );
 
   return (
     <>
       {open && (
-        <div
-          className="fixed inset-0 z-50 transition-opacity bg-overlay"
-          onClick={onClose}
-        />
+        <div className="fixed inset-0 z-50 bg-overlay" onClick={onClose} />
       )}
 
       <div
         className="fixed top-0 left-0 bottom-0 z-50 w-72 max-w-[80vw] transition-transform duration-300 overflow-y-auto safe-area-top safe-area-bottom bg-surface"
-        style={{
-          transform: open ? "translateX(0)" : "translateX(-100%)",
-        }}
+        style={{ transform: open ? "translateX(0)" : "translateX(-100%)" }}
       >
         <div className="p-4 pb-2">
-          <h2 className="text-lg font-bold text-foreground">
-            Table of Contents
-          </h2>
-          <p className="text-xs mt-1 text-muted">
-            {totalChapters} chapters
-          </p>
-          <div className="mt-3">
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => onQueryChange(e.target.value)}
-              placeholder="Search chapter number or title"
-              className="w-full rounded-xl px-3 py-2 text-sm outline-none bg-app text-foreground border border-border"
-            />
-          </div>
-          <div className="mt-2">
+          <h2 className="text-lg font-bold text-foreground">Chapters</h2>
+          <p className="text-xs mt-1 text-muted">{totalChapters} total</p>
+
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => onQueryChange(e.target.value)}
+            placeholder="Search chapters..."
+            className="mt-3 w-full rounded-lg px-3 py-2 text-sm outline-none bg-app text-foreground border border-border placeholder:text-muted"
+          />
+
+          {rangeCount > 1 && (
             <select
               value={selectedRange}
               onChange={(e) => onRangeChange(Number(e.target.value))}
-              className="w-full rounded-xl px-3 py-2 text-sm outline-none bg-app text-foreground border border-border"
+              className="mt-2 w-full rounded-lg px-3 py-2 text-sm outline-none bg-app text-foreground border border-border"
             >
-              {ranges.map((range) => (
-                <option key={range.index} value={range.index}>
-                  Chapters {range.label}
+              {ranges.map((r) => (
+                <option key={r.index} value={r.index}>
+                  {r.label}
                 </option>
               ))}
             </select>
-          </div>
+          )}
         </div>
 
         <nav className="pb-8">
           {visibleChapters.length === 0 ? (
-            <div className="px-4 py-6 text-sm text-muted">
-              No chapters found.
-            </div>
+            <div className="px-4 py-6 text-sm text-muted">No chapters found.</div>
           ) : (
             visibleChapters.map((chapter, idx) => {
               const chapterIndex = query.trim()
                 ? chapters.findIndex((c) => c.index === chapter.index)
                 : selectedRange * rangeSize + idx;
-              const chapterNumber = chapterIndex + 1;
               const isActive = chapterIndex === currentChapter;
               const isBookmarked = bookmarkedSet.has(chapterIndex);
+
               return (
                 <button
                   key={`${chapter.href}-${chapterIndex}`}
@@ -134,20 +120,19 @@ export function ChapterNav({
                     onSelectChapter(chapterIndex);
                     onClose();
                   }}
-                  className={`w-full text-left px-4 py-3 text-sm transition-colors block text-foreground ${
-                    isActive ? "bg-app font-semibold" : ""
+                  className={`w-full text-left px-4 py-3 text-sm transition-colors block ${
+                    isActive
+                      ? "bg-app text-foreground font-semibold"
+                      : "text-foreground"
                   }`}
                 >
                   <div className="flex items-center justify-between gap-2">
-                    <span>Chapter {chapterNumber}</span>
+                    <span className="truncate">{chapterIndex + 1}. {chapter.title}</span>
                     {isBookmarked && (
-                      <span className="text-[10px] uppercase tracking-wide px-2 py-0.5 rounded-full text-secondary bg-surface border border-border">
+                      <span className="shrink-0 text-[10px] uppercase tracking-wide px-2 py-0.5 rounded-full text-muted bg-app border border-border">
                         saved
                       </span>
                     )}
-                  </div>
-                  <div className="mt-1 text-xs truncate text-secondary">
-                    {chapter.title}
                   </div>
                 </button>
               );

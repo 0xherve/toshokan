@@ -20,15 +20,17 @@ interface AuthContextValue {
     email: string,
     password: string,
   ) => Promise<string | null>;
+  signInWithGoogle: (callbackURL?: string) => Promise<string | null>;
   signOut: () => Promise<string | null>;
 }
 
-const authBaseURL =
-  import.meta.env.VITE_AUTH_BASE_URL || window.location.origin;
-
-const authClient = createAuthClient({
-  baseURL: authBaseURL,
-});
+const authClient = createAuthClient(
+  import.meta.env.VITE_AUTH_BASE_URL
+    ? {
+        baseURL: import.meta.env.VITE_AUTH_BASE_URL,
+      }
+    : undefined,
+);
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
@@ -61,6 +63,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return error?.message ?? null;
   };
 
+  const signInWithGoogle = async (callbackURL = "/") => {
+    const { error } = await authClient.signIn.social({
+      provider: "google",
+      callbackURL,
+    });
+    return error?.message ?? null;
+  };
+
   const value = useMemo<AuthContextValue>(() => {
     const user = session.data?.user as { email?: string; role?: string } | undefined;
     const normalizedRole =
@@ -73,9 +83,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       error: session.error?.message ?? null,
       signInWithPassword,
       signUpWithPassword,
+      signInWithGoogle,
       signOut,
     };
-  }, [session.data?.session, session.data?.user, session.error?.message, session.isPending, session.isRefetching]);
+  }, [
+    session.data?.session,
+    session.data?.user,
+    session.error?.message,
+    session.isPending,
+    session.isRefetching,
+  ]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

@@ -41,3 +41,10 @@ Context: execute the accounts + admin + sync architecture plan incrementally, wi
 - [x] B3: Add initial SQL migration for schema, indexes, and triggers
 - [x] B4: Document local backend bootstrap and env behavior
 - [x] B5: Validate lint/build after backend integration changes
+- [x] B6: Add Drizzle ORM schema + drizzle-kit migrations and wire Better Auth to Drizzle adapter
+- [x] B7: Add Better Auth runtime server with `/api/auth/*` endpoint and auth guard helpers
+- [x] B8: Add role-aware auth model (`users.role`) and admin bootstrap command
+- [x] B9: Add Google OAuth provider wiring and auth-page action
+- [x] B10: Migrate app runtime to full TanStack Start (file routes + Start server runtime)
+- [x] B11: Remove separate auth server process and mount Better Auth through Start request middleware
+- [x] B12: Remove unused standalone auth server files/scripts and validate lint/build

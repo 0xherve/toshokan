@@ -23,20 +23,10 @@ export function AdminScaffold({ title, subtitle, children }: AdminScaffoldProps)
 
   if (isLoading) {
     return (
-      <div className="min-h-dvh" style={{ backgroundColor: "var(--bg-app)" }}>
+      <div className="min-h-dvh bg-app">
         <SiteHeader />
-        <main className="px-4 py-6 max-w-[36rem] mx-auto">
-          <div
-            className="rounded-2xl border p-5"
-            style={{
-              borderColor: "var(--border)",
-              backgroundColor: "var(--bg-surface)",
-            }}
-          >
-            <h1 className="text-lg font-bold" style={{ color: "var(--text-primary)" }}>
-              Loading session
-            </h1>
-          </div>
+        <main className="px-4 py-6 max-w-3xl mx-auto">
+          <div className="text-sm text-muted">Loading session...</div>
         </main>
       </div>
     );
@@ -44,64 +34,34 @@ export function AdminScaffold({ title, subtitle, children }: AdminScaffoldProps)
 
   if (role !== "admin") {
     return (
-      <div className="min-h-dvh" style={{ backgroundColor: "var(--bg-app)" }}>
+      <div className="min-h-dvh bg-app">
         <SiteHeader />
-        <main className="px-4 py-6 max-w-[36rem] mx-auto">
-          <div
-            className="rounded-2xl border p-5"
-            style={{
-              borderColor: "var(--border)",
-              backgroundColor: "var(--bg-surface)",
-            }}
+        <main className="px-4 py-8 max-w-md mx-auto text-center">
+          <h1 className="text-lg font-bold text-foreground">Admin access required</h1>
+          <p className="text-sm mt-2 text-secondary">
+            Sign in with an admin account to continue.
+          </p>
+          <Link
+            to="/auth"
+            className="inline-block mt-4 px-4 py-2 rounded-xl text-sm font-medium bg-primary text-on-primary transition-colors"
           >
-            <h1 className="text-lg font-bold" style={{ color: "var(--text-primary)" }}>
-              Admin access required
-            </h1>
-            <p className="text-sm mt-2" style={{ color: "var(--text-secondary)" }}>
-              Sign in with an admin role to manage books, users, and analytics.
-            </p>
-            <Link
-              to="/auth"
-              className="inline-block mt-4 px-4 py-2 rounded-lg text-sm transition-colors"
-              style={{
-                backgroundColor: "var(--bg-primary)",
-                color: "var(--text-on-primary)",
-                border: "1px solid var(--border)",
-              }}
-            >
-              Go to auth
-            </Link>
-          </div>
+            Sign in
+          </Link>
         </main>
       </div>
     );
   }
 
   return (
-    <div className="min-h-dvh" style={{ backgroundColor: "var(--bg-app)" }}>
+    <div className="min-h-dvh bg-app">
       <SiteHeader />
-      <main className="px-4 py-4 safe-area-bottom max-w-[58rem] mx-auto">
-        <section
-          className="rounded-2xl border p-4"
-          style={{
-            borderColor: "var(--border)",
-            backgroundColor: "var(--bg-surface)",
-          }}
-        >
-          <p
-            className="text-xs uppercase tracking-wider"
-            style={{ color: "var(--text-muted)" }}
-          >
-            Master Panel
-          </p>
-          <h1 className="text-lg font-bold mt-1" style={{ color: "var(--text-primary)" }}>
-            {title}
-          </h1>
-          <p className="text-sm mt-1" style={{ color: "var(--text-secondary)" }}>
-            {subtitle}
-          </p>
+      <main className="px-4 py-4 safe-area-bottom max-w-4xl mx-auto">
+        <div className="pb-4 border-b border-border">
+          <p className="text-[10px] uppercase tracking-widest text-muted">Admin</p>
+          <h1 className="text-lg font-bold mt-0.5 text-foreground">{title}</h1>
+          <p className="text-sm mt-0.5 text-secondary">{subtitle}</p>
 
-          <nav className="mt-4 flex gap-2 overflow-x-auto pb-1">
+          <nav className="mt-3 flex gap-1 overflow-x-auto">
             {adminNavItems.map((item) => {
               const isActive =
                 item.to === "/admin"
@@ -111,22 +71,18 @@ export function AdminScaffold({ title, subtitle, children }: AdminScaffoldProps)
                 <Link
                   key={item.to}
                   to={item.to}
-                  className="px-3 py-2 rounded-lg text-xs whitespace-nowrap transition-colors"
-                  style={{
-                    backgroundColor: isActive ? "var(--bg-app)" : "transparent",
-                    color: "var(--text-primary)",
-                    border: isActive
-                      ? "1px solid var(--border)"
-                      : "1px solid transparent",
-                    fontWeight: isActive ? 600 : 400,
-                  }}
+                  className={`px-2.5 py-1.5 rounded-lg text-xs whitespace-nowrap transition-colors ${
+                    isActive
+                      ? "bg-surface text-foreground font-medium"
+                      : "text-muted hover:text-secondary"
+                  }`}
                 >
                   {item.label}
                 </Link>
               );
             })}
           </nav>
-        </section>
+        </div>
 
         <div className="mt-4">{children}</div>
       </main>

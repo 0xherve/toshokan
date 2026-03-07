@@ -8,47 +8,25 @@ export function ReaderPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-dvh flex items-center justify-center px-6">
-        <div
-          className="rounded-2xl border p-5 text-sm"
-          style={{
-            borderColor: "var(--border)",
-            backgroundColor: "var(--bg-surface)",
-            color: "var(--text-secondary)",
-          }}
-        >
-          Loading book...
-        </div>
+      <div className="fixed inset-0 flex items-center justify-center bg-app">
+        <span className="text-sm text-muted">Loading book...</span>
       </div>
     );
   }
 
   if (error || !book?.epubUrl) {
     return (
-      <div className="min-h-dvh flex items-center justify-center px-6">
-        <div
-          className="rounded-2xl border p-5 max-w-xl"
-          style={{
-            borderColor: "var(--border)",
-            backgroundColor: "var(--bg-surface)",
-          }}
-        >
-          <h1 className="text-lg font-bold" style={{ color: "var(--text-primary)" }}>
-            Reader unavailable
-          </h1>
-          <p className="text-sm mt-2" style={{ color: "var(--text-secondary)" }}>
-            {error ?? "This book has no EPUB URL yet."}
+      <div className="fixed inset-0 flex items-center justify-center bg-app px-6">
+        <div className="max-w-sm text-center">
+          <h1 className="text-lg font-bold text-foreground">Unavailable</h1>
+          <p className="text-sm mt-2 text-secondary">
+            {error ?? "This book has no EPUB file yet."}
           </p>
           <Link
-            to="/admin/books"
-            className="inline-block mt-4 px-4 py-2 rounded-xl text-sm"
-            style={{
-              backgroundColor: "var(--bg-primary)",
-              color: "var(--text-on-primary)",
-              border: "1px solid var(--border)",
-            }}
+            to="/"
+            className="inline-block mt-4 px-4 py-2 rounded-xl text-sm font-medium bg-primary text-on-primary transition-colors"
           >
-            Manage books
+            Back to library
           </Link>
         </div>
       </div>

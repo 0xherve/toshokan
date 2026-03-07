@@ -1,81 +1,66 @@
 # Backend Setup
 
-This project is now split into:
-- **Frontend app** (Vite/React)
-- **Better Auth server** (app-owned auth identities)
-- **Supabase** (books, chapters, file storage)
+This app runs with:
+- App runtime: TanStack Start (single server process)
+- Auth API: Better Auth mounted at `/api/auth/*` via `src/start.ts`
+- Data: Supabase Postgres + Storage
 
-## 1) Database schema
+## 1) Run database migrations
 
-Apply:
+```bash
+bun run db:migrate
+```
 
-`supabase/migrations/202603072215_initial_app_schema.sql`
-
-This creates app tables (`books`, `book_chapters`, progress, bookmarks, events, etc.).
+Schema source: `src/db/schema.ts`
 
 ## 2) Supabase storage bucket
 
-Create bucket:
+Create a public bucket named `books`.
 
-`books`
-
-Admin upload writes EPUB files under:
-
+EPUB uploads are stored at:
 `books/epubs/<uuid>-<filename>.epub`
 
-## 3) Better Auth server
+## 3) Required env vars
 
-Start auth API:
+Core:
+- `DATABASE_URL`
+- `DATABASE_PASSWORD` (optional, used if URL still has `[YOUR-PASSWORD]`)
+- `BETTER_AUTH_SECRET` (or `AUTH_SECRET`)
+- `APP_ORIGIN` (default `http://localhost:3000`)
+- `BETTER_AUTH_URL` (optional; defaults to `APP_ORIGIN`)
 
-```bash
-bun run auth:dev
-```
+Frontend:
+- `PROJECT_URL` (Supabase project URL)
+- `PUBLISHABLE_KEY` (Supabase publishable key)
+- `VITE_AUTH_BASE_URL` (optional; use only if auth is served on a different origin)
 
-This serves:
+Google OAuth (optional):
+- `GOOGLE_CLIENT_ID`
+- `GOOGLE_CLIENT_SECRET`
 
-`http://localhost:4000/api/auth/*` (default)
+Google redirect URI:
+- `${APP_ORIGIN}/api/auth/callback/google`
+- Example: `http://localhost:3000/api/auth/callback/google`
 
-## 4) Frontend app
-
-Start frontend:
+## 4) Start the app
 
 ```bash
 bun run dev
 ```
 
-## 5) Required env vars
+Auth base path:
+- `http://localhost:3000/api/auth/*`
 
-Auth server (`server/auth-server.mjs`):
-- `DATABASE_URL`
-- `DATABASE_PASSWORD` (optional if embedded in URL)
-- `BETTER_AUTH_SECRET` (or `AUTH_SECRET`)
-- `APP_ORIGIN` (default `http://localhost:3000`)
-- `AUTH_ORIGIN` (default `http://localhost:4000`)
-- `AUTH_PORT` (default `4000`)
-
-Optional Google OAuth:
-- `GOOGLE_CLIENT_ID`
-- `GOOGLE_CLIENT_SECRET`
-
-Frontend:
-- `PROJECT_URL` (Supabase project URL)
-- `PUBLISHABLE_KEY` (Supabase publishable key)
-- `VITE_AUTH_BASE_URL` (e.g. `http://localhost:4000`)
-
-## 6) Make first admin
-
-After signup, promote a user:
+## 5) Promote first admin
 
 ```bash
 bun run auth:make-admin -- your@email.com
 ```
 
-## 7) Sanitization model
+## 6) Ingestion model
 
-Book sanitization happens at ingestion/upload:
+Book sanitization happens during upload:
 1. EPUB uploaded
 2. Chapters extracted
 3. HTML sanitized
 4. Sanitized chapters saved to `book_chapters`
-
-Reader loads sanitized `book_chapters` first; EPUB parsing is fallback only.
