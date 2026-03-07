@@ -8,7 +8,7 @@ Production: https://watashi.fun
 
 ## Tech Stack
 
-- **React 19 + TypeScript** — UI framework
+- **React 19 + TypeScript + TanStack Router** — app + routing framework
 - **Vite 7** — build tool, dev server, HMR
 - **Tailwind CSS v4** + `@tailwindcss/typography` — styling
 - **epub.js v0.3** — EPUB parsing (used directly, NOT the react-reader wrapper)
@@ -35,7 +35,8 @@ Each chapter is a full scrollable page. User scrolls through it, then hits "Next
 ```
 src/
 ├── App.tsx                    # Root — wires hooks + components together
-├── main.tsx                   # Entry — theme pre-load, React mount
+├── main.tsx                   # Entry — theme pre-load, TanStack Router mount
+├── router.tsx                 # TanStack Router route tree (`/` -> App)
 ├── index.css                  # Tailwind imports, themes, reader typography
 ├── components/
 │   ├── Reader.tsx             # Scrollable chapter content + tap zones

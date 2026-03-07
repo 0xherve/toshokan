@@ -19,39 +19,28 @@ export function BookmarkList({
     <>
       {open && (
         <div
-          className="fixed inset-0 z-50"
-          style={{ backgroundColor: "var(--overlay)" }}
+          className="fixed inset-0 z-50 bg-overlay"
           onClick={onClose}
         />
       )}
 
       <div
-        className="fixed top-0 right-0 bottom-0 z-50 w-72 max-w-[80vw] transition-transform duration-300 overflow-y-auto safe-area-top safe-area-bottom"
+        className="fixed top-0 right-0 bottom-0 z-50 w-72 max-w-[80vw] transition-transform duration-300 overflow-y-auto safe-area-top safe-area-bottom bg-surface"
         style={{
-          backgroundColor: "var(--bg-surface)",
           transform: open ? "translateX(0)" : "translateX(100%)",
         }}
       >
         <div className="p-4 pb-2">
-          <h2
-            className="text-lg font-bold"
-            style={{ color: "var(--text-primary)" }}
-          >
+          <h2 className="text-lg font-bold text-foreground">
             Bookmarks
           </h2>
-          <p
-            className="text-xs mt-1"
-            style={{ color: "var(--text-muted)" }}
-          >
+          <p className="text-xs mt-1 text-muted">
             {bookmarks.length} saved
           </p>
         </div>
 
         {bookmarks.length === 0 ? (
-          <div
-            className="px-4 py-8 text-center text-sm"
-            style={{ color: "var(--text-muted)" }}
-          >
+          <div className="px-4 py-8 text-center text-sm text-muted">
             No bookmarks yet.
             <br />
             Tap the bookmark icon to save your place.
@@ -61,8 +50,7 @@ export function BookmarkList({
             {bookmarks.map((bm) => (
               <div
                 key={bm.id}
-                className="px-4 py-3 transition-colors"
-                style={{ borderBottom: "1px solid var(--border)" }}
+                className="px-4 py-3 transition-colors border-b border-border"
               >
                 <button
                   onClick={() => {
@@ -71,29 +59,19 @@ export function BookmarkList({
                   }}
                   className="w-full text-left"
                 >
-                  <div
-                    className="text-sm font-medium"
-                    style={{ color: "var(--text-primary)" }}
-                  >
+                  <div className="text-sm font-medium text-foreground">
                     {bm.chapterTitle}
                   </div>
-                  <div
-                    className="text-xs mt-1 line-clamp-2"
-                    style={{ color: "var(--text-secondary)" }}
-                  >
+                  <div className="text-xs mt-1 line-clamp-2 text-secondary">
                     {bm.excerpt}
                   </div>
-                  <div
-                    className="text-xs mt-1"
-                    style={{ color: "var(--text-muted)" }}
-                  >
+                  <div className="text-xs mt-1 text-muted">
                     {Math.round(bm.scrollPercent * 100)}% through chapter
                   </div>
                 </button>
                 <button
                   onClick={() => onRemoveBookmark(bm.id)}
-                  className="text-xs mt-1 transition-colors"
-                  style={{ color: "var(--accent)" }}
+                  className="text-xs mt-1 transition-colors text-accent"
                 >
                   Remove
                 </button>

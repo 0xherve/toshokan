@@ -1,14 +1,11 @@
 export function LoadingScreen() {
   return (
-    <div
-      className="fixed inset-0 flex flex-col items-center justify-center gap-4"
-      style={{ backgroundColor: "var(--bg-app)", color: "var(--text-primary)" }}
-    >
+    <div className="fixed inset-0 flex flex-col items-center justify-center gap-4 bg-app text-foreground">
       <div className="text-2xl font-bold tracking-tight">Watashi</div>
-      <div className="text-xs" style={{ color: "var(--text-muted)" }}>
+      <div className="text-xs text-muted">
         A tasteful, personal light novel library
       </div>
-      <div className="flex items-center gap-2" style={{ color: "var(--text-secondary)" }}>
+      <div className="flex items-center gap-2 text-secondary">
         <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24" fill="none">
           <circle
             className="opacity-25"

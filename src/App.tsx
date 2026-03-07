@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect, useMemo } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import { useEpubReader } from "./hooks/useEpubReader";
 import { useTheme } from "./hooks/useTheme";
 import { useReadingProgress } from "./hooks/useReadingProgress";
@@ -25,6 +26,7 @@ type BeforeInstallPromptEvent = Event & {
 };
 
 export default function App() {
+  const navigate = useNavigate();
   const { isLoading, error, chapters, totalChapters, bookTitle } =
     useEpubReader(EPUB_URL);
   const { theme, setTheme } = useTheme();
@@ -192,18 +194,10 @@ export default function App() {
 
   if (error) {
     return (
-      <div
-        className="fixed inset-0 flex flex-col items-center justify-center gap-4 px-8 text-center"
-        style={{
-          backgroundColor: "var(--bg-app)",
-          color: "var(--text-primary)",
-        }}
-      >
+      <div className="fixed inset-0 flex flex-col items-center justify-center gap-4 px-8 text-center bg-app text-foreground">
         <div className="text-xl font-bold">Failed to load book</div>
-        <div className="text-sm" style={{ color: "var(--text-secondary)" }}>
-          {error}
-        </div>
-        <div className="text-xs mt-4" style={{ color: "var(--text-muted)" }}>
+        <div className="text-sm text-secondary">{error}</div>
+        <div className="text-xs mt-4 text-muted">
           Check <code>VITE_EPUB_URL</code> or the default blob URL.
         </div>
       </div>
@@ -230,7 +224,7 @@ export default function App() {
 
       <TopBar
         chapterTitle={bookTitle}
-        visible={true}
+        onLibraryClick={() => navigate({ to: "/" })}
         onMenuClick={() => openPanel("chapters")}
         onBookmarkClick={handleAddBookmark}
         theme={theme}
@@ -244,6 +238,7 @@ export default function App() {
         chapterIndex={currentChapter}
         totalChapters={totalChapters}
         chapterProgress={scrollPercent}
+        onBookmarksClick={() => openPanel("bookmarks")}
         onSettingsClick={() => openPanel("settings")}
       />
 

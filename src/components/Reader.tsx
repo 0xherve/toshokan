@@ -92,8 +92,7 @@ export function Reader({
   return (
     <div
       ref={scrollContainerRef}
-      className="fixed inset-0 overflow-y-auto"
-      style={{ backgroundColor: "var(--bg-reader)" }}
+      className="fixed inset-0 overflow-y-auto bg-reader"
       onScroll={onScroll}
       onClick={handleTap}
       onTouchStart={handleTouchStart}
@@ -104,30 +103,20 @@ export function Reader({
         className="reader-content mx-auto px-5 py-16 max-w-[38em]"
         style={{ fontSize: `${fontSize}px` }}
       >
-        <h1
-          className="text-2xl font-bold mb-8 text-center"
-          style={{ color: "var(--text-primary)" }}
-        >
+        <h1 className="text-2xl font-bold mb-8 text-center text-foreground">
           {chapter.title}
         </h1>
 
         <div dangerouslySetInnerHTML={{ __html: chapter.html }} />
 
-        <div
-          className="flex gap-4 mt-16 mb-8 pt-8"
-          style={{ borderTop: "1px solid var(--border)" }}
-        >
+        <div className="flex gap-4 mt-16 mb-8 pt-8 border-t border-border">
           {currentChapter > 0 && (
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 onPrev();
               }}
-              className="flex-1 py-3 rounded-xl text-sm font-medium transition-colors cursor-pointer"
-              style={{
-                backgroundColor: "var(--bg-surface)",
-                color: "var(--text-primary)",
-              }}
+              className="flex-1 py-3 rounded-xl text-sm font-medium transition-colors bg-surface text-foreground"
             >
               &larr; Previous
             </button>
@@ -138,12 +127,7 @@ export function Reader({
                 e.stopPropagation();
                 onNext();
               }}
-              className="flex-1 py-3 rounded-xl text-sm font-medium transition-colors cursor-pointer"
-              style={{
-                backgroundColor: "var(--bg-primary)",
-                color: "var(--text-on-primary)",
-                border: "1px solid var(--border)",
-              }}
+              className="flex-1 py-3 rounded-xl text-sm font-medium transition-colors bg-primary text-on-primary border border-border"
             >
               Next &rarr;
             </button>

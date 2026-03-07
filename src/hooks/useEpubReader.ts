@@ -13,6 +13,12 @@ interface UseEpubReaderReturn {
   bookTitle: string;
 }
 
+type NavigationTocItem = {
+  label: string;
+  href: string;
+  subitems?: NavigationTocItem[];
+};
+
 export function useEpubReader(url: string): UseEpubReaderReturn {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -36,19 +42,28 @@ export function useEpubReader(url: string): UseEpubReaderReturn {
       const title = metadata?.title?.trim();
       setBookTitle(title || "Untitled Book");
 
+      const normalizeHref = (href: string) =>
+        href.split("#")[0].replace(/^\.\//, "").toLowerCase();
+
       const tocItems: TocItem[] = [];
-      const navigation = book.navigation;
-      if (navigation?.toc) {
-        navigation.toc.forEach((item) => {
+      const collectTocItems = (items: NavigationTocItem[]) => {
+        items.forEach((item) => {
           const spineItem = book.spine.get(item.href);
-          if (spineItem) {
-            tocItems.push({
-              label: item.label.trim(),
-              href: item.href,
-              spineIndex: spineItem.index,
-            });
+          tocItems.push({
+            label: item.label.trim(),
+            href: normalizeHref(item.href),
+            spineIndex: spineItem ? spineItem.index : -1,
+          });
+
+          if (item.subitems && item.subitems.length > 0) {
+            collectTocItems(item.subitems);
           }
         });
+      };
+
+      const navigation = book.navigation;
+      if (navigation?.toc) {
+        collectTocItems(navigation.toc as NavigationTocItem[]);
       }
       setToc(tocItems);
 
@@ -81,7 +96,10 @@ export function useEpubReader(url: string): UseEpubReaderReturn {
             "",
           );
 
-          const tocEntry = tocItems.find((t) => t.spineIndex === item.index);
+          const normalizedItemHref = normalizeHref(item.href);
+          const tocEntry =
+            tocItems.find((t) => t.spineIndex === item.index) ||
+            tocItems.find((t) => t.href === normalizedItemHref);
           let title = tocEntry?.label || "";
 
           if (!title) {

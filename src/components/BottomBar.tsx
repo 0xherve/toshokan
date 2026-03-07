@@ -4,6 +4,7 @@ interface BottomBarProps {
   chapterIndex: number;
   totalChapters: number;
   chapterProgress: number;
+  onBookmarksClick?: () => void;
   onSettingsClick: () => void;
 }
 
@@ -13,16 +14,17 @@ export function BottomBar({
   chapterIndex,
   totalChapters,
   chapterProgress,
+  onBookmarksClick,
   onSettingsClick,
 }: BottomBarProps) {
   const progressPercent = Math.round(chapterProgress * 100);
 
   return (
     <div
-      className="fixed bottom-0 left-0 right-0 z-40 safe-area-bottom transition-transform duration-300"
+      className="fixed bottom-0 left-0 right-0 z-40 safe-area-bottom border-t transition-transform duration-300"
       style={{
         backgroundColor: "var(--bg-surface)",
-        borderTop: "1px solid var(--border)",
+        borderColor: "var(--border)",
         transform: visible ? "translateY(0)" : "translateY(100%)",
       }}
     >
@@ -51,14 +53,37 @@ export function BottomBar({
           {chapterIndex + 1}/{totalChapters} &middot; {progressPercent}%
         </span>
 
-        <button
-          onClick={onSettingsClick}
-          className="p-2 -mr-2 rounded-lg transition-colors cursor-pointer"
-          style={{ color: "var(--text-primary)" }}
-          aria-label="Font size"
-        >
-          <span className="text-base font-bold">A</span>
-        </button>
+        <div className="flex items-center gap-1">
+          {onBookmarksClick && (
+            <button
+              onClick={onBookmarksClick}
+              className="p-2 rounded-xl transition-colors cursor-pointer"
+              style={{ color: "var(--text-primary)" }}
+              aria-label="Open bookmarks"
+            >
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+              </svg>
+            </button>
+          )}
+          <button
+            onClick={onSettingsClick}
+            className="p-2 -mr-2 rounded-xl transition-colors cursor-pointer"
+            style={{ color: "var(--text-primary)" }}
+            aria-label="Font size"
+          >
+            <span className="text-base font-bold">A</span>
+          </button>
+        </div>
       </div>
     </div>
   );

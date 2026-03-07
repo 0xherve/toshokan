@@ -2,6 +2,22 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+@theme {
+  --color-app: var(--bg-app);
+  --color-reader: var(--bg-reader);
+  --color-surface: var(--bg-surface);
+  --color-primary: var(--bg-primary);
+  --color-primary-hover: var(--bg-primary-hover);
+  --color-on-primary: var(--text-on-primary);
+  --color-foreground: var(--text-primary);
+  --color-secondary: var(--text-secondary);
+  --color-muted: var(--text-muted);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-overlay: var(--overlay);
+}
+
 :root {
   --font-reading: "Public Sans", system-ui, sans-serif;
   --font-size-reading: 18px;
@@ -94,6 +110,12 @@ body {
 ::-webkit-scrollbar-thumb {
   background: var(--text-muted);
   border-radius: 2px;
+}
+
+button,
+a,
+[role="button"] {
+  cursor: pointer;
 }
 
 .safe-area-top {

@@ -42,12 +42,18 @@ export function ChapterNav({
   );
 
   const filteredChapters = useMemo(() => {
-    const normalizedQuery = query.trim().toLowerCase();
+    const normalize = (value: string) =>
+      value
+        .toLowerCase()
+        .replace(/[^\p{L}\p{N}\s]/gu, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+    const normalizedQuery = normalize(query);
     if (!normalizedQuery) return chapters;
     return chapters.filter((chapter, idx) => {
       const chapterNumber = idx + 1;
       if (String(chapterNumber).includes(normalizedQuery)) return true;
-      return chapter.title.toLowerCase().includes(normalizedQuery);
+      return normalize(chapter.title).includes(normalizedQuery);
     });
   }, [chapters, query]);
 
@@ -66,30 +72,22 @@ export function ChapterNav({
     <>
       {open && (
         <div
-          className="fixed inset-0 z-50 transition-opacity"
-          style={{ backgroundColor: "var(--overlay)" }}
+          className="fixed inset-0 z-50 transition-opacity bg-overlay"
           onClick={onClose}
         />
       )}
 
       <div
-        className="fixed top-0 left-0 bottom-0 z-50 w-72 max-w-[80vw] transition-transform duration-300 overflow-y-auto safe-area-top safe-area-bottom"
+        className="fixed top-0 left-0 bottom-0 z-50 w-72 max-w-[80vw] transition-transform duration-300 overflow-y-auto safe-area-top safe-area-bottom bg-surface"
         style={{
-          backgroundColor: "var(--bg-surface)",
           transform: open ? "translateX(0)" : "translateX(-100%)",
         }}
       >
         <div className="p-4 pb-2">
-          <h2
-            className="text-lg font-bold"
-            style={{ color: "var(--text-primary)" }}
-          >
+          <h2 className="text-lg font-bold text-foreground">
             Table of Contents
           </h2>
-          <p
-            className="text-xs mt-1"
-            style={{ color: "var(--text-muted)" }}
-          >
+          <p className="text-xs mt-1 text-muted">
             {totalChapters} chapters
           </p>
           <div className="mt-3">
@@ -98,24 +96,14 @@ export function ChapterNav({
               value={query}
               onChange={(e) => onQueryChange(e.target.value)}
               placeholder="Search chapter number or title"
-              className="w-full rounded-lg px-3 py-2 text-sm outline-none"
-              style={{
-                backgroundColor: "var(--bg-app)",
-                color: "var(--text-primary)",
-                border: "1px solid var(--border)",
-              }}
+              className="w-full rounded-xl px-3 py-2 text-sm outline-none bg-app text-foreground border border-border"
             />
           </div>
           <div className="mt-2">
             <select
               value={selectedRange}
               onChange={(e) => onRangeChange(Number(e.target.value))}
-              className="w-full rounded-lg px-3 py-2 text-sm outline-none"
-              style={{
-                backgroundColor: "var(--bg-app)",
-                color: "var(--text-primary)",
-                border: "1px solid var(--border)",
-              }}
+              className="w-full rounded-xl px-3 py-2 text-sm outline-none bg-app text-foreground border border-border"
             >
               {ranges.map((range) => (
                 <option key={range.index} value={range.index}>
@@ -128,10 +116,7 @@ export function ChapterNav({
 
         <nav className="pb-8">
           {visibleChapters.length === 0 ? (
-            <div
-              className="px-4 py-6 text-sm"
-              style={{ color: "var(--text-muted)" }}
-            >
+            <div className="px-4 py-6 text-sm text-muted">
               No chapters found.
             </div>
           ) : (
@@ -149,27 +134,20 @@ export function ChapterNav({
                     onSelectChapter(chapterIndex);
                     onClose();
                   }}
-                  className="w-full text-left px-4 py-3 text-sm transition-colors block cursor-pointer"
-                  style={{
-                    color: "var(--text-primary)",
-                    backgroundColor: isActive ? "var(--bg-app)" : "transparent",
-                    fontWeight: isActive ? 600 : 400,
-                  }}
+                  className={`w-full text-left px-4 py-3 text-sm transition-colors block text-foreground ${
+                    isActive ? "bg-app font-semibold" : ""
+                  }`}
                 >
                   <div className="flex items-center justify-between gap-2">
                     <span>Chapter {chapterNumber}</span>
                     {isBookmarked && (
-                      <span
-                        className="text-[10px] uppercase tracking-wide px-2 py-0.5 rounded-full"
-                        style={{
-                          color: "var(--text-secondary)",
-                          backgroundColor: "var(--bg-surface)",
-                          border: "1px solid var(--border)",
-                        }}
-                      >
+                      <span className="text-[10px] uppercase tracking-wide px-2 py-0.5 rounded-full text-secondary bg-surface border border-border">
                         saved
                       </span>
                     )}
+                  </div>
+                  <div className="mt-1 text-xs truncate text-secondary">
+                    {chapter.title}
                   </div>
                 </button>
               );
