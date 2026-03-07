@@ -4,9 +4,10 @@ import { VitePWA } from "vite-plugin-pwa";
 import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
-    server: {
-      port: 3000,
-    },
+  envPrefix: ["VITE_", "PROJECT_", "PUBLISHABLE_"],
+  server: {
+    port: 3000,
+  },
   plugins: [
     react(),
     tailwindcss(),

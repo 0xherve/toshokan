@@ -6,7 +6,6 @@ import { useReadingProgress } from "./hooks/useReadingProgress";
 import { useBookmarks } from "./hooks/useBookmarks";
 import { useWakeLock } from "./hooks/useWakeLock";
 import { getSettings, saveSettings } from "./lib/storage";
-import { EPUB_URL } from "./lib/constants";
 import type { Bookmark } from "./lib/constants";
 import { LoadingScreen } from "./components/LoadingScreen";
 import { Reader } from "./components/Reader";
@@ -25,10 +24,15 @@ type BeforeInstallPromptEvent = Event & {
   userChoice: Promise<{ outcome: "accepted" | "dismissed"; platform: string }>;
 };
 
-export default function App() {
+interface ReaderAppProps {
+  bookId: string;
+  epubUrl: string;
+}
+
+export default function App({ bookId, epubUrl }: ReaderAppProps) {
   const navigate = useNavigate();
   const { isLoading, error, chapters, totalChapters, bookTitle } =
-    useEpubReader(EPUB_URL);
+    useEpubReader(epubUrl, bookId);
   const { theme, setTheme } = useTheme();
   const {
     currentChapter,
@@ -198,7 +202,7 @@ export default function App() {
         <div className="text-xl font-bold">Failed to load book</div>
         <div className="text-sm text-secondary">{error}</div>
         <div className="text-xs mt-4 text-muted">
-          Check <code>VITE_EPUB_URL</code> or the default blob URL.
+          Verify the book upload and EPUB URL in Supabase.
         </div>
       </div>
     );

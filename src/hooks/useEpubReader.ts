@@ -3,6 +3,8 @@ import ePub from "epubjs";
 import type Book from "epubjs/types/book";
 import type Section from "epubjs/types/section";
 import type { ChapterData, TocItem } from "../lib/constants";
+import { supabase } from "../lib/supabase";
+import { sanitizeHtml } from "../lib/sanitize";
 
 interface UseEpubReaderReturn {
   isLoading: boolean;
@@ -19,7 +21,7 @@ type NavigationTocItem = {
   subitems?: NavigationTocItem[];
 };
 
-export function useEpubReader(url: string): UseEpubReaderReturn {
+export function useEpubReader(url: string, bookId: string): UseEpubReaderReturn {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [chapters, setChapters] = useState<ChapterData[]>([]);
@@ -31,6 +33,40 @@ export function useEpubReader(url: string): UseEpubReaderReturn {
     try {
       setIsLoading(true);
       setError(null);
+
+      if (supabase) {
+        const { data: storedChapters, error: chapterError } = await supabase
+          .from("book_chapters")
+          .select("chapter_index,title,html")
+          .eq("book_id", bookId)
+          .order("chapter_index", { ascending: true });
+
+        if (!chapterError && storedChapters && storedChapters.length > 0) {
+          const { data: bookData } = await supabase
+            .from("books")
+            .select("title")
+            .eq("id", bookId)
+            .single();
+          setBookTitle(bookData?.title ?? "Untitled Book");
+          setChapters(
+            storedChapters.map((chapter) => ({
+              href: `chapter-${chapter.chapter_index}`,
+              html: String(chapter.html ?? ""),
+              title: String(chapter.title ?? `Chapter ${chapter.chapter_index + 1}`),
+              index: Number(chapter.chapter_index ?? 0),
+            })),
+          );
+          setToc(
+            storedChapters.map((chapter) => ({
+              label: String(chapter.title ?? `Chapter ${chapter.chapter_index + 1}`),
+              href: `chapter-${chapter.chapter_index}`,
+              spineIndex: Number(chapter.chapter_index ?? 0),
+            })),
+          );
+          setIsLoading(false);
+          return;
+        }
+      }
 
       const book = ePub(url);
       bookRef.current = book;
@@ -91,10 +127,7 @@ export function useEpubReader(url: string): UseEpubReaderReturn {
             html = item.output;
           }
 
-          html = html.replace(
-            /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
-            "",
-          );
+          html = sanitizeHtml(html);
 
           const normalizedItemHref = normalizeHref(item.href);
           const tocEntry =
@@ -141,7 +174,7 @@ export function useEpubReader(url: string): UseEpubReaderReturn {
       setError(err instanceof Error ? err.message : "Failed to load book");
       setIsLoading(false);
     }
-  }, [url]);
+  }, [bookId, url]);
 
   useEffect(() => {
     loadBook();

@@ -1,14 +1,14 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { signOut, useDemoSession } from "../lib/demoSession";
+import { useAuth } from "../lib/auth";
 
 export function SiteHeader() {
   const location = useLocation();
-  const session = useDemoSession();
+  const { role, signOut, isLoading } = useAuth();
 
   const navItems = [
     { to: "/", label: "Library" },
     { to: "/reader", label: "Reader" },
-    ...(session.role === "admin" ? [{ to: "/admin", label: "Admin" }] : []),
+    ...(role === "admin" ? [{ to: "/admin", label: "Admin" }] : []),
   ] as const;
 
   return (
@@ -32,7 +32,7 @@ export function SiteHeader() {
               Personal Reading Space
             </p>
           </div>
-          {session.role === "guest" ? (
+          {role === "guest" ? (
             <Link
               to="/auth"
               className="px-3 py-2 rounded-lg text-xs transition-colors"
@@ -46,7 +46,10 @@ export function SiteHeader() {
             </Link>
           ) : (
             <button
-              onClick={signOut}
+              onClick={() => {
+                void signOut();
+              }}
+              disabled={isLoading}
               className="px-3 py-2 rounded-lg text-xs transition-colors cursor-pointer"
               style={{
                 backgroundColor: "var(--bg-app)",
@@ -54,7 +57,7 @@ export function SiteHeader() {
                 border: "1px solid var(--border)",
               }}
             >
-              Sign out
+              {isLoading ? "..." : "Sign out"}
             </button>
           )}
         </div>

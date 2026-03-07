@@ -14,21 +14,30 @@ Context: execute the accounts + admin + sync architecture plan incrementally, wi
 
 ## Notes
 
-- Backend/database/auth provider integration is a separate implementation phase.
-- This pass delivers production-grade frontend scaffolding that maps directly to planned backend contracts.
+- Better Auth client integration is wired for app-owned accounts.
+- Supabase is currently used for book metadata, chapter storage, and EPUB uploads.
 
 ## Progress Snapshot
 
 - Completed in this pass:
   - TanStack route IA for user/auth/reader/admin paths
-  - Frontend-only session + role model (`guest`, `user`, `admin`)
-  - User UI: auth + library experience
-  - Admin UI: overview, books, ingestion, users, audit
+  - Better Auth client session integration for sign-in/sign-up/sign-out UI
+  - User UI: auth + library with Supabase-backed books
+  - Admin UI: books upload with ingestion-time chapter sanitization
   - Reader integration into new app flow (library shortcut + bookmark panel entry)
+  - Reader source now book-centric (`/reader/$bookId`) instead of env-based single EPUB
   - Validation: lint/build passing
 
 - Next implementation phase (backend + data):
-  - Supabase auth wiring to replace demo session store
-  - Postgres schema/migrations for profiles/roles/books/preferences/progress/bookmarks/events
+  - Better Auth server endpoints (`/api/auth/*`) deployment
+  - Role propagation from Better Auth into app role model (`user`/`admin`)
   - API layer for ingestion jobs, analytics aggregations, and admin actions
   - Sync engine: IndexedDB outbox + server reconciliation
+
+## Backend Checklist
+
+- [x] B1: Add Supabase client/config and shared auth state provider
+- [x] B2: Replace demo session usage with Better Auth session integration
+- [x] B3: Add initial SQL migration for schema, indexes, and triggers
+- [x] B4: Document local backend bootstrap and env behavior
+- [x] B5: Validate lint/build after backend integration changes

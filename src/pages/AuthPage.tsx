@@ -1,21 +1,44 @@
 import { useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { SiteHeader } from "../components/SiteHeader";
-import { signIn, signOut, useDemoSession } from "../lib/demoSession";
+import { useAuth } from "../lib/auth";
 
 export function AuthPage() {
-  const session = useDemoSession();
   const navigate = useNavigate();
-  const [email, setEmail] = useState(session.email ?? "reader@watashi.fun");
+  const { email: activeEmail, role, signInWithPassword, signUpWithPassword, signOut } =
+    useAuth();
 
-  const handleSignInUser = () => {
-    signIn("user", email);
+  const [email, setEmail] = useState(activeEmail ?? "");
+  const [name, setName] = useState("Watashi Reader");
+  const [password, setPassword] = useState("");
+  const [message, setMessage] = useState<string | null>(null);
+
+  const handleSignIn = async () => {
+    const error = await signInWithPassword(email, password);
+    if (error) {
+      setMessage(error);
+      return;
+    }
+    setMessage("Signed in successfully.");
     navigate({ to: "/" });
   };
 
-  const handleSignInAdmin = () => {
-    signIn("admin", email);
-    navigate({ to: "/admin" });
+  const handleSignUp = async () => {
+    const error = await signUpWithPassword(name, email, password);
+    if (error) {
+      setMessage(error);
+      return;
+    }
+    setMessage("Account created. You can now sign in.");
+  };
+
+  const handleSignOut = async () => {
+    const error = await signOut();
+    if (error) {
+      setMessage(error);
+      return;
+    }
+    setMessage("Signed out.");
   };
 
   return (
@@ -34,19 +57,38 @@ export function AuthPage() {
             className="text-xs uppercase tracking-wide"
             style={{ color: "var(--text-muted)" }}
           >
-            Account
+            Better Auth
           </p>
           <h1 className="text-lg font-bold mt-1" style={{ color: "var(--text-primary)" }}>
-            Sign in to sync your reading
+            Account access
           </h1>
           <p className="text-sm mt-2" style={{ color: "var(--text-secondary)" }}>
-            This frontend build uses a temporary local session model. Backend auth will
-            replace this in the next phase.
+            Sign in with your app-owned account identity.
           </p>
 
           <label
-            htmlFor="email"
+            htmlFor="name"
             className="text-xs font-medium uppercase tracking-wider block mt-5 mb-2"
+            style={{ color: "var(--text-muted)" }}
+          >
+            Name
+          </label>
+          <input
+            id="name"
+            type="text"
+            value={name}
+            onChange={(event) => setName(event.target.value)}
+            className="w-full rounded-lg px-3 py-2 text-sm outline-none"
+            style={{
+              backgroundColor: "var(--bg-app)",
+              color: "var(--text-primary)",
+              border: "1px solid var(--border)",
+            }}
+          />
+
+          <label
+            htmlFor="email"
+            className="text-xs font-medium uppercase tracking-wider block mt-4 mb-2"
             style={{ color: "var(--text-muted)" }}
           >
             Email
@@ -64,9 +106,31 @@ export function AuthPage() {
             }}
           />
 
+          <label
+            htmlFor="password"
+            className="text-xs font-medium uppercase tracking-wider block mt-4 mb-2"
+            style={{ color: "var(--text-muted)" }}
+          >
+            Password
+          </label>
+          <input
+            id="password"
+            type="password"
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+            className="w-full rounded-lg px-3 py-2 text-sm outline-none"
+            style={{
+              backgroundColor: "var(--bg-app)",
+              color: "var(--text-primary)",
+              border: "1px solid var(--border)",
+            }}
+          />
+
           <div className="mt-4 grid gap-2">
             <button
-              onClick={handleSignInUser}
+              onClick={() => {
+                void handleSignIn();
+              }}
               className="w-full py-3 rounded-xl text-sm font-semibold transition-colors cursor-pointer"
               style={{
                 backgroundColor: "var(--bg-primary)",
@@ -74,10 +138,12 @@ export function AuthPage() {
                 border: "1px solid var(--border)",
               }}
             >
-              Continue as reader
+              Sign in
             </button>
             <button
-              onClick={handleSignInAdmin}
+              onClick={() => {
+                void handleSignUp();
+              }}
               className="w-full py-3 rounded-xl text-sm transition-colors cursor-pointer"
               style={{
                 backgroundColor: "var(--bg-app)",
@@ -85,7 +151,7 @@ export function AuthPage() {
                 border: "1px solid var(--border)",
               }}
             >
-              Continue as admin
+              Create account
             </button>
           </div>
         </section>
@@ -101,12 +167,19 @@ export function AuthPage() {
             Current session
           </p>
           <p className="text-xs mt-1" style={{ color: "var(--text-secondary)" }}>
-            Role: {session.role}
-            {session.email ? ` . ${session.email}` : ""}
+            Role: {role}
+            {activeEmail ? ` . ${activeEmail}` : ""}
           </p>
+          {message && (
+            <p className="text-xs mt-2" style={{ color: "var(--text-muted)" }}>
+              {message}
+            </p>
+          )}
           <div className="mt-3 flex items-center gap-2">
             <button
-              onClick={signOut}
+              onClick={() => {
+                void handleSignOut();
+              }}
               className="px-3 py-2 rounded-lg text-xs transition-colors cursor-pointer"
               style={{
                 backgroundColor: "var(--bg-app)",
@@ -114,7 +187,7 @@ export function AuthPage() {
                 border: "1px solid var(--border)",
               }}
             >
-              Clear session
+              Sign out
             </button>
             <Link
               to="/"

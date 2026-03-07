@@ -9,11 +9,12 @@ Production: https://watashi.fun
 ## Tech Stack
 
 - **React 19 + TypeScript + TanStack Router** — app + routing framework
+- **Better Auth (server + client)** — app-owned authentication model
+- **Supabase Postgres + Storage** — book metadata/chapters and EPUB uploads
 - **Vite 7** — build tool, dev server, HMR
 - **Tailwind CSS v4** + `@tailwindcss/typography` — styling
 - **epub.js v0.3** — EPUB parsing (used directly, NOT the react-reader wrapper)
 - **vite-plugin-pwa** — service worker, offline caching, installable PWA
-- **Vercel Blob** — EPUB file hosting (CDN-backed)
 - **Google Fonts** — Public Sans font (imported via CSS)
 
 ## Architecture
@@ -22,10 +23,10 @@ Production: https://watashi.fun
 
 The reader does NOT use epub.js's built-in iframe rendering. Instead:
 
-1. `useEpubReader` parses the EPUB with epub.js
-2. Extracts raw HTML from each spine item (`section.document.body.innerHTML`)
-3. Sanitizes it (strips `<script>` tags)
-4. Renders it directly in React via `dangerouslySetInnerHTML`
+1. Admin uploads EPUB from `/admin/books`
+2. Upload pipeline stores file + extracts chapters + sanitizes HTML
+3. Sanitized chapters are persisted in Supabase `book_chapters`
+4. Reader loads persisted chapters first; falls back to EPUB parsing when needed
 5. Tailwind styles apply natively — no iframe theming hacks
 
 Each chapter is a full scrollable page. User scrolls through it, then hits "Next Chapter" at the bottom.
@@ -36,7 +37,7 @@ Each chapter is a full scrollable page. User scrolls through it, then hits "Next
 src/
 ├── App.tsx                    # Root — wires hooks + components together
 ├── main.tsx                   # Entry — theme pre-load, TanStack Router mount
-├── router.tsx                 # TanStack Router route tree (`/` -> App)
+├── router.tsx                 # TanStack Router route tree (`/`, `/reader/$bookId`, `/admin/*`)
 ├── index.css                  # Tailwind imports, themes, reader typography
 ├── components/
 │   ├── Reader.tsx             # Scrollable chapter content + tap zones
@@ -47,21 +48,24 @@ src/
 │   ├── BookmarkList.tsx       # Slide-in bookmarks panel (from right)
 │   └── LoadingScreen.tsx      # Spinner shown during EPUB parse
 ├── hooks/
-│   ├── useEpubReader.ts       # Core — EPUB load, parse, chapter extraction
+│   ├── useEpubReader.ts       # Core — chapter load (Supabase + EPUB fallback)
+│   ├── useBooks.ts            # Book list + upload + sanitization ingest
 │   ├── useReadingProgress.ts  # Chapter index + scroll % tracking/persistence
 │   ├── useTheme.ts            # Light/sepia/dark toggle + persistence
 │   ├── useBookmarks.ts        # Add/remove bookmarks + persistence
 │   └── useWakeLock.ts         # Prevent screen sleep via Wake Lock API
 └── lib/
-    ├── constants.ts           # EPUB URL, types, theme/font defaults
+    ├── auth.tsx               # Better Auth client state provider
+    ├── supabase.ts            # Supabase client for book storage
+    ├── constants.ts           # Types, theme/font defaults
     └── storage.ts             # localStorage helpers (settings, position, bookmarks)
 ```
 
 ### Data Flow
 
 ```
-EPUB URL (Vercel Blob)
-  → useEpubReader (parse + extract HTML)
+Supabase books/book_chapters
+  → useEpubReader (DB chapters first, EPUB fallback)
     → chapters[] in state
       → Reader component (renders current chapter)
         → useReadingProgress (tracks scroll %, persists to localStorage)
@@ -94,9 +98,9 @@ Theme is applied to `<html>` before React renders (in main.tsx) to prevent flash
 
 - **No iframe rendering** — epub.js rendition uses iframes which block Tailwind styling and fight scroll behavior. We extract HTML directly instead.
 - **Scroll, not paginated** — full chapter scroll instead of CSS-column pagination. More natural on mobile.
-- **External EPUB hosting** — file hosted on Vercel Blob CDN, not bundled in repo (too large).
+- **Book source of truth in Supabase** — book metadata and chapters come from DB/storage.
 - **Public Sans** — loaded from Google Fonts CDN, not self-hosted (font file download issues).
-- **localStorage over IndexedDB** — simpler, sufficient for settings/bookmarks/position data.
+- **Upload-time sanitization** — chapter HTML is sanitized during ingestion, not only at render time.
 
 ## Development
 
@@ -104,7 +108,10 @@ Theme is applied to `<html>` before React renders (in main.tsx) to prevent flash
 # Install (run from the SAME environment you'll use for dev)
 bun install
 
-# Dev server
+# Better Auth server (required for real sign-in/sign-up)
+bun run auth:dev
+
+# Frontend dev server
 bun run dev
 
 # Build
@@ -119,6 +126,4 @@ bun run lint
 
 ## Environment Variables
 
-| Variable | Purpose | Default |
-|----------|---------|---------|
-| `VITE_EPUB_URL` | Override EPUB source URL | Vercel Blob URL in constants.ts |
+See [BACKEND_SETUP.md](./BACKEND_SETUP.md) for complete backend/frontend env setup.

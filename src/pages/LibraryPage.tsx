@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { SiteHeader } from "../components/SiteHeader";
-import { useDemoSession } from "../lib/demoSession";
-import { libraryBooks } from "../lib/mockData";
+import { useAuth } from "../lib/auth";
+import { useBooks } from "../hooks/useBooks";
 
 const statusLabels = {
   draft: "Draft",
@@ -10,7 +10,9 @@ const statusLabels = {
 } as const;
 
 export function LibraryPage() {
-  const session = useDemoSession();
+  const { role, email } = useAuth();
+  const { books, isLoading, error } = useBooks();
+  const currentBook = books[0];
 
   return (
     <div className="min-h-dvh" style={{ backgroundColor: "var(--bg-app)" }}>
@@ -31,10 +33,12 @@ export function LibraryPage() {
             Continue Reading
           </p>
           <h1 className="text-lg font-bold mt-1" style={{ color: "var(--text-primary)" }}>
-            Shadow Slave
+            {currentBook?.title ?? "No active book"}
           </h1>
           <p className="text-sm mt-1" style={{ color: "var(--text-secondary)" }}>
-            Chapter 1458 . 67% completed
+            {currentBook
+              ? `${currentBook.chapterCount} chapters available`
+              : "Upload or add a book from the admin panel"}
           </p>
           <div className="mt-4 h-1 rounded-full" style={{ backgroundColor: "var(--border)" }}>
             <div
@@ -43,18 +47,33 @@ export function LibraryPage() {
             />
           </div>
           <div className="mt-4 flex gap-3">
-            <Link
-              to="/reader"
-              className="px-4 py-2 rounded-xl text-sm font-medium transition-colors"
-              style={{
-                backgroundColor: "var(--bg-primary)",
-                color: "var(--text-on-primary)",
-                border: "1px solid var(--border)",
-              }}
-            >
-              Open reader
-            </Link>
-            {session.role === "guest" ? (
+            {currentBook ? (
+              <Link
+                to="/reader/$bookId"
+                params={{ bookId: currentBook.id }}
+                className="px-4 py-2 rounded-xl text-sm font-medium transition-colors"
+                style={{
+                  backgroundColor: "var(--bg-primary)",
+                  color: "var(--text-on-primary)",
+                  border: "1px solid var(--border)",
+                }}
+              >
+                Open reader
+              </Link>
+            ) : (
+              <Link
+                to="/admin/books"
+                className="px-4 py-2 rounded-xl text-sm font-medium transition-colors"
+                style={{
+                  backgroundColor: "var(--bg-primary)",
+                  color: "var(--text-on-primary)",
+                  border: "1px solid var(--border)",
+                }}
+              >
+                Add first book
+              </Link>
+            )}
+            {role === "guest" ? (
               <Link
                 to="/auth"
                 className="px-4 py-2 rounded-xl text-sm transition-colors"
@@ -68,7 +87,7 @@ export function LibraryPage() {
               </Link>
             ) : (
               <p className="text-xs self-center" style={{ color: "var(--text-muted)" }}>
-                Sync enabled for {session.email}
+                Sync enabled for {email}
               </p>
             )}
           </div>
@@ -91,8 +110,44 @@ export function LibraryPage() {
             </button>
           </div>
 
-          <div className="mt-2 rounded-2xl border overflow-hidden" style={{ borderColor: "var(--border)" }}>
-            {libraryBooks.map((book) => (
+          <div
+            className="mt-2 rounded-2xl border overflow-hidden"
+            style={{ borderColor: "var(--border)" }}
+          >
+            {isLoading && (
+              <div
+                className="p-4 text-sm"
+                style={{
+                  backgroundColor: "var(--bg-surface)",
+                  color: "var(--text-secondary)",
+                }}
+              >
+                Loading books...
+              </div>
+            )}
+            {error && (
+              <div
+                className="p-4 text-sm"
+                style={{
+                  backgroundColor: "var(--bg-surface)",
+                  color: "var(--text-secondary)",
+                }}
+              >
+                {error}
+              </div>
+            )}
+            {!isLoading && books.length === 0 && (
+              <div
+                className="p-4 text-sm"
+                style={{
+                  backgroundColor: "var(--bg-surface)",
+                  color: "var(--text-secondary)",
+                }}
+              >
+                No books found yet.
+              </div>
+            )}
+            {books.map((book) => (
               <div
                 key={book.id}
                 className="p-4 border-b last:border-b-0"
@@ -133,7 +188,8 @@ export function LibraryPage() {
 
                 <div className="mt-3 flex gap-2">
                   <Link
-                    to="/reader"
+                    to="/reader/$bookId"
+                    params={{ bookId: book.id }}
                     className="px-3 py-2 rounded-lg text-xs transition-colors"
                     style={{
                       backgroundColor: "var(--bg-app)",
@@ -143,7 +199,7 @@ export function LibraryPage() {
                   >
                     Read
                   </Link>
-                  {session.role === "admin" && (
+                  {role === "admin" && (
                     <Link
                       to="/admin/books"
                       className="px-3 py-2 rounded-lg text-xs transition-colors"

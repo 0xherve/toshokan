@@ -4,6 +4,7 @@ import { RouterProvider } from "@tanstack/react-router";
 import { registerSW } from "virtual:pwa-register";
 import "./index.css";
 import { router } from "./router";
+import { AuthProvider } from "./lib/auth";
 
 const savedTheme = (() => {
   try {
@@ -25,7 +26,9 @@ const root = document.getElementById("root");
 if (root) {
   createRoot(root).render(
     <StrictMode>
-      <RouterProvider router={router} />
+      <AuthProvider>
+        <RouterProvider router={router} />
+      </AuthProvider>
     </StrictMode>,
   );
 }

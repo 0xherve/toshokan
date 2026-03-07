@@ -4,7 +4,6 @@ import {
   createRoute,
   createRouter,
 } from "@tanstack/react-router";
-import App from "./App";
 import { AuthPage } from "./pages/AuthPage";
 import { LibraryPage } from "./pages/LibraryPage";
 import { AdminDashboardPage } from "./pages/AdminDashboardPage";
@@ -12,6 +11,8 @@ import { AdminBooksPage } from "./pages/AdminBooksPage";
 import { AdminIngestionPage } from "./pages/AdminIngestionPage";
 import { AdminUsersPage } from "./pages/AdminUsersPage";
 import { AdminAuditPage } from "./pages/AdminAuditPage";
+import { ReaderPage } from "./pages/ReaderPage";
+import { ReaderIndexPage } from "./pages/ReaderIndexPage";
 
 const rootRoute = createRootRoute({
   component: () => <Outlet />,
@@ -32,7 +33,13 @@ const authRoute = createRoute({
 const readerRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/reader",
-  component: App,
+  component: ReaderIndexPage,
+});
+
+const readerBookRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/reader/$bookId",
+  component: ReaderPage,
 });
 
 const adminDashboardRoute = createRoute({
@@ -69,6 +76,7 @@ const routeTree = rootRoute.addChildren([
   indexRoute,
   authRoute,
   readerRoute,
+  readerBookRoute,
   adminDashboardRoute,
   adminBooksRoute,
   adminIngestionRoute,

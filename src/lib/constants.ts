@@ -1,7 +1,3 @@
-export const EPUB_URL =
-  import.meta.env.VITE_EPUB_URL ||
-  "https://r11ytcy7ss0omh5m.public.blob.vercel-storage.com/shadow-slave.epub";
-
 export const STORAGE_KEYS = {
   CHAPTER_INDEX: "sr-chapter-index",
   SCROLL_POSITIONS: "sr-scroll-positions",

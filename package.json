@@ -5,13 +5,18 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "auth:dev": "bun server/auth-server.mjs",
+    "auth:make-admin": "bun server/set-admin.mjs",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "lint": "eslint ."
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.98.0",
     "@tanstack/react-router": "^1.132.0",
+    "better-auth": "^1.5.4",
     "epubjs": "^0.3.93",
+    "pg": "^8.20.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },

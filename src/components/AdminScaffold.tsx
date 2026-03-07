@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { Link, useLocation } from "@tanstack/react-router";
 import { SiteHeader } from "./SiteHeader";
-import { isAdmin, useDemoSession } from "../lib/demoSession";
+import { useAuth } from "../lib/auth";
 
 interface AdminScaffoldProps {
   title: string;
@@ -19,9 +19,30 @@ const adminNavItems = [
 
 export function AdminScaffold({ title, subtitle, children }: AdminScaffoldProps) {
   const location = useLocation();
-  const session = useDemoSession();
+  const { role, isLoading } = useAuth();
 
-  if (!isAdmin(session)) {
+  if (isLoading) {
+    return (
+      <div className="min-h-dvh" style={{ backgroundColor: "var(--bg-app)" }}>
+        <SiteHeader />
+        <main className="px-4 py-6 max-w-[36rem] mx-auto">
+          <div
+            className="rounded-2xl border p-5"
+            style={{
+              borderColor: "var(--border)",
+              backgroundColor: "var(--bg-surface)",
+            }}
+          >
+            <h1 className="text-lg font-bold" style={{ color: "var(--text-primary)" }}>
+              Loading session
+            </h1>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  if (role !== "admin") {
     return (
       <div className="min-h-dvh" style={{ backgroundColor: "var(--bg-app)" }}>
         <SiteHeader />
