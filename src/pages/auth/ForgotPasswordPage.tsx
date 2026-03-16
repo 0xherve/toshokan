@@ -1,12 +1,31 @@
-import { useState } from "react";
-import { Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { useAuth } from "../../lib/auth";
 import { AuthShell } from "./AuthShell";
 
 export function ForgotPasswordPage() {
-  const { email: activeEmail } = useAuth();
+  const navigate = useNavigate();
+  const { email: activeEmail, role, isLoading, forgotPassword } = useAuth();
   const [email, setEmail] = useState(activeEmail ?? "");
   const [forgotSent, setForgotSent] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!isLoading && role !== "guest") {
+      void navigate({ to: "/library", replace: true });
+    }
+  }, [role, isLoading, navigate]);
+
+  const handleSubmit = async () => {
+    if (!email.trim()) { setMessage("Email required."); return; }
+    setIsSubmitting(true);
+    setMessage(null);
+    const error = await forgotPassword(email);
+    setIsSubmitting(false);
+    if (error) { setMessage(error); return; }
+    setForgotSent(true);
+  };
 
   return (
     <AuthShell
@@ -27,7 +46,8 @@ export function ForgotPasswordPage() {
           </div>
           <button
             className="cta-primary"
-            onClick={() => setForgotSent(true)}
+            onClick={() => { void handleSubmit(); }}
+            disabled={isSubmitting}
             style={{
               width: "100%",
               fontFamily: "var(--font-ui)",
@@ -40,10 +60,16 @@ export function ForgotPasswordPage() {
               color: "#fff",
               letterSpacing: "0.02em",
               marginTop: 4,
+              opacity: isSubmitting ? 0.6 : 1,
             }}
           >
-            Send Reset Link
+            {isSubmitting ? "…" : "Send Reset Link"}
           </button>
+          {message && (
+            <p style={{ fontFamily: "var(--font-ui)", fontSize: "0.8125rem", color: "var(--foreground-soft)", textAlign: "center" }}>
+              {message}
+            </p>
+          )}
         </div>
       )}
 

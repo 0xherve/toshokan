@@ -1,5 +1,8 @@
+import { useState, useEffect } from "react";
 import { Link, useParams } from "@tanstack/react-router";
 import { useBook, useChapters } from "../hooks/useBooks";
+import { localDb } from "../lib/localDb";
+import type { BookItem } from "../hooks/useBooks";
 
 export function BookDetailPage() {
   const { bookSlug } = useParams({ from: "/books/$bookSlug" });
@@ -29,22 +32,17 @@ export function BookDetailPage() {
   );
 }
 
-function BookContent({
-  book,
-}: {
-  book: {
-    id: string;
-    title: string;
-    author: string;
-    description: string;
-    chapterCount: number;
-    completion: number;
-    epubUrl: string;
-  };
-}) {
+function BookContent({ book }: { book: BookItem }) {
   const { chapters, isLoading: chaptersLoading } = useChapters(book.id);
-  const progress = book.completion;
-  const currentCh = Math.round(progress * book.chapterCount);
+  const [currentCh, setCurrentCh] = useState(0);
+
+  useEffect(() => {
+    localDb.readingProgress.get(book.id).then((p) => {
+      if (p) setCurrentCh(p.chapterIndex);
+    });
+  }, [book.id]);
+
+  const progress = book.chapterCount > 0 ? currentCh / book.chapterCount : 0;
   const kanji = book.title.charAt(0);
 
   return (
@@ -68,7 +66,6 @@ function BookContent({
           </h1>
           <p className="font-ui text-sm text-foreground-soft mb-3">{book.author}</p>
 
-          {/* Tags */}
           <div className="flex gap-1.5 flex-wrap mb-4">
             <span className="font-ui text-2xs font-medium px-3 py-1 rounded-full bg-elevated text-foreground-muted border border-border">
               {book.chapterCount} chapters
@@ -91,16 +88,13 @@ function BookContent({
             </span>
           </div>
 
-          {/* CTA */}
-          {book.epubUrl && (
-            <Link
-              to="/read/$bookId"
-              params={{ bookId: book.id }}
-              className="cta-primary inline-block font-ui text-sm font-semibold px-[26px] py-2.5 rounded-lg bg-accent text-white tracking-wide"
-            >
-              {currentCh > 0 ? `Continue Ch. ${currentCh} →` : "Start Reading →"}
-            </Link>
-          )}
+          <Link
+            to="/read/$bookId"
+            params={{ bookId: book.id }}
+            className="cta-primary inline-block font-ui text-sm font-semibold px-[26px] py-2.5 rounded-lg bg-accent text-white tracking-wide"
+          >
+            {currentCh > 0 ? `Continue Ch. ${currentCh} →` : "Start Reading →"}
+          </Link>
         </div>
       </div>
 
@@ -135,14 +129,14 @@ function BookContent({
               params={{ bookId: book.id }}
               className="chapter-row flex items-center gap-3 px-5 py-3 border-b border-border last:border-b-0"
             >
-              <span
-                className="font-ui text-2xs text-foreground-muted font-medium shrink-0 w-8 text-right"
-              >
+              <span className="font-ui text-2xs text-foreground-muted font-medium shrink-0 w-8 text-right">
                 {ch.index + 1}
               </span>
               <span
                 className="font-ui text-sm text-foreground flex-1 min-w-0 truncate"
-                style={{ color: ch.index < currentCh ? "var(--foreground-muted)" : undefined }}
+                style={{
+                  color: ch.index < currentCh ? "var(--foreground-muted)" : undefined,
+                }}
               >
                 {ch.title}
               </span>

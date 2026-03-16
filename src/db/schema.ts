@@ -1,9 +1,8 @@
 import {
-  bigint,
   boolean,
   index,
   integer,
-  jsonb,
+  bigint,
   numeric,
   pgEnum,
   pgTable,
@@ -21,14 +20,9 @@ export const bookStatusEnum = pgEnum("book_status", [
   "archived",
 ]);
 
-export const ingestionStatusEnum = pgEnum("ingestion_status", [
-  "queued",
-  "processing",
-  "failed",
-  "done",
-]);
-
 export const userRoleEnum = pgEnum("user_role", ["user", "admin"]);
+
+// ── Better Auth tables (managed by Better Auth) ─────────────────────────────
 
 export const users = pgTable(
   "users",
@@ -121,6 +115,8 @@ export const verifications = pgTable(
   (table) => [index("verifications_identifier_idx").on(table.identifier)],
 );
 
+// ── App tables ───────────────────────────────────────────────────────────────
+
 export const books = pgTable(
   "books",
   {
@@ -129,8 +125,8 @@ export const books = pgTable(
     author: text("author").notNull().default("Unknown"),
     description: text("description"),
     status: bookStatusEnum("status").notNull().default("draft"),
-    epubUrl: text("epub_url").notNull(),
-    coverUrl: text("cover_url"),
+    epubStorageKey: text("epub_storage_key"),
+    coverStorageKey: text("cover_storage_key"),
     chapterCount: integer("chapter_count").notNull().default(0),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
@@ -158,9 +154,6 @@ export const bookChapters = pgTable(
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .notNull()
-      .defaultNow(),
   },
   (table) => [
     unique("book_chapters_book_id_chapter_index_key").on(
@@ -170,34 +163,6 @@ export const bookChapters = pgTable(
     index("book_chapters_book_idx").on(table.bookId, table.chapterIndex),
   ],
 );
-
-export const userRoles = pgTable(
-  "user_roles",
-  {
-    userId: text("user_id")
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
-    role: userRoleEnum("role").notNull(),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .notNull()
-      .defaultNow(),
-  },
-  (table) => [primaryKey({ columns: [table.userId, table.role] })],
-);
-
-export const userPreferences = pgTable("user_preferences", {
-  userId: text("user_id")
-    .primaryKey()
-    .references(() => users.id, { onDelete: "cascade" }),
-  theme: text("theme").notNull().default("dark"),
-  fontSize: integer("font_size").notNull().default(18),
-  lineHeight: numeric("line_height").notNull().default("1.75"),
-  prefetchBack: integer("prefetch_back").notNull().default(10),
-  prefetchAhead: integer("prefetch_ahead").notNull().default(30),
-  updatedAt: timestamp("updated_at", { withTimezone: true })
-    .notNull()
-    .defaultNow(),
-});
 
 export const readingProgress = pgTable(
   "reading_progress",
@@ -234,11 +199,8 @@ export const bookmarks = pgTable(
     chapterIndex: integer("chapter_index").notNull(),
     scrollPercent: numeric("scroll_percent").notNull().default("0"),
     excerpt: text("excerpt").notNull().default(""),
-    note: text("note"),
+    chapterTitle: text("chapter_title").notNull().default(""),
     createdAt: timestamp("created_at", { withTimezone: true })
-      .notNull()
-      .defaultNow(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
       .notNull()
       .defaultNow(),
     deletedAt: timestamp("deleted_at", { withTimezone: true }),
@@ -246,63 +208,4 @@ export const bookmarks = pgTable(
   (table) => [
     index("bookmarks_lookup_idx").on(table.userId, table.bookId, table.createdAt),
   ],
-);
-
-export const readingEvents = pgTable(
-  "reading_events",
-  {
-    id: uuid("id").default(sql`gen_random_uuid()`).primaryKey(),
-    userId: text("user_id").references(() => users.id, { onDelete: "set null" }),
-    bookId: uuid("book_id").references(() => books.id, { onDelete: "set null" }),
-    sessionId: text("session_id").references(() => sessions.id, {
-      onDelete: "set null",
-    }),
-    eventName: text("event_name").notNull(),
-    eventTs: timestamp("event_ts", { withTimezone: true }).notNull().defaultNow(),
-    payload: jsonb("payload").notNull().default(sql`'{}'::jsonb`),
-    ingestedAt: timestamp("ingested_at", { withTimezone: true })
-      .notNull()
-      .defaultNow(),
-  },
-  (table) => [
-    index("reading_events_user_ts_idx").on(table.userId, table.eventTs),
-    index("reading_events_book_ts_idx").on(table.bookId, table.eventTs),
-  ],
-);
-
-export const ingestionJobs = pgTable(
-  "ingestion_jobs",
-  {
-    id: uuid("id").default(sql`gen_random_uuid()`).primaryKey(),
-    bookId: uuid("book_id").references(() => books.id, { onDelete: "set null" }),
-    submittedBy: text("submitted_by").references(() => users.id, {
-      onDelete: "set null",
-    }),
-    status: ingestionStatusEnum("status").notNull(),
-    error: text("error"),
-    stats: jsonb("stats").notNull().default(sql`'{}'::jsonb`),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .notNull()
-      .defaultNow(),
-    startedAt: timestamp("started_at", { withTimezone: true }),
-    finishedAt: timestamp("finished_at", { withTimezone: true }),
-  },
-);
-
-export const adminAuditLogs = pgTable(
-  "admin_audit_logs",
-  {
-    id: uuid("id").default(sql`gen_random_uuid()`).primaryKey(),
-    actorUserId: text("actor_user_id")
-      .notNull()
-      .references(() => users.id),
-    action: text("action").notNull(),
-    entityType: text("entity_type").notNull(),
-    entityId: text("entity_id"),
-    metadata: jsonb("metadata").notNull().default(sql`'{}'::jsonb`),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .notNull()
-      .defaultNow(),
-  },
-  (table) => [index("audit_logs_created_at_idx").on(table.createdAt)],
 );

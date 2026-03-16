@@ -3,10 +3,10 @@ import { useNavigate } from "@tanstack/react-router";
 import { useEpubReader } from "./hooks/useEpubReader";
 import { useTheme } from "./hooks/useTheme";
 import { useReadingProgress } from "./hooks/useReadingProgress";
-import { useBookmarks } from "./hooks/useBookmarks";
+import { useBookmarks, type Bookmark } from "./hooks/useBookmarks";
 import { useWakeLock } from "./hooks/useWakeLock";
-import { getSettings, saveSettings, saveLastBookId } from "./lib/storage";
-import type { Bookmark } from "./lib/constants";
+import { getSettings, saveSettings } from "./lib/storage";
+import { saveLastBookId } from "./lib/storage";
 import { LoadingScreen } from "./components/LoadingScreen";
 import { Reader } from "./components/Reader";
 import { TopBar } from "./components/TopBar";
@@ -26,14 +26,14 @@ type BeforeInstallPromptEvent = Event & {
 
 interface ReaderAppProps {
   bookId: string;
-  epubUrl: string;
+  bookTitle: string;
+  chapterCount: number;
 }
 
-export default function App({ bookId, epubUrl }: ReaderAppProps) {
+export default function App({ bookId, bookTitle, chapterCount }: ReaderAppProps) {
   const navigate = useNavigate();
-  const { isLoading, error, chapters, totalChapters, bookTitle } =
-    useEpubReader(epubUrl, bookId);
   const { theme, setTheme } = useTheme();
+
   const {
     currentChapter,
     setCurrentChapter,
@@ -42,12 +42,15 @@ export default function App({ bookId, epubUrl }: ReaderAppProps) {
     scrollPercent,
     handleScroll,
     scrollContainerRef,
-  } = useReadingProgress(totalChapters, bookId);
+  } = useReadingProgress(bookId, chapterCount);
+
+  const { chapters, isLoading, error } = useEpubReader(bookId, currentChapter);
 
   useEffect(() => {
     saveLastBookId(bookId);
   }, [bookId]);
-  const { bookmarks, addBookmark, removeBookmark } = useBookmarks();
+
+  const { bookmarks, addBookmark, removeBookmark } = useBookmarks(bookId);
   useWakeLock();
 
   const [uiVisible, setUiVisible] = useState(false);
@@ -57,6 +60,8 @@ export default function App({ bookId, epubUrl }: ReaderAppProps) {
   const [chapterRange, setChapterRange] = useState(0);
   const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [showInstallToast, setShowInstallToast] = useState(false);
+
+  const totalChapters = chapters.length || chapterCount;
 
   const chapterRangesCount = useMemo(() => {
     if (totalChapters === 0) return 1;
@@ -98,12 +103,10 @@ export default function App({ bookId, epubUrl }: ReaderAppProps) {
   }, []);
 
   const toggleUI = useCallback(() => setUiVisible((v) => !v), []);
-
   const openPanel = useCallback((panel: Panel) => {
     setActivePanel(panel);
     setUiVisible(false);
   }, []);
-
   const closePanel = useCallback(() => setActivePanel("none"), []);
 
   const handleInstall = useCallback(async () => {
@@ -133,7 +136,7 @@ export default function App({ bookId, epubUrl }: ReaderAppProps) {
     if (!ch) return;
     const existing = bookmarks.find((bm) => bm.chapterIndex === currentChapter);
     if (existing) {
-      removeBookmark(existing.id);
+      void removeBookmark(existing.id);
       setActivePanel("none");
       return;
     }
@@ -143,7 +146,7 @@ export default function App({ bookId, epubUrl }: ReaderAppProps) {
     const charPos = Math.floor(text.length * scrollPercent);
     const start = Math.max(0, charPos - 60);
     const excerpt = text.slice(start, start + 120).trim();
-    addBookmark(currentChapter, ch.title, scrollPercent, excerpt || ch.title);
+    void addBookmark(currentChapter, ch.title, scrollPercent, excerpt || ch.title);
     setActivePanel("none");
   }, [chapters, currentChapter, scrollPercent, addBookmark, bookmarks, removeBookmark]);
 
@@ -189,7 +192,7 @@ export default function App({ bookId, epubUrl }: ReaderAppProps) {
   }
 
   const currentChapterData = chapters[currentChapter];
-  if (!currentChapterData) return null;
+  if (!currentChapterData) return <LoadingScreen />;
 
   return (
     <>
@@ -210,7 +213,6 @@ export default function App({ bookId, epubUrl }: ReaderAppProps) {
         onLibraryClick={() => navigate({ to: "/library" })}
         onMenuClick={() => openPanel("chapters")}
         onBookmarkClick={handleAddBookmark}
-        theme={theme}
         onThemeClick={() => openPanel("theme")}
         isBookmarked={bookmarks.some((bm) => bm.chapterIndex === currentChapter)}
       />

@@ -21,6 +21,7 @@ interface AuthContextValue {
     password: string,
   ) => Promise<string | null>;
   signInWithGoogle: (callbackURL?: string) => Promise<string | null>;
+  forgotPassword: (email: string) => Promise<string | null>;
   signOut: () => Promise<string | null>;
 }
 
@@ -58,6 +59,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return error?.message ?? null;
   };
 
+  const forgotPassword = async (email: string) => {
+    const { error } = await authClient.forgetPassword({
+      email: email.trim().toLowerCase(),
+      redirectTo: "/auth/reset-password",
+    });
+    return error?.message ?? null;
+  };
+
   const signOut = async () => {
     const { error } = await authClient.signOut();
     return error?.message ?? null;
@@ -84,6 +93,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       signInWithPassword,
       signUpWithPassword,
       signInWithGoogle,
+      forgotPassword,
       signOut,
     };
   }, [

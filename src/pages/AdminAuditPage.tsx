@@ -1,19 +1,13 @@
 import { AdminScaffold } from "../components/AdminScaffold";
-import { auditEvents } from "../lib/mockData";
 
 export function AdminAuditPage() {
   return (
     <AdminScaffold title="Audit Log" subtitle="Admin activity feed.">
-      <div className="divide-y divide-border">
-        {auditEvents.map((event) => (
-          <div key={event.id} className="py-3 flex items-start justify-between gap-3">
-            <div>
-              <p className="text-sm font-semibold text-foreground">{event.action}</p>
-              <p className="text-xs mt-0.5 text-foreground-soft">{event.actor} &middot; {event.target}</p>
-            </div>
-            <p className="text-xs text-foreground-muted whitespace-nowrap shrink-0">{event.at}</p>
-          </div>
-        ))}
+      <div className="rounded-xl border border-border bg-surface p-6 text-center">
+        <p className="text-sm font-medium text-foreground mb-1">Not yet configured</p>
+        <p className="text-xs text-foreground-muted">
+          Audit logging will be added in a future update.
+        </p>
       </div>
     </AdminScaffold>
   );

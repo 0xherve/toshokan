@@ -1,11 +1,17 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useAuth } from "../../lib/auth";
 import { AuthDivider, AuthShell } from "./AuthShell";
 
 export function SignUpPage() {
   const navigate = useNavigate();
-  const { email: activeEmail, signUpWithPassword, signInWithGoogle } = useAuth();
+  const { email: activeEmail, role, isLoading, signUpWithPassword, signInWithGoogle } = useAuth();
+
+  useEffect(() => {
+    if (!isLoading && role !== "guest") {
+      void navigate({ to: "/library", replace: true });
+    }
+  }, [role, isLoading, navigate]);
 
   const [email, setEmail] = useState(activeEmail ?? "");
   const [name, setName] = useState("");

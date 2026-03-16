@@ -14,13 +14,13 @@ export function ReaderPage() {
     );
   }
 
-  if (error || !book?.epubUrl) {
+  if (error || !book || book.chapterCount === 0) {
     return (
       <div className="fixed inset-0 flex items-center justify-center bg-background px-6">
         <div className="max-w-sm text-center">
           <h1 className="text-lg font-bold text-foreground font-display">Unavailable</h1>
           <p className="text-sm mt-2 text-foreground-soft font-reading">
-            {error ?? "This book has no EPUB file yet."}
+            {error ?? "This book has no chapters yet."}
           </p>
           <Link
             to="/library"
@@ -33,5 +33,7 @@ export function ReaderPage() {
     );
   }
 
-  return <App bookId={book.id} epubUrl={book.epubUrl} />;
+  return (
+    <App bookId={book.id} bookTitle={book.title} chapterCount={book.chapterCount} />
+  );
 }

@@ -1,14 +1,20 @@
 CREATE TYPE "public"."book_status" AS ENUM('draft', 'published', 'archived');--> statement-breakpoint
-CREATE TYPE "public"."ingestion_status" AS ENUM('queued', 'processing', 'failed', 'done');--> statement-breakpoint
 CREATE TYPE "public"."user_role" AS ENUM('user', 'admin');--> statement-breakpoint
-CREATE TABLE "admin_audit_logs" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"actor_user_id" text NOT NULL,
-	"action" text NOT NULL,
-	"entity_type" text NOT NULL,
-	"entity_id" text,
-	"metadata" jsonb DEFAULT '{}'::jsonb NOT NULL,
-	"created_at" timestamp with time zone DEFAULT now() NOT NULL
+CREATE TABLE "accounts" (
+	"id" text PRIMARY KEY NOT NULL,
+	"accountId" text NOT NULL,
+	"providerId" text NOT NULL,
+	"userId" text NOT NULL,
+	"accessToken" text,
+	"refreshToken" text,
+	"idToken" text,
+	"accessTokenExpiresAt" timestamp with time zone,
+	"refreshTokenExpiresAt" timestamp with time zone,
+	"scope" text,
+	"password" text,
+	"createdAt" timestamp with time zone DEFAULT now() NOT NULL,
+	"updatedAt" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "accounts_provider_account_unique" UNIQUE("providerId","accountId")
 );
 --> statement-breakpoint
 CREATE TABLE "book_chapters" (
@@ -18,7 +24,6 @@ CREATE TABLE "book_chapters" (
 	"title" text NOT NULL,
 	"html" text NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
-	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	CONSTRAINT "book_chapters_book_id_chapter_index_key" UNIQUE("book_id","chapter_index")
 );
 --> statement-breakpoint
@@ -29,9 +34,8 @@ CREATE TABLE "bookmarks" (
 	"chapter_index" integer NOT NULL,
 	"scroll_percent" numeric DEFAULT '0' NOT NULL,
 	"excerpt" text DEFAULT '' NOT NULL,
-	"note" text,
+	"chapter_title" text DEFAULT '' NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
-	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"deleted_at" timestamp with time zone
 );
 --> statement-breakpoint
@@ -41,34 +45,11 @@ CREATE TABLE "books" (
 	"author" text DEFAULT 'Unknown' NOT NULL,
 	"description" text,
 	"status" "book_status" DEFAULT 'draft' NOT NULL,
-	"epub_url" text NOT NULL,
-	"cover_url" text,
+	"epub_storage_key" text,
+	"cover_storage_key" text,
 	"chapter_count" integer DEFAULT 0 NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
-);
---> statement-breakpoint
-CREATE TABLE "ingestion_jobs" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"book_id" uuid,
-	"submitted_by" text,
-	"status" "ingestion_status" NOT NULL,
-	"error" text,
-	"stats" jsonb DEFAULT '{}'::jsonb NOT NULL,
-	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
-	"started_at" timestamp with time zone,
-	"finished_at" timestamp with time zone
-);
---> statement-breakpoint
-CREATE TABLE "reading_events" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"user_id" text,
-	"book_id" uuid,
-	"session_id" text,
-	"event_name" text NOT NULL,
-	"event_ts" timestamp with time zone DEFAULT now() NOT NULL,
-	"payload" jsonb DEFAULT '{}'::jsonb NOT NULL,
-	"ingested_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "reading_progress" (
@@ -81,33 +62,51 @@ CREATE TABLE "reading_progress" (
 	CONSTRAINT "reading_progress_user_id_book_id_pk" PRIMARY KEY("user_id","book_id")
 );
 --> statement-breakpoint
-CREATE TABLE "user_preferences" (
-	"user_id" text PRIMARY KEY NOT NULL,
-	"theme" text DEFAULT 'dark' NOT NULL,
-	"font_size" integer DEFAULT 18 NOT NULL,
-	"line_height" numeric DEFAULT '1.75' NOT NULL,
-	"prefetch_back" integer DEFAULT 10 NOT NULL,
-	"prefetch_ahead" integer DEFAULT 30 NOT NULL,
-	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
+CREATE TABLE "sessions" (
+	"id" text PRIMARY KEY NOT NULL,
+	"expiresAt" timestamp with time zone NOT NULL,
+	"token" text NOT NULL,
+	"createdAt" timestamp with time zone DEFAULT now() NOT NULL,
+	"updatedAt" timestamp with time zone DEFAULT now() NOT NULL,
+	"ipAddress" text,
+	"userAgent" text,
+	"userId" text NOT NULL,
+	CONSTRAINT "sessions_token_unique" UNIQUE("token")
 );
 --> statement-breakpoint
-CREATE TABLE "user_roles" (
-	"user_id" text NOT NULL,
-	"role" "user_role" NOT NULL,
-	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
-	CONSTRAINT "user_roles_user_id_role_pk" PRIMARY KEY("user_id","role")
+CREATE TABLE "users" (
+	"id" text PRIMARY KEY NOT NULL,
+	"name" text NOT NULL,
+	"email" text NOT NULL,
+	"role" "user_role" DEFAULT 'user' NOT NULL,
+	"emailVerified" boolean DEFAULT false NOT NULL,
+	"image" text,
+	"createdAt" timestamp with time zone DEFAULT now() NOT NULL,
+	"updatedAt" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "users_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint
+CREATE TABLE "verifications" (
+	"id" text PRIMARY KEY NOT NULL,
+	"identifier" text NOT NULL,
+	"value" text NOT NULL,
+	"expiresAt" timestamp with time zone NOT NULL,
+	"createdAt" timestamp with time zone DEFAULT now() NOT NULL,
+	"updatedAt" timestamp with time zone DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+ALTER TABLE "accounts" ADD CONSTRAINT "accounts_userId_users_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "book_chapters" ADD CONSTRAINT "book_chapters_book_id_books_id_fk" FOREIGN KEY ("book_id") REFERENCES "public"."books"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "bookmarks" ADD CONSTRAINT "bookmarks_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "bookmarks" ADD CONSTRAINT "bookmarks_book_id_books_id_fk" FOREIGN KEY ("book_id") REFERENCES "public"."books"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "ingestion_jobs" ADD CONSTRAINT "ingestion_jobs_book_id_books_id_fk" FOREIGN KEY ("book_id") REFERENCES "public"."books"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "reading_events" ADD CONSTRAINT "reading_events_book_id_books_id_fk" FOREIGN KEY ("book_id") REFERENCES "public"."books"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "reading_progress" ADD CONSTRAINT "reading_progress_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "reading_progress" ADD CONSTRAINT "reading_progress_book_id_books_id_fk" FOREIGN KEY ("book_id") REFERENCES "public"."books"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-CREATE INDEX "audit_logs_created_at_idx" ON "admin_audit_logs" USING btree ("created_at");--> statement-breakpoint
+ALTER TABLE "sessions" ADD CONSTRAINT "sessions_userId_users_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+CREATE INDEX "accounts_user_id_idx" ON "accounts" USING btree ("userId");--> statement-breakpoint
 CREATE INDEX "book_chapters_book_idx" ON "book_chapters" USING btree ("book_id","chapter_index");--> statement-breakpoint
 CREATE INDEX "bookmarks_lookup_idx" ON "bookmarks" USING btree ("user_id","book_id","created_at");--> statement-breakpoint
 CREATE INDEX "books_status_idx" ON "books" USING btree ("status");--> statement-breakpoint
 CREATE INDEX "books_updated_at_idx" ON "books" USING btree ("updated_at");--> statement-breakpoint
-CREATE INDEX "reading_events_user_ts_idx" ON "reading_events" USING btree ("user_id","event_ts");--> statement-breakpoint
-CREATE INDEX "reading_events_book_ts_idx" ON "reading_events" USING btree ("book_id","event_ts");--> statement-breakpoint
-CREATE INDEX "reading_progress_book_idx" ON "reading_progress" USING btree ("book_id");
+CREATE INDEX "reading_progress_book_idx" ON "reading_progress" USING btree ("book_id");--> statement-breakpoint
+CREATE INDEX "sessions_user_id_idx" ON "sessions" USING btree ("userId");--> statement-breakpoint
+CREATE INDEX "verifications_identifier_idx" ON "verifications" USING btree ("identifier");

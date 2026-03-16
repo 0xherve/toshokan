@@ -1,6 +1,5 @@
 export const STORAGE_KEYS = {
   SETTINGS: "sr-settings",
-  BOOKMARKS: "sr-bookmarks",
 } as const;
 
 export const DEFAULT_FONT_SIZE = 18;
@@ -15,15 +14,6 @@ export interface Settings {
   fontSize: number;
 }
 
-export interface Bookmark {
-  id: string;
-  chapterIndex: number;
-  chapterTitle: string;
-  scrollPercent: number;
-  excerpt: string;
-  createdAt: number;
-}
-
 export interface ChapterData {
   href: string;
   html: string;
@@ -31,11 +21,6 @@ export interface ChapterData {
   index: number;
 }
 
-export interface TocItem {
-  label: string;
-  href: string;
-  spineIndex: number;
-}
 
 export const DEFAULT_SETTINGS: Settings = {
   theme: "dark",

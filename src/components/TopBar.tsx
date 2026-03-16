@@ -1,11 +1,8 @@
-import type { ThemeName } from "../lib/constants";
-
 interface TopBarProps {
   chapterTitle: string;
   onLibraryClick?: () => void;
   onMenuClick: () => void;
   onBookmarkClick: () => void;
-  theme: ThemeName;
   onThemeClick: () => void;
   isBookmarked: boolean;
 }

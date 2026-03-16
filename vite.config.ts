@@ -5,20 +5,20 @@ import tsconfigPaths from "vite-tsconfig-paths";
 import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
-  envPrefix: ["VITE_", "PROJECT_", "PUBLISHABLE_"],
+  envPrefix: ["VITE_"],
   server: {
     port: 3000,
   },
   plugins: [
     tsconfigPaths(),
-    ...tanstackStart(),
+    tanstackStart(),
     tailwindcss(),
     VitePWA({
       registerType: "autoUpdate",
       includeAssets: ["logo.svg", "favicon.svg", "mask-icon.svg"],
       manifest: {
-        name: "Watashi",
-        short_name: "Watashi",
+        name: "Toshokan",
+        short_name: "Toshokan",
         description: "A tasteful, personal light novel library",
         theme_color: "#111111",
         background_color: "#111111",

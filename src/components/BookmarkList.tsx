@@ -1,4 +1,4 @@
-import type { Bookmark } from "../lib/constants";
+import type { Bookmark } from "../hooks/useBookmarks";
 
 interface BookmarkListProps {
   open: boolean;

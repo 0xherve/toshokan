@@ -1,5 +1,6 @@
 import { useMemo } from "react";
-import type { Bookmark, ChapterData } from "../lib/constants";
+import type { ChapterData } from "../lib/constants";
+import type { Bookmark } from "../hooks/useBookmarks";
 
 interface ChapterNavProps {
   open: boolean;

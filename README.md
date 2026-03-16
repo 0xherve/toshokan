@@ -142,6 +142,8 @@ bun run preview
 bun run lint
 ```
 
-## Environment Variables
+## Future planned Features
 
-See [`BACKEND_SETUP.md`](./BACKEND_SETUP.md) for backend/frontend env setup (Supabase, Better Auth, optional Google OAuth).
+- open reading without account and local data saving without login
+- Novel/Book upvote and downvotes
+- 
