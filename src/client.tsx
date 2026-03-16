@@ -1,7 +1,6 @@
 import { StrictMode, startTransition } from "react";
 import { hydrateRoot } from "react-dom/client";
 import { StartClient } from "@tanstack/react-start/client";
-import { registerSW } from "virtual:pwa-register";
 import { DEFAULT_SETTINGS } from "./lib/constants";
 
 const rawSettings = (() => {
@@ -24,10 +23,6 @@ const initialTheme = (() => {
 })();
 
 document.documentElement.className = initialTheme;
-
-registerSW({
-  immediate: true,
-});
 
 startTransition(() => {
   hydrateRoot(
