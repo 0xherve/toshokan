@@ -21,6 +21,8 @@
   --font-display: 'Shippori Mincho', serif;
   --font-reading: 'Public Sans', system-ui, sans-serif;
   --font-ui: 'DM Sans', system-ui, sans-serif;
+  --text-2xs: 0.625rem;
+  --text-3xs: 0.5625rem;
 }
 
 :root, .light {

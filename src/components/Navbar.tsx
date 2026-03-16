@@ -19,7 +19,7 @@ export function Navbar() {
           <Link
             to="/library"
             className="nav-link font-ui text-[0.8125rem] font-medium"
-            style={{ color: location.pathname.startsWith("/library") ? "var(--foreground)" : "var(--foreground-muted)" }}
+            style={{ color: location.pathname.startsWith("/library") || location.pathname.startsWith("/books") ? "var(--foreground)" : "var(--foreground-muted)" }}
           >
             Library
           </Link>

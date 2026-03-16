@@ -4,6 +4,7 @@ import type Book from "epubjs/types/book";
 import type Section from "epubjs/types/section";
 import { supabase } from "../lib/supabase";
 import { sanitizeHtml } from "../lib/sanitize";
+import { getChapterIndexForBook } from "../lib/storage";
 
 export type BookStatus = "draft" | "published" | "archived";
 
@@ -11,11 +12,17 @@ export interface BookItem {
   id: string;
   title: string;
   author: string;
+  description: string;
   chapterCount: number;
   completion: number;
   status: BookStatus;
   updatedAt: string;
   epubUrl: string;
+}
+
+export interface ChapterItem {
+  index: number;
+  title: string;
 }
 
 interface UseBooksOptions {
@@ -30,12 +37,18 @@ type UploadBookInput = {
 };
 
 function mapBook(row: Record<string, unknown>): BookItem {
+  const id = String(row.id ?? "");
+  const chapterCount = Number(row.chapter_count ?? 0);
+  const chapterIndex = getChapterIndexForBook(id);
+  const completion = chapterCount > 0 ? chapterIndex / chapterCount : 0;
+
   return {
-    id: String(row.id ?? ""),
+    id,
     title: String(row.title ?? "Untitled"),
     author: String(row.author ?? "Unknown"),
-    chapterCount: Number(row.chapter_count ?? 0),
-    completion: 0,
+    description: String(row.description ?? ""),
+    chapterCount,
+    completion,
     status: (row.status as BookStatus) ?? "draft",
     updatedAt: String(row.updated_at ?? "").slice(0, 10),
     epubUrl: String(row.epub_url ?? ""),
@@ -106,7 +119,7 @@ export function useBooks(options: UseBooksOptions = {}) {
     setIsLoading(true);
     const query = supabase
       .from("books")
-      .select("id,title,author,chapter_count,status,updated_at,epub_url")
+      .select("id,title,author,description,chapter_count,status,updated_at,epub_url")
       .order("updated_at", { ascending: false });
 
     const filteredQuery = includeUnpublished
@@ -211,7 +224,7 @@ export function useBook(bookId: string) {
     setIsLoading(true);
     const { data, error } = await supabase
       .from("books")
-      .select("id,title,author,chapter_count,status,updated_at,epub_url")
+      .select("id,title,author,description,chapter_count,status,updated_at,epub_url")
       .eq("id", bookId)
       .single();
 
@@ -232,4 +245,41 @@ export function useBook(bookId: string) {
   }, [loadBook]);
 
   return { book, isLoading, error, refresh: loadBook };
+}
+
+export function useChapters(bookId: string) {
+  const [chapters, setChapters] = useState<ChapterItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!supabase) {
+      setError("Supabase is not configured.");
+      setIsLoading(false);
+      return;
+    }
+
+    setIsLoading(true);
+    void supabase
+      .from("book_chapters")
+      .select("chapter_index,title")
+      .eq("book_id", bookId)
+      .order("chapter_index", { ascending: true })
+      .then(({ data, error }) => {
+        if (error) {
+          setError(error.message);
+          setIsLoading(false);
+          return;
+        }
+        setChapters(
+          (data ?? []).map((r) => ({
+            index: Number(r.chapter_index),
+            title: String(r.title),
+          })),
+        );
+        setIsLoading(false);
+      });
+  }, [bookId]);
+
+  return { chapters, isLoading, error };
 }

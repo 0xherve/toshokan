@@ -1,14 +1,14 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import {
-  getChapterIndex,
-  saveChapterIndex,
-  getScrollPositions,
-  saveScrollPosition,
+  getChapterIndexForBook,
+  saveChapterIndexForBook,
+  getScrollPositionsForBook,
+  saveScrollPositionForBook,
 } from "../lib/storage";
 
-export function useReadingProgress(totalChapters: number) {
+export function useReadingProgress(totalChapters: number, bookId: string) {
   const [currentChapter, setCurrentChapterState] = useState(() => {
-    const saved = getChapterIndex();
+    const saved = getChapterIndexForBook(bookId);
     if (totalChapters > 0 && saved >= totalChapters) return 0;
     return saved;
   });
@@ -18,7 +18,7 @@ export function useReadingProgress(totalChapters: number) {
 
   useEffect(() => {
     if (!scrollContainerRef.current) return;
-    const positions = getScrollPositions();
+    const positions = getScrollPositionsForBook(bookId);
     const savedPercent = positions[currentChapter] || 0;
 
     requestAnimationFrame(() => {
@@ -27,7 +27,7 @@ export function useReadingProgress(totalChapters: number) {
       const maxScroll = el.scrollHeight - el.clientHeight;
       el.scrollTop = maxScroll * savedPercent;
     });
-  }, [currentChapter]);
+  }, [currentChapter, bookId]);
 
   const handleScroll = useCallback(() => {
     if (!scrollContainerRef.current) return;
@@ -38,9 +38,9 @@ export function useReadingProgress(totalChapters: number) {
 
     if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
     saveTimeoutRef.current = setTimeout(() => {
-      saveScrollPosition(currentChapter, percent);
+      saveScrollPositionForBook(bookId, currentChapter, percent);
     }, 500);
-  }, [currentChapter]);
+  }, [currentChapter, bookId]);
 
   useEffect(() => {
     const saveNow = () => {
@@ -48,7 +48,7 @@ export function useReadingProgress(totalChapters: number) {
       const el = scrollContainerRef.current;
       const maxScroll = el.scrollHeight - el.clientHeight;
       const percent = maxScroll > 0 ? el.scrollTop / maxScroll : 0;
-      saveScrollPosition(currentChapter, percent);
+      saveScrollPositionForBook(bookId, currentChapter, percent);
     };
 
     const onVisibilityChange = () => {
@@ -62,7 +62,7 @@ export function useReadingProgress(totalChapters: number) {
       window.removeEventListener("beforeunload", saveNow);
       if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
     };
-  }, [currentChapter]);
+  }, [currentChapter, bookId]);
 
   const setCurrentChapter = useCallback(
     (index: number) => {
@@ -71,12 +71,12 @@ export function useReadingProgress(totalChapters: number) {
         const el = scrollContainerRef.current;
         const maxScroll = el.scrollHeight - el.clientHeight;
         const percent = maxScroll > 0 ? el.scrollTop / maxScroll : 0;
-        saveScrollPosition(currentChapter, percent);
+        saveScrollPositionForBook(bookId, currentChapter, percent);
       }
       setCurrentChapterState(index);
-      saveChapterIndex(index);
+      saveChapterIndexForBook(bookId, index);
     },
-    [totalChapters, currentChapter],
+    [totalChapters, currentChapter, bookId],
   );
 
   const goNext = useCallback(() => {

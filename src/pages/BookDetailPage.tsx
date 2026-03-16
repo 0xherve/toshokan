@@ -1,5 +1,5 @@
 import { Link, useParams } from "@tanstack/react-router";
-import { useBook } from "../hooks/useBooks";
+import { useBook, useChapters } from "../hooks/useBooks";
 
 export function BookDetailPage() {
   const { bookSlug } = useParams({ from: "/books/$bookSlug" });
@@ -36,11 +36,13 @@ function BookContent({
     id: string;
     title: string;
     author: string;
+    description: string;
     chapterCount: number;
     completion: number;
     epubUrl: string;
   };
 }) {
+  const { chapters, isLoading: chaptersLoading } = useChapters(book.id);
   const progress = book.completion;
   const currentCh = Math.round(progress * book.chapterCount);
   const kanji = book.title.charAt(0);
@@ -103,36 +105,54 @@ function BookContent({
       </div>
 
       {/* Synopsis */}
-      <div className="mb-8">
-        <div className="font-ui text-2xs font-semibold text-foreground-muted uppercase tracking-[0.1em] mb-2.5">
-          Synopsis
+      {book.description && (
+        <div className="mb-8">
+          <div className="font-ui text-2xs font-semibold text-foreground-muted uppercase tracking-[0.1em] mb-2.5">
+            Synopsis
+          </div>
+          <p className="font-reading text-base leading-[1.75] text-foreground-soft">
+            {book.description}
+          </p>
         </div>
-        <p className="font-reading text-base leading-[1.75] text-foreground-soft">
-          {book.title} by {book.author}.
-        </p>
-      </div>
+      )}
 
       {/* Chapters */}
       <div>
         <div className="font-ui text-2xs font-semibold text-foreground-muted uppercase tracking-[0.1em] mb-2.5">
           Chapters
         </div>
-        <div className="bg-surface rounded-[10px] border border-border p-5">
-          <p className="font-ui text-sm text-foreground-muted">
-            {book.chapterCount} chapters available.
-            {book.epubUrl && (
-              <>
-                {" "}
-                <Link
-                  to="/read/$bookId"
-                  params={{ bookId: book.id }}
-                  className="text-accent hover:text-accent-soft transition-colors"
-                >
-                  Open reader →
-                </Link>
-              </>
-            )}
-          </p>
+        <div className="bg-surface rounded-[10px] border border-border overflow-hidden">
+          {chaptersLoading && (
+            <p className="font-ui text-sm text-foreground-muted p-5">Loading chapters...</p>
+          )}
+          {!chaptersLoading && chapters.length === 0 && (
+            <p className="font-ui text-sm text-foreground-muted p-5">No chapters available.</p>
+          )}
+          {chapters.map((ch) => (
+            <Link
+              key={ch.index}
+              to="/read/$bookId"
+              params={{ bookId: book.id }}
+              className="chapter-row flex items-center gap-3 px-5 py-3 border-b border-border last:border-b-0"
+            >
+              <span
+                className="font-ui text-2xs text-foreground-muted font-medium shrink-0 w-8 text-right"
+              >
+                {ch.index + 1}
+              </span>
+              <span
+                className="font-ui text-sm text-foreground flex-1 min-w-0 truncate"
+                style={{ color: ch.index < currentCh ? "var(--foreground-muted)" : undefined }}
+              >
+                {ch.title}
+              </span>
+              {ch.index === currentCh && currentCh > 0 && (
+                <span className="font-ui text-2xs text-accent font-semibold shrink-0">
+                  current
+                </span>
+              )}
+            </Link>
+          ))}
         </div>
       </div>
     </>

@@ -22,11 +22,11 @@ export function saveSettings(settings: Settings): void {
   localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(settings));
 }
 
-export function getChapterIndex(): number {
+export function getChapterIndexForBook(bookId: string): number {
   if (!hasStorage()) return 0;
 
   try {
-    const raw = localStorage.getItem(STORAGE_KEYS.CHAPTER_INDEX);
+    const raw = localStorage.getItem(`sr-chapter-index-${bookId}`);
     if (raw) return parseInt(raw, 10);
   } catch {
     /* ignore */
@@ -34,16 +34,16 @@ export function getChapterIndex(): number {
   return 0;
 }
 
-export function saveChapterIndex(index: number): void {
+export function saveChapterIndexForBook(bookId: string, index: number): void {
   if (!hasStorage()) return;
-  localStorage.setItem(STORAGE_KEYS.CHAPTER_INDEX, String(index));
+  localStorage.setItem(`sr-chapter-index-${bookId}`, String(index));
 }
 
-export function getScrollPositions(): Record<number, number> {
+export function getScrollPositionsForBook(bookId: string): Record<number, number> {
   if (!hasStorage()) return {};
 
   try {
-    const raw = localStorage.getItem(STORAGE_KEYS.SCROLL_POSITIONS);
+    const raw = localStorage.getItem(`sr-scroll-positions-${bookId}`);
     if (raw) return JSON.parse(raw);
   } catch {
     /* ignore */
@@ -51,15 +51,30 @@ export function getScrollPositions(): Record<number, number> {
   return {};
 }
 
-export function saveScrollPosition(
+export function saveScrollPositionForBook(
+  bookId: string,
   chapterIndex: number,
   percent: number,
 ): void {
   if (!hasStorage()) return;
 
-  const positions = getScrollPositions();
+  const positions = getScrollPositionsForBook(bookId);
   positions[chapterIndex] = percent;
-  localStorage.setItem(STORAGE_KEYS.SCROLL_POSITIONS, JSON.stringify(positions));
+  localStorage.setItem(`sr-scroll-positions-${bookId}`, JSON.stringify(positions));
+}
+
+export function getLastBookId(): string | null {
+  if (!hasStorage()) return null;
+  try {
+    return localStorage.getItem("sr-last-book") || null;
+  } catch {
+    return null;
+  }
+}
+
+export function saveLastBookId(bookId: string): void {
+  if (!hasStorage()) return;
+  localStorage.setItem("sr-last-book", bookId);
 }
 
 export function getBookmarks(): Bookmark[] {

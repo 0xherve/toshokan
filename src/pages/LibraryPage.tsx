@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useAuth } from "../lib/auth";
 import { useBooks } from "../hooks/useBooks";
+import { getLastBookId } from "../lib/storage";
 
 export function LibraryPage() {
   const { role, email } = useAuth();
@@ -9,7 +10,8 @@ export function LibraryPage() {
   const [filter, setFilter] = useState("all");
   const [search, setSearch] = useState("");
 
-  const currentBook = books[0];
+  const lastBookId = getLastBookId();
+  const currentBook = (lastBookId ? books.find((b) => b.id === lastBookId) : null) ?? books[0];
 
   const filtered = books.filter((b) => {
     const matchSearch =

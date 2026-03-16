@@ -5,7 +5,7 @@ import { useTheme } from "./hooks/useTheme";
 import { useReadingProgress } from "./hooks/useReadingProgress";
 import { useBookmarks } from "./hooks/useBookmarks";
 import { useWakeLock } from "./hooks/useWakeLock";
-import { getSettings, saveSettings } from "./lib/storage";
+import { getSettings, saveSettings, saveLastBookId } from "./lib/storage";
 import type { Bookmark } from "./lib/constants";
 import { LoadingScreen } from "./components/LoadingScreen";
 import { Reader } from "./components/Reader";
@@ -42,7 +42,11 @@ export default function App({ bookId, epubUrl }: ReaderAppProps) {
     scrollPercent,
     handleScroll,
     scrollContainerRef,
-  } = useReadingProgress(totalChapters);
+  } = useReadingProgress(totalChapters, bookId);
+
+  useEffect(() => {
+    saveLastBookId(bookId);
+  }, [bookId]);
   const { bookmarks, addBookmark, removeBookmark } = useBookmarks();
   useWakeLock();
 

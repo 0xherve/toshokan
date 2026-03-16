@@ -1,6 +1,4 @@
 export const STORAGE_KEYS = {
-  CHAPTER_INDEX: "sr-chapter-index",
-  SCROLL_POSITIONS: "sr-scroll-positions",
   SETTINGS: "sr-settings",
   BOOKMARKS: "sr-bookmarks",
 } as const;
