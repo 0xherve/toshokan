@@ -3,6 +3,7 @@ import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import { VitePWA } from "vite-plugin-pwa";
 import tsconfigPaths from "vite-tsconfig-paths";
 import tailwindcss from "@tailwindcss/vite";
+import { nitro } from "nitro/vite";
 
 export default defineConfig({
   envPrefix: ["VITE_"],
@@ -12,6 +13,9 @@ export default defineConfig({
   plugins: [
     tsconfigPaths(),
     tanstackStart(),
+    nitro({
+      preset: "vercel",
+    }),
     tailwindcss(),
     VitePWA({
       registerType: "autoUpdate",
@@ -19,7 +23,7 @@ export default defineConfig({
       manifest: {
         name: "Toshokan",
         short_name: "Toshokan",
-        description: "A tasteful, personal light novel library",
+        description: "An opinionated light novel library",
         theme_color: "#111111",
         background_color: "#111111",
         display: "standalone",
