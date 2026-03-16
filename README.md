@@ -1,23 +1,23 @@
-# Watashi - EPUB Reader PWA
+# Toshokan - Light Novel Reader
 
 ## What is this?
 
-A tasteful, personal light novel library. Initially designed for comfortable, distraction-free reading of **Shadow Slave**.
+A tasteful, personal light novel library and reader — chapter tracking, bookmarks, and a reading surface designed to disappear behind the words.
 
-Production: https://watashi.fun
+Production: `https://watashi.fun`
 
 ## Tech Stack
 
-- **TanStack Start + React 19 + TypeScript** — SSR/app runtime + routing
-- **Better Auth (server + client)** — app-owned authentication model
+- **TanStack Router + React 19 + TypeScript** — client routing + app structure
+- **Better Auth (server + client)** — app-owned authentication
 - **Google OAuth (optional)** — social sign-in through Better Auth
 - **Supabase Postgres + Storage** — book metadata/chapters and EPUB uploads
 - **Drizzle ORM + drizzle-kit** — typed schema and SQL migrations
-- **Vite 7** — build pipeline/dev runtime (via TanStack Start plugin)
-- **Tailwind CSS v4** + `@tailwindcss/typography` — styling
+- **Vite 7** — dev server + build
+- **Tailwind CSS v4** — styling (includes `@tailwindcss/typography`)
 - **epub.js v0.3** — EPUB parsing (used directly, NOT the react-reader wrapper)
 - **vite-plugin-pwa** — service worker, offline caching, installable PWA
-- **Google Fonts** — Public Sans font (imported via CSS)
+- **Fonts** — loaded via CSS
 
 ## Architecture
 
@@ -37,21 +37,23 @@ Each chapter is a full scrollable page. User scrolls through it, then hits "Next
 
 ```
 src/
-├── App.tsx                    # Root — wires hooks + components together
-├── client.tsx                 # Start client entry — hydration + SW registration
-├── start.ts                   # Start request middleware (Better Auth route handling)
-├── router.tsx                 # Start router factory using generated route tree
-├── routes/                    # File routes (`/`, `/auth`, `/reader/*`, `/admin/*`)
+├── App.tsx                    # App composition + router provider
+├── client.tsx                 # Client entry + SW registration
+├── router.tsx                 # Router factory using generated route tree
+├── routes/                    # File routes (`/`, `/library`, `/books/*`, `/read/*`, `/admin/*`, `/auth`)
 ├── routeTree.gen.ts           # Auto-generated route tree (do not edit)
-├── index.css                  # Tailwind imports, themes, reader typography
+├── index.css                  # Tailwind + theme tokens + reader typography
+├── pages/                     # Page components rendered by routes
 ├── components/
+│   ├── Navbar.tsx             # Global nav (hidden in reader routes)
+│   ├── Footer.tsx             # Global footer (hidden in reader routes)
 │   ├── Reader.tsx             # Scrollable chapter content + tap zones
 │   ├── TopBar.tsx             # Chapter title, TOC button, bookmark button
 │   ├── BottomBar.tsx          # Progress bar, chapter info, settings button
 │   ├── ChapterNav.tsx         # Slide-in TOC panel (from left)
 │   ├── SettingsPanel.tsx      # Bottom sheet — theme picker, font size
 │   ├── BookmarkList.tsx       # Slide-in bookmarks panel (from right)
-│   └── LoadingScreen.tsx      # Spinner shown during EPUB parse
+│   └── LoadingScreen.tsx      # Spinner shown during chapter load
 ├── hooks/
 │   ├── useEpubReader.ts       # Core — chapter load (Supabase + EPUB fallback)
 │   ├── useBooks.ts            # Book list + upload + sanitization ingest
@@ -66,10 +68,16 @@ src/
     └── storage.ts             # localStorage helpers (settings, position, bookmarks)
 
 server/
-├── auth.ts                   # Better Auth config + providers + role hooks
-├── db.ts                     # Drizzle pg connection for auth runtime
-└── set-admin.ts              # Promote a user to admin
+├── auth.ts                   # Better Auth config + providers
+└── db.ts                     # Drizzle pg connection for auth runtime
 ```
+
+### Routes
+
+- **Public**: `/` (landing), `/about`, `/library`, `/books/$bookSlug`
+- **Reader**: `/read/` (index), `/read/$bookId` (full-screen reader shell)
+- **Auth**: `/auth`
+- **Admin**: `/admin` (dashboard), `/admin/books`, `/admin/ingestion`, `/admin/users`, `/admin/audit`
 
 ### Data Flow
 
@@ -118,7 +126,7 @@ Theme is applied to `<html>` before React hydrates (in `client.tsx`) to prevent 
 # Install (run from the SAME environment you'll use for dev)
 bun install
 
-# Full TanStack Start app (UI + auth runtime in one process)
+# Run dev server
 bun run dev
 
 # Drizzle migrations
@@ -136,7 +144,4 @@ bun run lint
 
 ## Environment Variables
 
-See [BACKEND_SETUP.md](./BACKEND_SETUP.md) for complete backend/frontend env setup.
-
-Google OAuth redirect URI:
-`http://localhost:3000/api/auth/callback/google`
+See [`BACKEND_SETUP.md`](./BACKEND_SETUP.md) for backend/frontend env setup (Supabase, Better Auth, optional Google OAuth).

@@ -63,7 +63,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return error?.message ?? null;
   };
 
-  const signInWithGoogle = async (callbackURL = "/") => {
+  const signInWithGoogle = async (callbackURL = "/library") => {
     const { error } = await authClient.signIn.social({
       provider: "google",
       callbackURL,

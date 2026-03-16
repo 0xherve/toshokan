@@ -1,11 +1,11 @@
 {
-  "name": "watashi",
+  "name": "toshokan",
   "private": true,
   "version": "0.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite dev",
-"build": "vite build",
+    "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint .",
     "db:generate": "drizzle-kit generate",
@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.98.0",
+    "@tabler/icons-react": "^3.40.0",
     "@tanstack/react-router": "^1.166.2",
     "@tanstack/react-start": "^1.166.2",
     "better-auth": "^1.5.4",

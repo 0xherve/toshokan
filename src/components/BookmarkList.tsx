@@ -18,7 +18,7 @@ export function BookmarkList({
   return (
     <>
       {open && (
-        <div className="fixed inset-0 z-50 bg-overlay" onClick={onClose} />
+        <div className="fixed inset-0 z-50 bg-black/30 dark:bg-black/60" onClick={onClose} />
       )}
 
       <div
@@ -26,18 +26,18 @@ export function BookmarkList({
         style={{ transform: open ? "translateX(0)" : "translateX(100%)" }}
       >
         <div className="p-4 pb-2">
-          <h2 className="text-lg font-bold text-foreground">Bookmarks</h2>
-          <p className="text-xs mt-1 text-muted">{bookmarks.length} saved</p>
+          <h2 className="text-lg font-bold text-foreground font-display">Bookmarks</h2>
+          <p className="text-xs mt-1 text-foreground-muted font-ui">{bookmarks.length} saved</p>
         </div>
 
         {bookmarks.length === 0 ? (
-          <div className="px-4 py-8 text-center text-sm text-muted">
+          <div className="px-4 py-8 text-center text-sm text-foreground-muted font-ui">
             No bookmarks yet.
             <br />
             <span className="text-xs">Tap the bookmark icon to save your place.</span>
           </div>
         ) : (
-          <div className="pb-8">
+          <div className="pb-8 font-ui">
             {bookmarks.map((bm) => (
               <div key={bm.id} className="px-4 py-3 border-b border-border">
                 <button
@@ -45,14 +45,14 @@ export function BookmarkList({
                   className="w-full text-left"
                 >
                   <div className="text-sm font-medium text-foreground">{bm.chapterTitle}</div>
-                  <div className="text-xs mt-1 line-clamp-2 text-secondary">{bm.excerpt}</div>
-                  <div className="text-xs mt-1 text-muted">
+                  <div className="text-xs mt-1 line-clamp-2 text-foreground-soft">{bm.excerpt}</div>
+                  <div className="text-xs mt-1 text-foreground-muted">
                     {Math.round(bm.scrollPercent * 100)}% through chapter
                   </div>
                 </button>
                 <button
                   onClick={() => onRemoveBookmark(bm.id)}
-                  className="text-xs mt-1 transition-colors text-muted hover:text-foreground"
+                  className="text-xs mt-1 transition-colors text-foreground-muted hover:text-foreground"
                 >
                   Remove
                 </button>

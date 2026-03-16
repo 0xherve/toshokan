@@ -23,7 +23,7 @@ const initialTheme = (() => {
   }
 })();
 
-document.documentElement.setAttribute("data-theme", initialTheme);
+document.documentElement.className = initialTheme;
 
 registerSW({
   immediate: true,

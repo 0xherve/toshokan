@@ -66,7 +66,7 @@ export default function App({ bookId, epubUrl }: ReaderAppProps) {
   }, [currentChapter, totalChapters, chapterRangesCount]);
 
   useEffect(() => {
-    document.documentElement.setAttribute("data-theme", theme);
+    document.documentElement.className = theme;
   }, [theme]);
 
   useEffect(() => {
@@ -177,9 +177,9 @@ export default function App({ bookId, epubUrl }: ReaderAppProps) {
 
   if (error) {
     return (
-      <div className="fixed inset-0 flex flex-col items-center justify-center gap-4 px-8 text-center bg-app">
-        <div className="text-xl font-bold text-foreground">Failed to load book</div>
-        <div className="text-sm text-secondary">{error}</div>
+      <div className="fixed inset-0 flex flex-col items-center justify-center gap-4 px-8 text-center bg-background">
+        <div className="text-xl font-bold text-foreground font-display">Failed to load book</div>
+        <div className="text-sm text-foreground-soft font-reading">{error}</div>
       </div>
     );
   }
@@ -203,7 +203,7 @@ export default function App({ bookId, epubUrl }: ReaderAppProps) {
 
       <TopBar
         chapterTitle={bookTitle}
-        onLibraryClick={() => navigate({ to: "/" })}
+        onLibraryClick={() => navigate({ to: "/library" })}
         onMenuClick={() => openPanel("chapters")}
         onBookmarkClick={handleAddBookmark}
         theme={theme}

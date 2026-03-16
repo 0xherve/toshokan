@@ -9,9 +9,9 @@ export function AdminAuditPage() {
           <div key={event.id} className="py-3 flex items-start justify-between gap-3">
             <div>
               <p className="text-sm font-semibold text-foreground">{event.action}</p>
-              <p className="text-xs mt-0.5 text-secondary">{event.actor} &middot; {event.target}</p>
+              <p className="text-xs mt-0.5 text-foreground-soft">{event.actor} &middot; {event.target}</p>
             </div>
-            <p className="text-xs text-muted whitespace-nowrap shrink-0">{event.at}</p>
+            <p className="text-xs text-foreground-muted whitespace-nowrap shrink-0">{event.at}</p>
           </div>
         ))}
       </div>

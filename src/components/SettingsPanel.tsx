@@ -16,7 +16,7 @@ export function SettingsPanel({
   return (
     <>
       {open && (
-        <div className="fixed inset-0 z-50 bg-overlay" onClick={onClose} />
+        <div className="fixed inset-0 z-50 bg-black/30 dark:bg-black/60" onClick={onClose} />
       )}
 
       <div
@@ -27,14 +27,14 @@ export function SettingsPanel({
           <div className="w-10 h-1 rounded-full bg-border" />
         </div>
 
-        <div className="px-6 pb-8">
-          <label className="text-xs font-medium uppercase tracking-wider block mb-3 text-muted">
+        <div className="px-6 pb-8 font-ui">
+          <label className="text-xs font-medium uppercase tracking-wider block mb-3 text-foreground-muted">
             Font Size — {fontSize}px
           </label>
           <div className="flex items-center gap-4">
             <button
               onClick={() => onFontSizeChange(Math.max(MIN_FONT_SIZE, fontSize - FONT_SIZE_STEP))}
-              className="w-10 h-10 rounded-xl flex items-center justify-center text-sm font-bold transition-colors bg-app text-muted disabled:opacity-30"
+              className="w-10 h-10 rounded-xl flex items-center justify-center text-sm font-bold transition-colors bg-background text-foreground-muted disabled:opacity-30"
               disabled={fontSize <= MIN_FONT_SIZE}
             >
               A
@@ -52,7 +52,7 @@ export function SettingsPanel({
 
             <button
               onClick={() => onFontSizeChange(Math.min(MAX_FONT_SIZE, fontSize + FONT_SIZE_STEP))}
-              className="w-10 h-10 rounded-xl flex items-center justify-center text-xl font-bold transition-colors bg-app text-foreground disabled:opacity-30"
+              className="w-10 h-10 rounded-xl flex items-center justify-center text-xl font-bold transition-colors bg-background text-foreground disabled:opacity-30"
               disabled={fontSize >= MAX_FONT_SIZE}
             >
               A

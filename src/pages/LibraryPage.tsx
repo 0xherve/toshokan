@@ -1,115 +1,209 @@
+import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { SiteHeader } from "../components/SiteHeader";
 import { useAuth } from "../lib/auth";
 import { useBooks } from "../hooks/useBooks";
 
 export function LibraryPage() {
   const { role, email } = useAuth();
   const { books, isLoading, error } = useBooks();
+  const [filter, setFilter] = useState("all");
+  const [search, setSearch] = useState("");
+
   const currentBook = books[0];
 
+  const filtered = books.filter((b) => {
+    const matchSearch =
+      !search ||
+      b.title.toLowerCase().includes(search.toLowerCase()) ||
+      b.author.toLowerCase().includes(search.toLowerCase());
+    if (filter === "completed") return matchSearch && b.completion >= 1;
+    if (filter === "reading") return matchSearch && b.completion < 1;
+    return matchSearch;
+  });
+
   return (
-    <div className="min-h-dvh bg-app">
-      <SiteHeader />
+    <div className="max-w-5xl mx-auto px-10 pt-22 pb-20 animate-[fadeIn_0.3s_ease]">
+        <h1 className="font-display text-[2rem] font-bold tracking-tight mb-7">
+          Your Library
+        </h1>
 
-      <main className="px-4 py-6 safe-area-bottom max-w-2xl mx-auto">
-        {/* Continue reading */}
+        {/* Continue reading card */}
         {currentBook && (
-          <section className="pb-6 border-b border-border">
-            <p className="text-[10px] uppercase tracking-widest text-muted">Continue reading</p>
-            <h1 className="text-lg font-bold mt-1 text-foreground">{currentBook.title}</h1>
-            <p className="text-xs mt-1 text-secondary">
-              {currentBook.author} &middot; {currentBook.chapterCount} chapters
-            </p>
-
-            <div className="mt-3 h-px bg-border relative">
-              <div className="absolute inset-y-0 left-0 bg-foreground" style={{ width: "67%" }} />
+          <Link
+            to="/books/$bookSlug"
+            params={{ bookSlug: currentBook.id }}
+            className="book-card flex gap-[18px] items-center bg-surface rounded-xl border border-border shadow-sm px-[26px] py-[22px] mb-7"
+          >
+            <div
+              className="w-[52px] h-[75px] rounded-md shrink-0 flex items-center justify-center font-display text-xl text-accent opacity-55 border border-border"
+              style={{
+                background:
+                  "linear-gradient(155deg, color-mix(in srgb, var(--accent) 20%, transparent), color-mix(in srgb, var(--accent) 10%, transparent))",
+              }}
+            >
+              {currentBook.title.charAt(0)}
             </div>
-
-            <div className="mt-4 flex items-center gap-3">
-              <Link
-                to="/reader/$bookId"
-                params={{ bookId: currentBook.id }}
-                className="px-4 py-2.5 rounded-xl text-sm font-medium bg-primary text-on-primary transition-colors"
-              >
-                Continue
-              </Link>
-              {role === "guest" && (
-                <Link to="/auth" className="text-xs text-muted hover:text-secondary transition-colors">
-                  Sign in to sync
-                </Link>
-              )}
-              {role !== "guest" && (
-                <span className="text-xs text-muted">Syncing as {email}</span>
-              )}
+            <div className="flex-1 min-w-0">
+              <div className="font-ui text-3xs font-semibold text-foreground-muted uppercase tracking-[0.08em] mb-0.5">
+                Continue Reading
+              </div>
+              <div className="font-display text-lg font-semibold tracking-tight">
+                {currentBook.title}
+              </div>
+              <div className="font-ui text-xs text-foreground-muted">
+                Ch. {Math.round(currentBook.completion * currentBook.chapterCount)} of{" "}
+                {currentBook.chapterCount} · {currentBook.author}
+              </div>
             </div>
-          </section>
+            <div className="flex flex-col items-end gap-1.5 min-w-[90px]">
+              <span className="font-ui text-xs font-semibold text-accent">
+                {Math.round(currentBook.completion * 100)}%
+              </span>
+              <div className="w-[90px] h-[2.5px] bg-elevated rounded-full overflow-hidden">
+                <div
+                  className="h-full rounded-full"
+                  style={{
+                    width: `${Math.round(currentBook.completion * 100)}%`,
+                    backgroundColor:
+                      currentBook.completion >= 1 ? "var(--success)" : "var(--accent)",
+                  }}
+                />
+              </div>
+            </div>
+          </Link>
         )}
 
         {!currentBook && !isLoading && (
-          <section className="pb-6 border-b border-border">
-            <h1 className="text-lg font-bold text-foreground">Your library is empty</h1>
-            <p className="text-sm mt-1 text-secondary">Upload a book to get started.</p>
-            <Link
-              to="/admin/books"
-              className="inline-block mt-4 px-4 py-2.5 rounded-xl text-sm font-medium bg-primary text-on-primary transition-colors"
-            >
-              Add first book
-            </Link>
-          </section>
+          <div className="bg-surface rounded-xl border border-border shadow-sm px-[26px] py-[22px] mb-7">
+            <h2 className="font-display text-lg font-bold text-foreground">
+              Your library is empty
+            </h2>
+            <p className="text-sm mt-1 text-foreground-soft font-reading">
+              Upload a book to get started.
+            </p>
+            {role === "admin" && (
+              <Link
+                to="/admin/books"
+                className="cta-primary inline-block mt-4 font-ui text-sm font-semibold px-6 py-2.5 rounded-lg bg-accent text-white"
+              >
+                Add first book
+              </Link>
+            )}
+          </div>
         )}
 
-        {/* Book list */}
-        <section className="mt-6">
-          <h2 className="text-xs font-medium uppercase tracking-wider text-muted">Library</h2>
+        {/* Search + filter */}
+        <div className="flex gap-3 mb-6 items-center">
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search library..."
+            className="flex-1 font-ui text-[0.8125rem] px-4 py-2.5 rounded-lg border border-border bg-background text-foreground outline-none focus:border-accent transition-colors"
+          />
+          <div className="flex gap-1">
+            {([["all", "All"], ["reading", "Reading"], ["completed", "Done"]] as const).map(
+              ([key, label]) => (
+                <button
+                  key={key}
+                  onClick={() => setFilter(key)}
+                  className="font-ui text-xs px-3.5 py-[7px] rounded-full border-none"
+                  style={{
+                    fontWeight: filter === key ? 600 : 400,
+                    backgroundColor:
+                      filter === key
+                        ? "color-mix(in srgb, var(--accent) 10%, transparent)"
+                        : "transparent",
+                    color: filter === key ? "var(--accent)" : "var(--foreground-muted)",
+                  }}
+                >
+                  {label}
+                </button>
+              ),
+            )}
+          </div>
+        </div>
 
-          {isLoading && (
-            <p className="mt-4 text-sm text-muted">Loading...</p>
-          )}
+        {/* Loading / error states */}
+        {isLoading && (
+          <p className="mt-4 text-sm text-foreground-muted font-ui">Loading...</p>
+        )}
+        {error && <p className="mt-4 text-sm text-foreground-soft font-ui">{error}</p>}
 
-          {error && (
-            <p className="mt-4 text-sm text-secondary">{error}</p>
-          )}
-
-          {!isLoading && books.length === 0 && (
-            <p className="mt-4 text-sm text-muted">No books yet.</p>
-          )}
-
-          <div className="mt-3 space-y-0 divide-y divide-border">
-            {books.map((book) => (
-              <div key={book.id} className="py-4 first:pt-0">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <h3 className="text-sm font-semibold text-foreground truncate">{book.title}</h3>
-                    <p className="text-xs mt-0.5 text-secondary">{book.author}</p>
-                  </div>
-                  <span className="shrink-0 text-[10px] uppercase tracking-wide text-muted">
+        {/* Book grid */}
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-4">
+          {filtered.map((book, i) => (
+            <Link
+              key={book.id}
+              to="/books/$bookSlug"
+              params={{ bookSlug: book.id }}
+              className="book-card bg-surface rounded-[10px] border border-border p-[18px_20px] flex gap-4 animate-[slideUp_0.3s_ease_both]"
+              style={{ animationDelay: `${i * 0.04}s` }}
+            >
+              <div
+                className="w-[60px] h-[87px] rounded-md shrink-0 flex items-center justify-center font-display text-[1.4rem] text-accent opacity-55 border border-border"
+                style={{
+                  background:
+                    "linear-gradient(155deg, color-mix(in srgb, var(--accent) 20%, transparent), color-mix(in srgb, var(--accent) 10%, transparent))",
+                }}
+              >
+                {book.title.charAt(0)}
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="font-display text-base font-semibold leading-snug mb-0.5">
+                  {book.title}
+                </div>
+                <div className="font-ui text-xs text-foreground-muted mb-1">
+                  {book.author}
+                </div>
+                <div className="flex gap-1 mb-2.5 flex-wrap">
+                  <span className="font-ui text-3xs px-2 py-0.5 rounded-full bg-elevated text-foreground-muted">
                     {book.chapterCount} ch
                   </span>
                 </div>
-
-                <div className="mt-2 flex items-center gap-2">
-                  <Link
-                    to="/reader/$bookId"
-                    params={{ bookId: book.id }}
-                    className="px-3 py-1.5 rounded-lg text-xs font-medium bg-surface text-foreground transition-colors hover:bg-primary hover:text-on-primary"
-                  >
-                    Read
-                  </Link>
-                  {role === "admin" && (
-                    <Link
-                      to="/admin/books"
-                      className="px-3 py-1.5 rounded-lg text-xs text-muted hover:text-secondary transition-colors"
-                    >
-                      Manage
-                    </Link>
-                  )}
+                <div className="flex items-center gap-2">
+                  <div className="flex-1 h-[2.5px] bg-elevated rounded-full overflow-hidden">
+                    <div
+                      className="h-full rounded-full transition-[width] duration-400"
+                      style={{
+                        width: `${Math.round(book.completion * 100)}%`,
+                        backgroundColor:
+                          book.completion >= 1 ? "var(--success)" : "var(--accent)",
+                      }}
+                    />
+                  </div>
+                  <span className="font-ui text-3xs text-foreground-muted font-medium shrink-0">
+                    {book.completion >= 1 ? "✓" : `${Math.round(book.completion * 100)}%`}
+                  </span>
                 </div>
               </div>
-            ))}
+            </Link>
+          ))}
+        </div>
+
+        {!isLoading && filtered.length === 0 && books.length > 0 && (
+          <div className="text-center py-16 font-ui text-[0.9375rem] text-foreground-muted">
+            No books found.
           </div>
-        </section>
-      </main>
+        )}
+
+        {/* Auth status */}
+        {role === "guest" && (
+          <div className="mt-8 text-center">
+            <Link
+              to="/auth/signin"
+              className="text-xs text-foreground-muted hover:text-foreground-soft transition-colors font-ui"
+            >
+              Sign in to sync your progress
+            </Link>
+          </div>
+        )}
+        {role !== "guest" && (
+          <div className="mt-8 text-center">
+            <span className="text-xs text-foreground-muted font-ui">
+              Syncing as {email}
+            </span>
+          </div>
+        )}
     </div>
   );
 }

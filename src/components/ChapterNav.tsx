@@ -68,7 +68,7 @@ export function ChapterNav({
   return (
     <>
       {open && (
-        <div className="fixed inset-0 z-50 bg-overlay" onClick={onClose} />
+        <div className="fixed inset-0 z-50 bg-black/30 dark:bg-black/60" onClick={onClose} />
       )}
 
       <div
@@ -76,22 +76,22 @@ export function ChapterNav({
         style={{ transform: open ? "translateX(0)" : "translateX(-100%)" }}
       >
         <div className="p-4 pb-2">
-          <h2 className="text-lg font-bold text-foreground">Chapters</h2>
-          <p className="text-xs mt-1 text-muted">{totalChapters} total</p>
+          <h2 className="text-lg font-bold text-foreground font-display">Chapters</h2>
+          <p className="text-xs mt-1 text-foreground-muted font-ui">{totalChapters} total</p>
 
           <input
             type="text"
             value={query}
             onChange={(e) => onQueryChange(e.target.value)}
             placeholder="Search chapters..."
-            className="mt-3 w-full rounded-lg px-3 py-2 text-sm outline-none bg-app text-foreground border border-border placeholder:text-muted"
+            className="mt-3 w-full rounded-lg px-3 py-2 text-sm outline-none font-ui bg-background text-foreground border border-border placeholder:text-foreground-muted"
           />
 
           {rangeCount > 1 && (
             <select
               value={selectedRange}
               onChange={(e) => onRangeChange(Number(e.target.value))}
-              className="mt-2 w-full rounded-lg px-3 py-2 text-sm outline-none bg-app text-foreground border border-border"
+              className="mt-2 w-full rounded-lg px-3 py-2 text-sm outline-none font-ui bg-background text-foreground border border-border"
             >
               {ranges.map((r) => (
                 <option key={r.index} value={r.index}>
@@ -102,9 +102,9 @@ export function ChapterNav({
           )}
         </div>
 
-        <nav className="pb-8">
+        <nav className="pb-8 font-ui">
           {visibleChapters.length === 0 ? (
-            <div className="px-4 py-6 text-sm text-muted">No chapters found.</div>
+            <div className="px-4 py-6 text-sm text-foreground-muted">No chapters found.</div>
           ) : (
             visibleChapters.map((chapter, idx) => {
               const chapterIndex = query.trim()
@@ -122,14 +122,14 @@ export function ChapterNav({
                   }}
                   className={`w-full text-left px-4 py-3 text-sm transition-colors block ${
                     isActive
-                      ? "bg-app text-foreground font-semibold"
+                      ? "bg-background text-foreground font-semibold"
                       : "text-foreground"
                   }`}
                 >
                   <div className="flex items-center justify-between gap-2">
                     <span className="truncate">{chapterIndex + 1}. {chapter.title}</span>
                     {isBookmarked && (
-                      <span className="shrink-0 text-[10px] uppercase tracking-wide px-2 py-0.5 rounded-full text-muted bg-app border border-border">
+                      <span className="shrink-0 text-[10px] uppercase tracking-wide px-2 py-0.5 rounded-full text-foreground-muted bg-background border border-border">
                         saved
                       </span>
                     )}

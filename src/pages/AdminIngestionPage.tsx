@@ -10,13 +10,13 @@ export function AdminIngestionPage() {
             <div className="flex items-start justify-between gap-3">
               <div>
                 <p className="text-sm font-semibold text-foreground">{job.bookTitle}</p>
-                <p className="text-xs mt-0.5 text-secondary">{job.submittedBy}</p>
+                <p className="text-xs mt-0.5 text-foreground-soft">{job.submittedBy}</p>
               </div>
-              <span className="shrink-0 text-[10px] uppercase tracking-wide text-muted">{job.status}</span>
+              <span className="shrink-0 text-[10px] uppercase tracking-wide text-foreground-muted">{job.status}</span>
             </div>
             <div className="mt-2 flex items-center justify-between">
-              <p className="text-xs text-muted">{job.createdAt}</p>
-              <button className="text-xs text-muted hover:text-secondary transition-colors">Retry</button>
+              <p className="text-xs text-foreground-muted">{job.createdAt}</p>
+              <button className="text-xs text-foreground-muted hover:text-foreground-soft transition-colors">Retry</button>
             </div>
           </div>
         ))}

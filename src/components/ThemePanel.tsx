@@ -8,16 +8,15 @@ interface ThemePanelProps {
 }
 
 const themes: { name: ThemeName; label: string; bg: string; fg: string }[] = [
-  { name: "light", label: "Light", bg: "#fafaf8", fg: "#1a1a1a" },
-  { name: "sepia", label: "Sepia", bg: "#f4ecd8", fg: "#5b4636" },
-  { name: "dark", label: "Dark", bg: "#111111", fg: "#d4d4d4" },
+  { name: "light", label: "Light", bg: "#F7F4F0", fg: "#1A1614" },
+  { name: "dark", label: "Dark", bg: "#141210", fg: "#E8E4DF" },
 ];
 
 export function ThemePanel({ open, onClose, theme, onThemeChange }: ThemePanelProps) {
   return (
     <>
       {open && (
-        <div className="fixed inset-0 z-50 bg-overlay" onClick={onClose} />
+        <div className="fixed inset-0 z-50 bg-black/30 dark:bg-black/60" onClick={onClose} />
       )}
 
       <div
@@ -25,18 +24,18 @@ export function ThemePanel({ open, onClose, theme, onThemeChange }: ThemePanelPr
         style={{ transform: open ? "translateX(0)" : "translateX(100%)" }}
       >
         <div className="p-4 pb-2">
-          <h2 className="text-lg font-bold text-foreground">Theme</h2>
-          <p className="text-xs mt-1 text-muted">Choose a reading theme</p>
+          <h2 className="text-lg font-bold text-foreground font-display">Theme</h2>
+          <p className="text-xs mt-1 text-foreground-muted font-ui">Choose a reading theme</p>
         </div>
 
-        <div className="px-4 pb-6 grid gap-3">
+        <div className="px-4 pb-6 grid gap-3 font-ui">
           {themes.map((t) => (
             <button
               key={t.name}
               onClick={() => onThemeChange(t.name)}
               className={`w-full py-3 rounded-xl text-sm font-medium transition-all ${
                 theme === t.name
-                  ? "ring-2 ring-foreground"
+                  ? "ring-2 ring-accent"
                   : "border border-border"
               }`}
               style={{ backgroundColor: t.bg, color: t.fg }}

@@ -83,7 +83,7 @@ export function Reader({
   return (
     <div
       ref={scrollContainerRef}
-      className="fixed inset-0 overflow-y-auto bg-reader"
+      className="fixed inset-0 overflow-y-auto bg-reading"
       onScroll={onScroll}
       onClick={handleTap}
       onTouchStart={handleTouchStart}
@@ -94,13 +94,13 @@ export function Reader({
         className="reader-content mx-auto px-5 py-16 max-w-[38em]"
         style={{ fontSize: `${fontSize}px` }}
       >
-        <h1 className="text-2xl font-bold mb-8 text-center text-foreground">
+        <h1 className="text-2xl font-bold mb-8 text-center text-foreground font-display">
           {chapter.title}
         </h1>
 
         <div dangerouslySetInnerHTML={{ __html: chapter.html }} />
 
-        <div className="flex gap-4 mt-16 mb-8 pt-8 border-t border-border">
+        <div className="flex gap-4 mt-16 mb-8 pt-8 border-t border-border font-ui">
           {currentChapter > 0 && (
             <button
               onClick={(e) => { e.stopPropagation(); onPrev(); }}
@@ -112,7 +112,7 @@ export function Reader({
           {currentChapter < totalChapters - 1 && (
             <button
               onClick={(e) => { e.stopPropagation(); onNext(); }}
-              className="flex-1 py-3 rounded-xl text-sm font-medium transition-colors bg-primary text-on-primary border border-border"
+              className="flex-1 py-3 rounded-xl text-sm font-medium transition-colors bg-accent text-white border border-border"
             >
               Next &rarr;
             </button>

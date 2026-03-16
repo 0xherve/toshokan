@@ -25,7 +25,7 @@ export function AdminBooksPage() {
     setTitle(""); setAuthor(""); setStatus("draft"); setFile(null);
   };
 
-  const inputClass = "w-full rounded-lg px-3 py-2 text-sm outline-none bg-app text-foreground border border-border placeholder:text-muted focus:border-foreground transition-colors";
+  const inputClass = "w-full rounded-lg px-3 py-2 text-sm outline-none bg-background text-foreground border border-border placeholder:text-foreground-muted focus:border-accent transition-colors";
 
   return (
     <AdminScaffold title="Books" subtitle="Upload and manage the catalog.">
@@ -35,17 +35,17 @@ export function AdminBooksPage() {
 
         <div className="mt-4 space-y-3">
           <div>
-            <label htmlFor="book-title" className="text-xs font-medium uppercase tracking-wider block mb-1.5 text-muted">Title</label>
+            <label htmlFor="book-title" className="text-xs font-medium uppercase tracking-wider block mb-1.5 text-foreground-muted">Title</label>
             <input id="book-title" type="text" value={title} onChange={(e) => setTitle(e.target.value)} className={inputClass} placeholder="Book title" />
           </div>
 
           <div>
-            <label htmlFor="book-author" className="text-xs font-medium uppercase tracking-wider block mb-1.5 text-muted">Author</label>
+            <label htmlFor="book-author" className="text-xs font-medium uppercase tracking-wider block mb-1.5 text-foreground-muted">Author</label>
             <input id="book-author" type="text" value={author} onChange={(e) => setAuthor(e.target.value)} className={inputClass} placeholder="Author name" />
           </div>
 
           <div>
-            <label htmlFor="book-status" className="text-xs font-medium uppercase tracking-wider block mb-1.5 text-muted">Status</label>
+            <label htmlFor="book-status" className="text-xs font-medium uppercase tracking-wider block mb-1.5 text-foreground-muted">Status</label>
             <select id="book-status" value={status} onChange={(e) => setStatus(e.target.value as BookStatus)} className={inputClass}>
               <option value="draft">Draft</option>
               <option value="published">Published</option>
@@ -54,7 +54,7 @@ export function AdminBooksPage() {
           </div>
 
           <div>
-            <label htmlFor="book-file" className="text-xs font-medium uppercase tracking-wider block mb-1.5 text-muted">EPUB File</label>
+            <label htmlFor="book-file" className="text-xs font-medium uppercase tracking-wider block mb-1.5 text-foreground-muted">EPUB File</label>
             <input id="book-file" type="file" accept=".epub,application/epub+zip" onChange={(e) => setFile(e.target.files?.[0] ?? null)} className={inputClass} />
           </div>
         </div>
@@ -62,29 +62,29 @@ export function AdminBooksPage() {
         <button
           onClick={() => { void handleUpload(); }}
           disabled={isUploading}
-          className="mt-4 px-4 py-2.5 rounded-xl text-sm font-medium bg-primary text-on-primary transition-colors disabled:opacity-50"
+          className="mt-4 px-4 py-2.5 rounded-xl text-sm font-medium bg-accent text-white transition-colors disabled:opacity-50"
         >
           {isUploading ? "Uploading..." : "Upload & sanitize"}
         </button>
 
-        {message && <p className="text-xs mt-3 text-secondary">{message}</p>}
+        {message && <p className="text-xs mt-3 text-foreground-soft">{message}</p>}
       </section>
 
       {/* Catalog */}
       <section className="mt-6">
-        <h2 className="text-xs font-medium uppercase tracking-wider text-muted mb-3">Catalog</h2>
+        <h2 className="text-xs font-medium uppercase tracking-wider text-foreground-muted mb-3">Catalog</h2>
 
-        {isLoading && <p className="text-sm text-muted">Loading...</p>}
-        {error && <p className="text-sm text-secondary">{error}</p>}
+        {isLoading && <p className="text-sm text-foreground-muted">Loading...</p>}
+        {error && <p className="text-sm text-foreground-soft">{error}</p>}
 
         <div className="divide-y divide-border">
           {books.map((book) => (
             <div key={book.id} className="py-3 flex items-start justify-between gap-3">
               <div>
                 <p className="text-sm font-semibold text-foreground">{book.title}</p>
-                <p className="text-xs mt-0.5 text-secondary">{book.author} &middot; {book.chapterCount} ch</p>
+                <p className="text-xs mt-0.5 text-foreground-soft">{book.author} &middot; {book.chapterCount} ch</p>
               </div>
-              <span className="shrink-0 text-[10px] uppercase tracking-wide text-muted">
+              <span className="shrink-0 text-[10px] uppercase tracking-wide text-foreground-muted">
                 {book.status}
               </span>
             </div>

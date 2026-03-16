@@ -1,75 +1,64 @@
-@import url("https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap");
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
 @theme {
-  --color-app: var(--bg-app);
-  --color-reader: var(--bg-reader);
-  --color-surface: var(--bg-surface);
-  --color-primary: var(--bg-primary);
-  --color-primary-hover: var(--bg-primary-hover);
-  --color-on-primary: var(--text-on-primary);
-  --color-foreground: var(--text-primary);
-  --color-secondary: var(--text-secondary);
-  --color-muted: var(--text-muted);
-  --color-border: var(--border);
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-elevated: var(--elevated);
+  --color-reading: var(--reading);
+  --color-foreground: var(--foreground);
+  --color-foreground-soft: var(--foreground-soft);
+  --color-foreground-muted: var(--foreground-muted);
   --color-accent: var(--accent);
-  --color-accent-hover: var(--accent-hover);
-  --color-overlay: var(--overlay);
+  --color-accent-soft: var(--accent-soft);
+  --color-border: var(--border);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+  --font-display: 'Shippori Mincho', serif;
+  --font-reading: 'Public Sans', system-ui, sans-serif;
+  --font-ui: 'DM Sans', system-ui, sans-serif;
 }
 
-:root {
-  --font-reading: "Public Sans", system-ui, sans-serif;
+:root, .light {
+  --background:       #F7F4F0;
+  --surface:          #EFEBE5;
+  --elevated:         #E6E1D9;
+  --reading:          #FAF8F5;
+  --foreground:       #1A1614;
+  --foreground-soft:  #4A4540;
+  --foreground-muted: #8A8580;
+  --accent:           #C45D3E;
+  --accent-soft:      #D4856E;
+  --border:           #DDD8D0;
+  --success:          #4A7A5B;
+  --warning:          #B8860B;
+  --shadow-sm: 0 1px 3px rgba(26,22,20,0.06), 0 1px 2px rgba(26,22,20,0.04);
+  --shadow-md: 0 4px 12px rgba(26,22,20,0.08), 0 2px 4px rgba(26,22,20,0.04);
+  --shadow-lg: 0 12px 32px rgba(26,22,20,0.10), 0 4px 8px rgba(26,22,20,0.04);
   --font-size-reading: 18px;
   --line-height-reading: 1.75;
 }
 
-[data-theme="light"] {
-  --bg-app: #fafaf8;
-  --bg-reader: #ffffff;
-  --bg-surface: #f5f5f3;
-  --bg-primary: #1a1a1a;
-  --bg-primary-hover: #111111;
-  --text-on-primary: #ffffff;
-  --text-primary: #1a1a1a;
-  --text-secondary: #555555;
-  --text-muted: #999999;
-  --border: #e5e5e5;
-  --accent: #1a1a1a;
-  --accent-hover: #111111;
-  --overlay: rgba(0, 0, 0, 0.3);
-}
-
-[data-theme="sepia"] {
-  --bg-app: #f4ecd8;
-  --bg-reader: #f8f1e0;
-  --bg-surface: #ede3cb;
-  --bg-primary: #7a5a3a;
-  --bg-primary-hover: #6b4e32;
-  --text-on-primary: #fdf6e3;
-  --text-primary: #5b4636;
-  --text-secondary: #7a6352;
-  --text-muted: #a08b76;
-  --border: #d4c5a9;
-  --accent: #5b4636;
-  --accent-hover: #4b392b;
-  --overlay: rgba(0, 0, 0, 0.3);
-}
-
-[data-theme="dark"] {
-  --bg-app: #111111;
-  --bg-reader: #1a1a1a;
-  --bg-surface: #222222;
-  --bg-primary: #ffffff;
-  --bg-primary-hover: #e5e5e5;
-  --text-on-primary: #111111;
-  --text-primary: #d4d4d4;
-  --text-secondary: #a0a0a0;
-  --text-muted: #666666;
-  --border: #333333;
-  --accent: #ffffff;
-  --accent-hover: #f5f5f5;
-  --overlay: rgba(0, 0, 0, 0.6);
+.dark {
+  --background:       #141210;
+  --surface:          #1E1B18;
+  --elevated:         #282420;
+  --reading:          #1A1816;
+  --foreground:       #E8E4DF;
+  --foreground-soft:  #B0AAA2;
+  --foreground-muted: #706B65;
+  --accent:           #E07050;
+  --accent-soft:      #C45D3E;
+  --border:           #2E2A26;
+  --success:          #5C9A6E;
+  --warning:          #D4A030;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.20), 0 1px 2px rgba(0,0,0,0.16);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.28), 0 2px 4px rgba(0,0,0,0.16);
+  --shadow-lg: 0 12px 32px rgba(0,0,0,0.36), 0 4px 8px rgba(0,0,0,0.16);
 }
 
 *,
@@ -83,20 +72,26 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  scroll-behavior: smooth;
 }
 
 body {
   margin: 0;
   padding: 0;
-  font-family: var(--font-reading);
-  background-color: var(--bg-app);
-  color: var(--text-primary);
+  font-family: var(--font-ui);
+  background-color: var(--background);
+  color: var(--foreground);
   overscroll-behavior: none;
   min-height: 100dvh;
 }
 
 #root {
   min-height: 100dvh;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--accent) 20%, transparent);
+  color: var(--accent);
 }
 
 ::-webkit-scrollbar {
@@ -108,7 +103,7 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--text-muted);
+  background: var(--foreground-muted);
   border-radius: 2px;
 }
 
@@ -131,7 +126,7 @@ a,
   font-family: var(--font-reading);
   font-size: var(--font-size-reading);
   line-height: var(--line-height-reading);
-  color: var(--text-primary);
+  color: var(--foreground);
 }
 
 .reader-content p {
@@ -142,7 +137,8 @@ a,
 .reader-content h2,
 .reader-content h3,
 .reader-content h4 {
-  color: var(--text-primary);
+  font-family: var(--font-display);
+  color: var(--foreground);
   font-weight: 700;
   margin-top: 1.5em;
   margin-bottom: 0.5em;
@@ -169,4 +165,139 @@ a,
 .reader-content strong,
 .reader-content b {
   font-weight: 700;
+}
+
+/* ─── Landing page ─────────────────────────────────────────── */
+
+@keyframes spineFade {
+  0%   { opacity: 0; }
+  30%  { opacity: 0.3; }
+  70%  { opacity: 0.3; }
+  100% { opacity: 0; }
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.nav-link {
+  transition: color 0.15s ease;
+  text-decoration: none;
+}
+.nav-link:hover {
+  color: var(--foreground);
+}
+
+.cta-primary {
+  transition: filter 0.15s ease, transform 0.1s ease;
+}
+.cta-primary:hover { filter: brightness(1.1); }
+.cta-primary:active { transform: scale(0.97); }
+
+.cta-secondary {
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+.cta-secondary:hover {
+  background-color: var(--surface);
+  border-color: var(--foreground-muted);
+}
+
+.theme-toggle {
+  transition: background-color 0.15s ease;
+}
+.theme-toggle:hover {
+  background-color: var(--elevated);
+}
+
+.book-card {
+  transition: border-color 0.2s ease;
+}
+.book-card:hover {
+  border-color: var(--accent-soft);
+}
+
+.chapter-row {
+  transition: background-color 0.12s ease;
+}
+.chapter-row:hover {
+  background-color: var(--elevated);
+}
+
+.back-btn {
+  transition: color 0.15s ease;
+}
+.back-btn:hover {
+  color: var(--foreground);
+}
+
+.auth-input {
+  width: 100%;
+  font-family: var(--font-ui);
+  font-size: 0.875rem;
+  padding: 11px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background-color: var(--background);
+  color: var(--foreground);
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.auth-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(196,93,62,0.10);
+}
+.dark .auth-input:focus {
+  box-shadow: 0 0 0 3px rgba(224,112,80,0.10);
+}
+.auth-input::placeholder {
+  color: var(--foreground-muted);
+}
+
+.oauth-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-family: var(--font-ui);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background-color: var(--surface);
+  color: var(--foreground);
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+.oauth-btn:hover {
+  border-color: var(--foreground-muted);
+  background-color: var(--elevated);
+}
+
+.auth-link {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.15s ease;
+  cursor: pointer;
+}
+.auth-link:hover {
+  color: var(--accent-soft);
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }

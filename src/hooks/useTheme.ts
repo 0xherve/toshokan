@@ -6,7 +6,7 @@ export function useTheme() {
   const [theme, setThemeState] = useState<ThemeName>(() => getSettings().theme);
 
   useEffect(() => {
-    document.documentElement.setAttribute("data-theme", theme);
+    document.documentElement.className = theme;
   }, [theme]);
 
   const setTheme = useCallback((newTheme: ThemeName) => {

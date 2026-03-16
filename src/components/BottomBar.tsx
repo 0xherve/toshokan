@@ -26,17 +26,17 @@ export function BottomBar({
     >
       <div className="h-0.5 w-full bg-border">
         <div
-          className="h-full bg-foreground transition-all duration-300"
+          className="h-full bg-accent transition-all duration-300"
           style={{ width: `${progressPercent}%` }}
         />
       </div>
 
-      <div className="flex items-center justify-between px-4 h-11">
-        <span className="text-xs truncate flex-1 text-secondary">
+      <div className="flex items-center justify-between px-4 h-11 font-ui">
+        <span className="text-xs truncate flex-1 text-foreground-soft">
           {chapterTitle}
         </span>
 
-        <span className="text-xs mx-3 whitespace-nowrap text-muted">
+        <span className="text-xs mx-3 whitespace-nowrap text-foreground-muted">
           {chapterIndex + 1}/{totalChapters} &middot; {progressPercent}%
         </span>
 

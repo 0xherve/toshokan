@@ -20,7 +20,7 @@ export function TopBar({
 }: TopBarProps) {
   return (
     <div className="fixed top-0 left-0 right-0 z-40 safe-area-top border-b border-border bg-surface">
-      <div className="flex items-center justify-between px-4 h-12">
+      <div className="flex items-center justify-between px-4 h-12 font-ui">
         <div className="flex items-center gap-1">
           {onLibraryClick && (
             <button
@@ -53,7 +53,7 @@ export function TopBar({
         <div className="flex items-center gap-1">
           <button
             onClick={onThemeClick}
-            className="p-2 rounded-lg transition-colors text-secondary"
+            className="p-2 rounded-lg transition-colors text-foreground-soft"
             aria-label="Theme"
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

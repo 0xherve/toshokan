@@ -10,7 +10,7 @@ export const MIN_FONT_SIZE = 14;
 export const MAX_FONT_SIZE = 28;
 export const FONT_SIZE_STEP = 2;
 
-export type ThemeName = "light" | "sepia" | "dark";
+export type ThemeName = "light" | "dark";
 
 export interface Settings {
   theme: ThemeName;
