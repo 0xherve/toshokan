@@ -7,7 +7,7 @@ export function Footer() {
 
   return (
     <footer className="bg-background safe-area-bottom">
-      <div className="border-t border-border max-w-5xl mx-auto h-14 flex items-center justify-between">
+      <div className="border-t border-border max-w-5xl mx-auto px-4 md:px-10 h-14 flex items-center justify-between">
         <div className="font-ui text-[0.8125rem] font-medium text-foreground-muted">
           Built by <a className="text-foreground hover:underline" href="https://github.com/0xherve" target="_blank">0xherve</a>
         </div>

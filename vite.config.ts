@@ -9,7 +9,7 @@ export default defineConfig({
   },
   plugins: [
     tsconfigPaths(),
-    tanstackStart({ preset: 'vercel' }),
+    tanstackStart(),
     tailwindcss(),
   ],
 });

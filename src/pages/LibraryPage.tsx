@@ -57,8 +57,8 @@ export function LibraryPage() {
   });
 
   return (
-    <div className="max-w-5xl mx-auto px-10 pt-22 pb-20 animate-[fadeIn_0.3s_ease]">
-      <h1 className="font-display text-[2rem] font-bold tracking-tight mb-7">
+    <div className="max-w-5xl mx-auto px-4 md:px-10 pt-22 pb-20 animate-[fadeIn_0.3s_ease]">
+      <h1 className="font-display text-[1.5rem] md:text-[2rem] font-bold tracking-tight mb-7">
         Your Library
       </h1>
 
@@ -68,7 +68,7 @@ export function LibraryPage() {
           to="/books/$bookSlug"
           params={{ bookSlug: currentBook.id }}
           onClick={() => saveLastBookId(currentBook.id)}
-          className="book-card flex gap-[18px] items-center bg-surface rounded-xl border border-border shadow-sm px-[26px] py-[22px] mb-7"
+          className="book-card flex gap-[18px] items-center bg-surface rounded-xl border border-border shadow-sm px-4 py-4 md:px-[26px] md:py-[22px] mb-7"
         >
           <div
             className="w-[52px] h-[75px] rounded-md shrink-0 flex items-center justify-center font-display text-xl text-accent opacity-55 border border-border"
@@ -131,7 +131,7 @@ export function LibraryPage() {
       )}
 
       {/* Search + filter */}
-      <div className="flex gap-3 mb-6 items-center">
+      <div className="flex flex-col sm:flex-row gap-3 mb-6 sm:items-center">
         <input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -167,7 +167,7 @@ export function LibraryPage() {
       {error && <p className="mt-4 text-sm text-foreground-soft font-ui">{error}</p>}
 
       {/* Book grid */}
-      <div className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-4">
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-4">
         {filtered.map((book, i) => {
           const completion = getCompletion(book.id, book.chapterCount);
           return (

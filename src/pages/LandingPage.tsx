@@ -17,7 +17,7 @@ export function LandingPage() {
 
   return (
     <div className="bg-background text-foreground font-ui overflow-x-hidden">
-      <section className="relative mt-14 h-[calc(100dvh-3.5rem)] px-10 max-w-[1120px] mx-auto flex items-center justify-center text-center overflow-hidden">
+      <section className="relative mt-14 h-[calc(100dvh-3.5rem)] px-5 md:px-10 max-w-[1120px] mx-auto flex items-center justify-center text-center overflow-hidden">
         {/* Tategaki ruled lines */}
         <div className="absolute inset-0 z-0 pointer-events-none">
           {SPINE_LINES.map((line, i) => (
@@ -45,7 +45,7 @@ export function LandingPage() {
             <div className="font-ui text-xs font-semibold text-accent tracking-[0.12em] uppercase mb-5">
               Just for reading
             </div>
-            <h1 className="font-display text-[3.75rem] font-bold leading-[1.1] tracking-tight mb-6">
+            <h1 className="font-display text-[2rem] sm:text-[2.75rem] md:text-[3.75rem] font-bold leading-[1.1] tracking-tight mb-6">
               A Quite Room <br /> with a Good book
             </h1>
           </div>
@@ -58,13 +58,13 @@ export function LandingPage() {
               transitionDelay: "0.3s",
             }}
           >
-            <p className="font-reading text-md leading-relaxed text-foreground-soft max-w-[520px] mb-10">
+            <p className="font-reading text-md leading-relaxed text-foreground-soft max-w-[320px] sm:max-w-[520px] mb-10">
               Toshokan is an opinionated light novel reader that is intentionally minimal to get out of the way of the reader. 
             </p>
           </div>
 
           <div
-            className="flex gap-3 items-center justify-center transition-all duration-600 ease-out"
+            className="flex flex-col sm:flex-row gap-3 items-center justify-center transition-all duration-600 ease-out"
             style={{
               opacity: heroReady ? 1 : 0,
               transform: heroReady ? "translateY(0)" : "translateY(12px)",

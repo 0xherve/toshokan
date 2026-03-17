@@ -29,7 +29,7 @@ export function AdminDashboardPage() {
 
   return (
     <AdminScaffold title="Overview" subtitle="Operational summary.">
-      <section className="grid grid-cols-2 gap-3">
+      <section className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {statsLoading
           ? Array.from({ length: 4 }).map((_, i) => (
               <article

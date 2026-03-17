@@ -3,9 +3,9 @@ import { Link } from "@tanstack/react-router";
 export function AboutPage() {
   return (
     <main>
-      <div className="max-w-4xl mx-auto px-10 pt-36 pb-24 animate-[fadeIn_0.3s_ease]">
+      <div className="max-w-4xl mx-auto px-5 md:px-10 pt-24 md:pt-36 pb-24 animate-[fadeIn_0.3s_ease]">
         <div className="text-center mb-12">
-          <h1 className="font-display text-6xl font-bold tracking-tight leading-[1.15] mb-5">
+          <h1 className="font-display text-3xl sm:text-5xl md:text-6xl font-bold tracking-tight leading-[1.15] mb-5">
             About Toshokan
           </h1>
           <p className="font-display text-lg text-foreground-muted tracking-[0.04em]">
@@ -35,14 +35,14 @@ export function AboutPage() {
       </div>
 
       <section className="pb-6 max-w-5xl mx-auto mb-24">
-        <div className="flex flex-col items-center justify-center bg-surface rounded-2xl border border-border shadow-md px-12 py-14 text-center">
+        <div className="flex flex-col items-center justify-center bg-surface rounded-2xl border border-border shadow-md px-6 py-8 md:px-12 md:py-14 text-center">
           <h2 className="font-display text-[2rem] font-bold tracking-tight mb-3">
             Join the club
           </h2>
           <p className="font-reading text-base text-foreground-muted mx-auto mb-7">
             Create an account and start reading the right way.
           </p>
-          <div className="flex gap-3 justify-center">
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link
               to="/auth/signup"
               className="cta-primary font-ui text-[0.9375rem] font-semibold px-8 py-3.5 rounded-lg border-none bg-accent text-white tracking-wide"

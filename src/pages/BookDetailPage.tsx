@@ -9,7 +9,7 @@ export function BookDetailPage() {
   const { book, isLoading, error } = useBook(bookSlug);
 
   return (
-    <div className="max-w-[860px] mx-auto px-10 pt-22 pb-20 animate-[fadeIn_0.3s_ease]">
+    <div className="max-w-[860px] mx-auto px-4 md:px-10 pt-22 pb-20 animate-[fadeIn_0.3s_ease]">
       <Link
         to="/library"
         className="back-btn font-ui text-[0.8125rem] font-medium text-foreground-muted inline-flex items-center gap-1.5 mb-5"
@@ -48,7 +48,7 @@ function BookContent({ book }: { book: BookItem }) {
   return (
     <>
       {/* Book info card */}
-      <div className="flex gap-6 mb-9 bg-surface rounded-[14px] border border-border p-7">
+      <div className="flex flex-col sm:flex-row gap-6 mb-9 bg-surface rounded-[14px] border border-border p-5 sm:p-7">
         {/* Cover placeholder */}
         <div
           className="w-[90px] h-[130px] rounded-md shrink-0 flex items-center justify-center font-display text-[2.125rem] text-accent opacity-55 border border-border"
@@ -61,7 +61,7 @@ function BookContent({ book }: { book: BookItem }) {
         </div>
 
         <div className="flex-1 min-w-0">
-          <h1 className="font-display text-[1.75rem] font-bold leading-[1.2] mb-1.5 tracking-tight">
+          <h1 className="font-display text-[1.375rem] md:text-[1.75rem] font-bold leading-[1.2] mb-1.5 tracking-tight">
             {book.title}
           </h1>
           <p className="font-ui text-sm text-foreground-soft mb-3">{book.author}</p>
