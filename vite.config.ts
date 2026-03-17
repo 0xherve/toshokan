@@ -4,13 +4,12 @@ import tsconfigPaths from "vite-tsconfig-paths";
 import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
-  envPrefix: ["VITE_"],
   server: {
     port: 3000,
   },
   plugins: [
     tsconfigPaths(),
-    tanstackStart(),
+    tanstackStart({ preset: 'vercel' }),
     tailwindcss(),
   ],
 });
