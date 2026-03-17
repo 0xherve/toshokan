@@ -4,16 +4,17 @@ import { upsertProgress } from "../../server/functions/progress/upsertProgress";
 
 const SYNC_DEBOUNCE_MS = 2000;
 
-export function useReadingProgress(bookId: string, totalChapters = 0) {
-  const [currentChapter, setCurrentChapterState] = useState(0);
+export function useReadingProgress(bookId: string, totalChapters = 0, initialChapter?: number) {
+  const [currentChapter, setCurrentChapterState] = useState(initialChapter ?? 0);
   const [scrollPercent, setScrollPercent] = useState(0);
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const syncTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const updatedAtRef = useRef<number>(Date.now());
 
-  // Load initial state from Dexie
+  // Load initial state from Dexie (skip if initialChapter was provided)
   useEffect(() => {
+    if (initialChapter !== undefined) return;
     localDb.readingProgress.get(bookId).then((saved) => {
       if (!saved) return;
       const chapter =
@@ -22,7 +23,7 @@ export function useReadingProgress(bookId: string, totalChapters = 0) {
           : saved.chapterIndex;
       setCurrentChapterState(chapter);
     });
-  }, [bookId, totalChapters]);
+  }, [bookId, totalChapters, initialChapter]);
 
   // Restore scroll position when chapter changes
   useEffect(() => {

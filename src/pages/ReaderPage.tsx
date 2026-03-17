@@ -1,9 +1,10 @@
-import { Link, useParams } from "@tanstack/react-router";
+import { Link, useParams, useSearch } from "@tanstack/react-router";
 import App from "../App";
 import { useBook } from "../hooks/useBooks";
 
 export function ReaderPage() {
   const { bookId } = useParams({ from: "/read/$bookId" });
+  const { ch } = useSearch({ from: "/read/$bookId" });
   const { book, isLoading, error } = useBook(bookId);
 
   if (isLoading) {
@@ -34,6 +35,6 @@ export function ReaderPage() {
   }
 
   return (
-    <App bookId={book.id} bookTitle={book.title} chapterCount={book.chapterCount} />
+    <App bookId={book.id} bookTitle={book.title} chapterCount={book.chapterCount} initialChapter={ch} />
   );
 }

@@ -28,9 +28,10 @@ interface ReaderAppProps {
   bookId: string;
   bookTitle: string;
   chapterCount: number;
+  initialChapter?: number;
 }
 
-export default function App({ bookId, bookTitle, chapterCount }: ReaderAppProps) {
+export default function App({ bookId, bookTitle, chapterCount, initialChapter }: ReaderAppProps) {
   const navigate = useNavigate();
   const { theme, setTheme } = useTheme();
 
@@ -42,7 +43,7 @@ export default function App({ bookId, bookTitle, chapterCount }: ReaderAppProps)
     scrollPercent,
     handleScroll,
     scrollContainerRef,
-  } = useReadingProgress(bookId, chapterCount);
+  } = useReadingProgress(bookId, chapterCount, initialChapter);
 
   const { chapters, isLoading, error } = useEpubReader(bookId, currentChapter);
 

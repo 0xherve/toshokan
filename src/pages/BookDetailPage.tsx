@@ -127,6 +127,7 @@ function BookContent({ book }: { book: BookItem }) {
               key={ch.index}
               to="/read/$bookId"
               params={{ bookId: book.id }}
+              search={{ ch: ch.index }}
               className="chapter-row flex items-center gap-3 px-5 py-3 border-b border-border last:border-b-0"
             >
               <span className="font-ui text-2xs text-foreground-muted font-medium shrink-0 w-8 text-right">
