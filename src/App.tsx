@@ -14,10 +14,9 @@ import { BottomBar } from "./components/BottomBar";
 import { ChapterNav } from "./components/ChapterNav";
 import { SettingsPanel } from "./components/SettingsPanel";
 import { BookmarkList } from "./components/BookmarkList";
-import { ThemePanel } from "./components/ThemePanel";
 import { InstallToast } from "./components/InstallToast";
 
-type Panel = "none" | "chapters" | "settings" | "bookmarks" | "theme";
+type Panel = "none" | "chapters" | "settings" | "bookmarks";
 
 type BeforeInstallPromptEvent = Event & {
   prompt: () => Promise<void>;
@@ -214,7 +213,7 @@ export default function App({ bookId, bookTitle, chapterCount, initialChapter }:
         onLibraryClick={() => navigate({ to: "/library" })}
         onMenuClick={() => openPanel("chapters")}
         onBookmarkClick={handleAddBookmark}
-        onThemeClick={() => openPanel("theme")}
+        onThemeClick={() => setTheme(theme === "light" ? "dark" : "light")}
         isBookmarked={bookmarks.some((bm) => bm.chapterIndex === currentChapter)}
       />
 
@@ -256,13 +255,6 @@ export default function App({ bookId, bookTitle, chapterCount, initialChapter }:
         onClose={closePanel}
         fontSize={fontSize}
         onFontSizeChange={handleFontSizeChange}
-      />
-
-      <ThemePanel
-        open={activePanel === "theme"}
-        onClose={closePanel}
-        theme={theme}
-        onThemeChange={setTheme}
       />
 
       <BookmarkList

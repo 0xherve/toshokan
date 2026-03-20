@@ -62,7 +62,7 @@ export function LandingPage() {
               Toshokan is an opinionated light novel reader that is intentionally minimal to get out of the way of the reader. 
             </p>
           </div>
-
+          
           <div
             className="flex flex-col sm:flex-row gap-3 items-center justify-center transition-all duration-600 ease-out"
             style={{
