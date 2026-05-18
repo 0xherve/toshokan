@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
 import { Link, useLocation } from "@tanstack/react-router";
-import { useAuth } from "../lib/auth";
 
 interface AdminScaffoldProps {
   title: string;
@@ -18,34 +17,6 @@ const adminNavItems = [
 
 export function AdminScaffold({ title, subtitle, children }: AdminScaffoldProps) {
   const location = useLocation();
-  const { role, isLoading } = useAuth();
-
-  if (isLoading) {
-    return (
-      <main className="px-4 py-20 max-w-3xl mx-auto">
-        <div className="text-sm text-foreground-muted">Loading session...</div>
-      </main>
-    );
-  }
-
-  if (role !== "admin") {
-    return (
-      <main className="min-h-100 flex flex-col items-center justify-center">
-        <div className="mx-auto text-center">
-        <h1 className="text-4xl font-bold text-foreground">Admin access required</h1>
-        <p className="text-sm mt-2 text-foreground-soft">
-          Sign in with an admin account to continue.
-        </p>
-        <Link
-          to="/auth/signin"
-          className="inline-block mt-4 px-4 py-2 rounded-xl text-sm font-medium bg-accent text-white transition-colors"
-        >
-          Sign in
-        </Link>
-        </div>
-      </main>
-    );
-  }
 
   return (
     <main className="px-4 py-20 safe-area-bottom max-w-5xl mx-auto">
