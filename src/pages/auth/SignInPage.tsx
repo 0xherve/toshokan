@@ -1,17 +1,19 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useAuth } from "../../lib/auth";
 import { AuthDivider, AuthShell } from "./AuthShell";
 
 export function SignInPage() {
   const navigate = useNavigate();
+  const { redirect: redirectTo } = useSearch({ from: "/auth/signin" });
+  const postLoginUrl = redirectTo || "/library";
   const { email: activeEmail, role, isLoading, signInWithPassword, signInWithGoogle, signOut } = useAuth();
 
   useEffect(() => {
     if (!isLoading && role !== "guest") {
-      void navigate({ to: "/library", replace: true });
+      void navigate({ to: postLoginUrl, replace: true });
     }
-  }, [role, isLoading, navigate]);
+  }, [role, isLoading, navigate, postLoginUrl]);
 
   const [email, setEmail] = useState(activeEmail ?? "");
   const [password, setPassword] = useState("");
@@ -34,12 +36,12 @@ export function SignInPage() {
       setMessage(error);
       return;
     }
-    void navigate({ to: "/library" });
+    void navigate({ to: postLoginUrl });
   };
 
   const handleGoogle = async () => {
     setIsSubmitting(true);
-    const error = await signInWithGoogle("/library");
+    const error = await signInWithGoogle(postLoginUrl);
     setIsSubmitting(false);
     if (error) setMessage(error);
   };

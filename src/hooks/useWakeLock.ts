@@ -11,6 +11,11 @@ export function useWakeLock() {
     const request = async () => {
       try {
         if ("wakeLock" in navigator) {
+          // Release previous lock before requesting a new one
+          if (wakeLock) {
+            await wakeLock.release();
+            wakeLock = null;
+          }
           const nav = navigator as Navigator & {
             wakeLock: { request: (type: "screen") => Promise<WakeLockSentinel> };
           };

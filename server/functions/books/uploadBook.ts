@@ -30,27 +30,31 @@ export const uploadBook = createServerFn({ method: "POST" })
 
     await uploadToR2(storageKey, buffer, "application/epub+zip");
 
-    const [book] = await db
-      .insert(books)
-      .values({
-        title: title.trim(),
-        author: author.trim() || "Unknown",
-        status,
-        epubStorageKey: storageKey,
-        chapterCount: chapters.length,
-      })
-      .returning({ id: books.id });
+    const [{ bookId, chapterCount }] = await db.transaction(async (tx) => {
+      const [book] = await tx
+        .insert(books)
+        .values({
+          title: title.trim(),
+          author: author.trim() || "Unknown",
+          status,
+          epubStorageKey: storageKey,
+          chapterCount: chapters.length,
+        })
+        .returning({ id: books.id });
 
-    if (chapters.length > 0) {
-      await db.insert(bookChapters).values(
-        chapters.map((ch) => ({
-          bookId: book.id,
-          chapterIndex: ch.chapterIndex,
-          title: ch.title,
-          html: ch.html,
-        })),
-      );
-    }
+      if (chapters.length > 0) {
+        await tx.insert(bookChapters).values(
+          chapters.map((ch) => ({
+            bookId: book.id,
+            chapterIndex: ch.chapterIndex,
+            title: ch.title,
+            html: ch.html,
+          })),
+        );
+      }
 
-    return { bookId: book.id, chapterCount: chapters.length };
+      return { bookId: book.id, chapterCount: chapters.length };
+    });
+
+    return { bookId, chapterCount };
   });

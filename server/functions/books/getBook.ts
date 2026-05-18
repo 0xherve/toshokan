@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { eq, and, ne } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import { db } from "../../db";
 import { books } from "../../../src/db/schema";
 
@@ -16,7 +16,7 @@ export const getBook = createServerFn({ method: "GET" })
         updatedAt: books.updatedAt,
       })
       .from(books)
-      .where(and(eq(books.id, bookId), ne(books.status, "archived")))
+      .where(and(eq(books.id, bookId), eq(books.status, "published")))
       .limit(1);
     return book ?? null;
   });

@@ -9,7 +9,7 @@ export type { LocalBookmark as Bookmark };
 async function flushUnsyncedBookmarks(bookId: string) {
   const unsynced = await localDb.bookmarks
     .where("synced")
-    .equals(0) // Dexie stores false as 0
+    .equals(false)
     .filter((b) => b.bookId === bookId && b.deletedAt === null)
     .toArray();
 
