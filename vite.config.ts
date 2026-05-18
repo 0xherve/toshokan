@@ -4,6 +4,8 @@ import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import tailwindcss from "@tailwindcss/vite";
 
+import { cloudflare } from "@cloudflare/vite-plugin";
+
 export default defineConfig({
   server: {
     port: 3000,
@@ -12,13 +14,10 @@ export default defineConfig({
     tsconfigPaths(),
     tanstackStart(),
     tailwindcss(),
-		nitro({
-			preset: "vercel",
-			vercel: {
-				functions: {
-					runtime: "nodejs22"
-				}
-			}
-    }),
+		cloudflare({
+          viteEnvironment: {
+            name: "ssr"
+          }
+        }),
   ],
 });

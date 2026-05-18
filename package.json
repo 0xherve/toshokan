@@ -6,13 +6,16 @@
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
-    "preview": "vite preview",
+    "preview": "bun run build && wrangler dev",
     "lint": "eslint .",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate"
+    "db:migrate": "drizzle-kit migrate",
+    "deploy": "bun run build && wrangler deploy",
+    "cf-typegen": "wrangler types"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.777.0",
+    "@cloudflare/vite-plugin": "^1.30.0",
     "@neondatabase/serverless": "^1.0.2",
     "@tabler/icons-react": "^3.40.0",
     "@tanstack/react-router": "^1.166.2",
@@ -23,7 +26,8 @@
     "epubjs": "^0.3.93",
     "nitro": "^3.0.260311-beta",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "wrangler": "^4.76.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.0.12",
