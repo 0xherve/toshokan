@@ -4,12 +4,9 @@ import {
   Outlet,
   Scripts,
   createRootRouteWithContext,
-  useLocation,
 } from "@tanstack/react-router";
 import appCss from "../index.css?url";
-import { AuthProvider } from "../lib/auth";
-import { Navbar } from "../components/Navbar";
-import { Footer } from "../components/Footer";
+import { AuthProvider } from "@/lib/auth";
 
 export const Route = createRootRouteWithContext()({
   head: () => ({
@@ -44,26 +41,6 @@ function NotFound() {
   );
 }
 
-function AppShell() {
-  const location = useLocation();
-  const isReader = location.pathname.startsWith("/read/") || location.pathname === "/read";
-  const isAuth = location.pathname.startsWith("/auth");
-
-  if (isReader || isAuth) {
-    return <Outlet />;
-  }
-
-  return (
-    <div className="min-h-dvh flex flex-col">
-      <Navbar />
-      <div className="flex-1">
-        <Outlet />
-      </div>
-      <Footer />
-    </div>
-  );
-}
-
 function RootDocument() {
   return (
     <html lang="en" className="dark">
@@ -72,7 +49,7 @@ function RootDocument() {
       </head>
       <body>
         <AuthProvider>
-          <AppShell />
+          <Outlet />
         </AuthProvider>
         <Scripts />
       </body>

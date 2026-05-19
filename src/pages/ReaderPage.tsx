@@ -1,10 +1,13 @@
-import { Link, useParams, useSearch } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import App from "../App";
 import { useBook } from "../hooks/useBooks";
 
-export function ReaderPage() {
-  const { bookId } = useParams({ from: "/read/$bookId" });
-  const { ch } = useSearch({ from: "/read/$bookId" });
+interface ReaderPageProps {
+  bookId: string;
+  ch?: number;
+}
+
+export function ReaderPage({ bookId, ch }: ReaderPageProps) {
   const { book, isLoading, error } = useBook(bookId);
 
   if (isLoading) {

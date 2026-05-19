@@ -8,12 +8,12 @@ const protectedRoutes: { pattern: string; role?: string }[] = [
 const authRouteMiddleware = createMiddleware({ type: "request" }).server(
   async ({ pathname, request, next }) => {
     if (pathname.startsWith("/api/auth")) {
-      const { auth } = await import("../server/auth");
+      const { auth } = await import("@server/auth");
       return auth.handler(request);
     }
 
     if (pathname.startsWith("/auth/")) {
-      const { auth } = await import("../server/auth");
+      const { auth } = await import("@server/auth");
       const session = await auth.api.getSession({
         headers: request.headers,
       });
@@ -28,7 +28,7 @@ const authRouteMiddleware = createMiddleware({ type: "request" }).server(
 
     const match = protectedRoutes.find((r) => pathname.startsWith(r.pattern));
     if (match) {
-      const { auth } = await import("../server/auth");
+      const { auth } = await import("@server/auth");
       const session = await auth.api.getSession({
         headers: request.headers,
       });

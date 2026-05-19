@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { localDb } from "../lib/localDb";
-import { upsertProgress } from "../../server/functions/progress/upsertProgress";
-import { getProgress } from "../../server/functions/progress/getProgress";
+import { upsertProgress } from "@server/functions/progress/upsertProgress";
+import { getProgress } from "@server/functions/progress/getProgress";
 
 const SYNC_DEBOUNCE_MS = 2000;
 

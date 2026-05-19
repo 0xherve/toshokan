@@ -1,11 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, useNavigate, useSearch } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { useAuth } from "../../lib/auth";
 import { AuthDivider, AuthShell } from "./AuthShell";
 
-export function SignInPage() {
+interface SignInPageProps {
+  redirect?: string;
+}
+
+export function SignInPage({ redirect: redirectTo }: SignInPageProps) {
   const navigate = useNavigate();
-  const { redirect: redirectTo } = useSearch({ from: "/auth/signin" });
   const postLoginUrl = redirectTo || "/library";
   const { email: activeEmail, role, isLoading, signInWithPassword, signInWithGoogle, signOut } = useAuth();
 

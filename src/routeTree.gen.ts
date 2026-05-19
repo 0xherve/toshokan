@@ -9,327 +9,462 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as LibraryRouteImport } from './routes/library'
-import { Route as AboutRouteImport } from './routes/about'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as ReadIndexRouteImport } from './routes/read/index'
-import { Route as AdminIndexRouteImport } from './routes/admin/index'
-import { Route as ReadBookIdRouteImport } from './routes/read/$bookId'
-import { Route as BooksBookSlugRouteImport } from './routes/books/$bookSlug'
+import { Route as AuthRouteRouteImport } from './routes/auth/route'
+import { Route as readerRouteRouteImport } from './routes/(reader)/route'
+import { Route as publicRouteRouteImport } from './routes/(public)/route'
+import { Route as appRouteRouteImport } from './routes/(app)/route'
+import { Route as adminRouteRouteImport } from './routes/(admin)/route'
+import { Route as publicIndexRouteImport } from './routes/(public)/index'
 import { Route as AuthSignupRouteImport } from './routes/auth/signup'
 import { Route as AuthSigninRouteImport } from './routes/auth/signin'
 import { Route as AuthForgotPasswordRouteImport } from './routes/auth/forgot-password'
-import { Route as AdminUsersRouteImport } from './routes/admin/users'
-import { Route as AdminIngestionRouteImport } from './routes/admin/ingestion'
-import { Route as AdminBooksRouteImport } from './routes/admin/books'
-import { Route as AdminAuditRouteImport } from './routes/admin/audit'
+import { Route as publicAboutRouteImport } from './routes/(public)/about'
+import { Route as appLibraryRouteImport } from './routes/(app)/library'
+import { Route as readerReadIndexRouteImport } from './routes/(reader)/read/index'
+import { Route as adminAdminIndexRouteImport } from './routes/(admin)/admin/index'
+import { Route as readerReadBookIdRouteImport } from './routes/(reader)/read/$bookId'
+import { Route as publicBooksBookSlugRouteImport } from './routes/(public)/books/$bookSlug'
+import { Route as adminAdminUsersRouteImport } from './routes/(admin)/admin/users'
+import { Route as adminAdminIngestionRouteImport } from './routes/(admin)/admin/ingestion'
+import { Route as adminAdminBooksRouteImport } from './routes/(admin)/admin/books'
+import { Route as adminAdminAuditRouteImport } from './routes/(admin)/admin/audit'
 
-const LibraryRoute = LibraryRouteImport.update({
-  id: '/library',
-  path: '/library',
+const AuthRouteRoute = AuthRouteRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AboutRoute = AboutRouteImport.update({
-  id: '/about',
-  path: '/about',
+const readerRouteRoute = readerRouteRouteImport.update({
+  id: '/(reader)',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
+const publicRouteRoute = publicRouteRouteImport.update({
+  id: '/(public)',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const appRouteRoute = appRouteRouteImport.update({
+  id: '/(app)',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const adminRouteRoute = adminRouteRouteImport.update({
+  id: '/(admin)',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const publicIndexRoute = publicIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ReadIndexRoute = ReadIndexRouteImport.update({
-  id: '/read/',
-  path: '/read/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminIndexRoute = AdminIndexRouteImport.update({
-  id: '/admin/',
-  path: '/admin/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ReadBookIdRoute = ReadBookIdRouteImport.update({
-  id: '/read/$bookId',
-  path: '/read/$bookId',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BooksBookSlugRoute = BooksBookSlugRouteImport.update({
-  id: '/books/$bookSlug',
-  path: '/books/$bookSlug',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => publicRouteRoute,
 } as any)
 const AuthSignupRoute = AuthSignupRouteImport.update({
-  id: '/auth/signup',
-  path: '/auth/signup',
-  getParentRoute: () => rootRouteImport,
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => AuthRouteRoute,
 } as any)
 const AuthSigninRoute = AuthSigninRouteImport.update({
-  id: '/auth/signin',
-  path: '/auth/signin',
-  getParentRoute: () => rootRouteImport,
+  id: '/signin',
+  path: '/signin',
+  getParentRoute: () => AuthRouteRoute,
 } as any)
 const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
-  id: '/auth/forgot-password',
-  path: '/auth/forgot-password',
-  getParentRoute: () => rootRouteImport,
+  id: '/forgot-password',
+  path: '/forgot-password',
+  getParentRoute: () => AuthRouteRoute,
 } as any)
-const AdminUsersRoute = AdminUsersRouteImport.update({
+const publicAboutRoute = publicAboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => publicRouteRoute,
+} as any)
+const appLibraryRoute = appLibraryRouteImport.update({
+  id: '/library',
+  path: '/library',
+  getParentRoute: () => appRouteRoute,
+} as any)
+const readerReadIndexRoute = readerReadIndexRouteImport.update({
+  id: '/read/',
+  path: '/read/',
+  getParentRoute: () => readerRouteRoute,
+} as any)
+const adminAdminIndexRoute = adminAdminIndexRouteImport.update({
+  id: '/admin/',
+  path: '/admin/',
+  getParentRoute: () => adminRouteRoute,
+} as any)
+const readerReadBookIdRoute = readerReadBookIdRouteImport.update({
+  id: '/read/$bookId',
+  path: '/read/$bookId',
+  getParentRoute: () => readerRouteRoute,
+} as any)
+const publicBooksBookSlugRoute = publicBooksBookSlugRouteImport.update({
+  id: '/books/$bookSlug',
+  path: '/books/$bookSlug',
+  getParentRoute: () => publicRouteRoute,
+} as any)
+const adminAdminUsersRoute = adminAdminUsersRouteImport.update({
   id: '/admin/users',
   path: '/admin/users',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => adminRouteRoute,
 } as any)
-const AdminIngestionRoute = AdminIngestionRouteImport.update({
+const adminAdminIngestionRoute = adminAdminIngestionRouteImport.update({
   id: '/admin/ingestion',
   path: '/admin/ingestion',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => adminRouteRoute,
 } as any)
-const AdminBooksRoute = AdminBooksRouteImport.update({
+const adminAdminBooksRoute = adminAdminBooksRouteImport.update({
   id: '/admin/books',
   path: '/admin/books',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => adminRouteRoute,
 } as any)
-const AdminAuditRoute = AdminAuditRouteImport.update({
+const adminAdminAuditRoute = adminAdminAuditRouteImport.update({
   id: '/admin/audit',
   path: '/admin/audit',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => adminRouteRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/about': typeof AboutRoute
-  '/library': typeof LibraryRoute
-  '/admin/audit': typeof AdminAuditRoute
-  '/admin/books': typeof AdminBooksRoute
-  '/admin/ingestion': typeof AdminIngestionRoute
-  '/admin/users': typeof AdminUsersRoute
+  '/auth': typeof AuthRouteRouteWithChildren
+  '/library': typeof appLibraryRoute
+  '/about': typeof publicAboutRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/signin': typeof AuthSigninRoute
   '/auth/signup': typeof AuthSignupRoute
-  '/books/$bookSlug': typeof BooksBookSlugRoute
-  '/read/$bookId': typeof ReadBookIdRoute
-  '/admin/': typeof AdminIndexRoute
-  '/read/': typeof ReadIndexRoute
+  '/': typeof publicIndexRoute
+  '/admin/audit': typeof adminAdminAuditRoute
+  '/admin/books': typeof adminAdminBooksRoute
+  '/admin/ingestion': typeof adminAdminIngestionRoute
+  '/admin/users': typeof adminAdminUsersRoute
+  '/books/$bookSlug': typeof publicBooksBookSlugRoute
+  '/read/$bookId': typeof readerReadBookIdRoute
+  '/admin/': typeof adminAdminIndexRoute
+  '/read/': typeof readerReadIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/about': typeof AboutRoute
-  '/library': typeof LibraryRoute
-  '/admin/audit': typeof AdminAuditRoute
-  '/admin/books': typeof AdminBooksRoute
-  '/admin/ingestion': typeof AdminIngestionRoute
-  '/admin/users': typeof AdminUsersRoute
+  '/auth': typeof AuthRouteRouteWithChildren
+  '/library': typeof appLibraryRoute
+  '/about': typeof publicAboutRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/signin': typeof AuthSigninRoute
   '/auth/signup': typeof AuthSignupRoute
-  '/books/$bookSlug': typeof BooksBookSlugRoute
-  '/read/$bookId': typeof ReadBookIdRoute
-  '/admin': typeof AdminIndexRoute
-  '/read': typeof ReadIndexRoute
+  '/': typeof publicIndexRoute
+  '/admin/audit': typeof adminAdminAuditRoute
+  '/admin/books': typeof adminAdminBooksRoute
+  '/admin/ingestion': typeof adminAdminIngestionRoute
+  '/admin/users': typeof adminAdminUsersRoute
+  '/books/$bookSlug': typeof publicBooksBookSlugRoute
+  '/read/$bookId': typeof readerReadBookIdRoute
+  '/admin': typeof adminAdminIndexRoute
+  '/read': typeof readerReadIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/about': typeof AboutRoute
-  '/library': typeof LibraryRoute
-  '/admin/audit': typeof AdminAuditRoute
-  '/admin/books': typeof AdminBooksRoute
-  '/admin/ingestion': typeof AdminIngestionRoute
-  '/admin/users': typeof AdminUsersRoute
+  '/(admin)': typeof adminRouteRouteWithChildren
+  '/(app)': typeof appRouteRouteWithChildren
+  '/(public)': typeof publicRouteRouteWithChildren
+  '/(reader)': typeof readerRouteRouteWithChildren
+  '/auth': typeof AuthRouteRouteWithChildren
+  '/(app)/library': typeof appLibraryRoute
+  '/(public)/about': typeof publicAboutRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/signin': typeof AuthSigninRoute
   '/auth/signup': typeof AuthSignupRoute
-  '/books/$bookSlug': typeof BooksBookSlugRoute
-  '/read/$bookId': typeof ReadBookIdRoute
-  '/admin/': typeof AdminIndexRoute
-  '/read/': typeof ReadIndexRoute
+  '/(public)/': typeof publicIndexRoute
+  '/(admin)/admin/audit': typeof adminAdminAuditRoute
+  '/(admin)/admin/books': typeof adminAdminBooksRoute
+  '/(admin)/admin/ingestion': typeof adminAdminIngestionRoute
+  '/(admin)/admin/users': typeof adminAdminUsersRoute
+  '/(public)/books/$bookSlug': typeof publicBooksBookSlugRoute
+  '/(reader)/read/$bookId': typeof readerReadBookIdRoute
+  '/(admin)/admin/': typeof adminAdminIndexRoute
+  '/(reader)/read/': typeof readerReadIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/'
-    | '/about'
+    | '/auth'
     | '/library'
+    | '/about'
+    | '/auth/forgot-password'
+    | '/auth/signin'
+    | '/auth/signup'
+    | '/'
     | '/admin/audit'
     | '/admin/books'
     | '/admin/ingestion'
     | '/admin/users'
-    | '/auth/forgot-password'
-    | '/auth/signin'
-    | '/auth/signup'
     | '/books/$bookSlug'
     | '/read/$bookId'
     | '/admin/'
     | '/read/'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/'
-    | '/about'
+    | '/auth'
     | '/library'
+    | '/about'
+    | '/auth/forgot-password'
+    | '/auth/signin'
+    | '/auth/signup'
+    | '/'
     | '/admin/audit'
     | '/admin/books'
     | '/admin/ingestion'
     | '/admin/users'
-    | '/auth/forgot-password'
-    | '/auth/signin'
-    | '/auth/signup'
     | '/books/$bookSlug'
     | '/read/$bookId'
     | '/admin'
     | '/read'
   id:
     | '__root__'
-    | '/'
-    | '/about'
-    | '/library'
-    | '/admin/audit'
-    | '/admin/books'
-    | '/admin/ingestion'
-    | '/admin/users'
+    | '/(admin)'
+    | '/(app)'
+    | '/(public)'
+    | '/(reader)'
+    | '/auth'
+    | '/(app)/library'
+    | '/(public)/about'
     | '/auth/forgot-password'
     | '/auth/signin'
     | '/auth/signup'
-    | '/books/$bookSlug'
-    | '/read/$bookId'
-    | '/admin/'
-    | '/read/'
+    | '/(public)/'
+    | '/(admin)/admin/audit'
+    | '/(admin)/admin/books'
+    | '/(admin)/admin/ingestion'
+    | '/(admin)/admin/users'
+    | '/(public)/books/$bookSlug'
+    | '/(reader)/read/$bookId'
+    | '/(admin)/admin/'
+    | '/(reader)/read/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  AboutRoute: typeof AboutRoute
-  LibraryRoute: typeof LibraryRoute
-  AdminAuditRoute: typeof AdminAuditRoute
-  AdminBooksRoute: typeof AdminBooksRoute
-  AdminIngestionRoute: typeof AdminIngestionRoute
-  AdminUsersRoute: typeof AdminUsersRoute
-  AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
-  AuthSigninRoute: typeof AuthSigninRoute
-  AuthSignupRoute: typeof AuthSignupRoute
-  BooksBookSlugRoute: typeof BooksBookSlugRoute
-  ReadBookIdRoute: typeof ReadBookIdRoute
-  AdminIndexRoute: typeof AdminIndexRoute
-  ReadIndexRoute: typeof ReadIndexRoute
+  adminRouteRoute: typeof adminRouteRouteWithChildren
+  appRouteRoute: typeof appRouteRouteWithChildren
+  publicRouteRoute: typeof publicRouteRouteWithChildren
+  readerRouteRoute: typeof readerRouteRouteWithChildren
+  AuthRouteRoute: typeof AuthRouteRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/library': {
-      id: '/library'
-      path: '/library'
-      fullPath: '/library'
-      preLoaderRoute: typeof LibraryRouteImport
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutRouteImport
+    '/(reader)': {
+      id: '/(reader)'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof readerRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
+    '/(public)': {
+      id: '/(public)'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof publicRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(app)': {
+      id: '/(app)'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof appRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(admin)': {
+      id: '/(admin)'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof adminRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(public)/': {
+      id: '/(public)/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/read/': {
-      id: '/read/'
-      path: '/read'
-      fullPath: '/read/'
-      preLoaderRoute: typeof ReadIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/': {
-      id: '/admin/'
-      path: '/admin'
-      fullPath: '/admin/'
-      preLoaderRoute: typeof AdminIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/read/$bookId': {
-      id: '/read/$bookId'
-      path: '/read/$bookId'
-      fullPath: '/read/$bookId'
-      preLoaderRoute: typeof ReadBookIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/books/$bookSlug': {
-      id: '/books/$bookSlug'
-      path: '/books/$bookSlug'
-      fullPath: '/books/$bookSlug'
-      preLoaderRoute: typeof BooksBookSlugRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof publicIndexRouteImport
+      parentRoute: typeof publicRouteRoute
     }
     '/auth/signup': {
       id: '/auth/signup'
-      path: '/auth/signup'
+      path: '/signup'
       fullPath: '/auth/signup'
       preLoaderRoute: typeof AuthSignupRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AuthRouteRoute
     }
     '/auth/signin': {
       id: '/auth/signin'
-      path: '/auth/signin'
+      path: '/signin'
       fullPath: '/auth/signin'
       preLoaderRoute: typeof AuthSigninRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AuthRouteRoute
     }
     '/auth/forgot-password': {
       id: '/auth/forgot-password'
-      path: '/auth/forgot-password'
+      path: '/forgot-password'
       fullPath: '/auth/forgot-password'
       preLoaderRoute: typeof AuthForgotPasswordRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AuthRouteRoute
     }
-    '/admin/users': {
-      id: '/admin/users'
+    '/(public)/about': {
+      id: '/(public)/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof publicAboutRouteImport
+      parentRoute: typeof publicRouteRoute
+    }
+    '/(app)/library': {
+      id: '/(app)/library'
+      path: '/library'
+      fullPath: '/library'
+      preLoaderRoute: typeof appLibraryRouteImport
+      parentRoute: typeof appRouteRoute
+    }
+    '/(reader)/read/': {
+      id: '/(reader)/read/'
+      path: '/read'
+      fullPath: '/read/'
+      preLoaderRoute: typeof readerReadIndexRouteImport
+      parentRoute: typeof readerRouteRoute
+    }
+    '/(admin)/admin/': {
+      id: '/(admin)/admin/'
+      path: '/admin'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof adminAdminIndexRouteImport
+      parentRoute: typeof adminRouteRoute
+    }
+    '/(reader)/read/$bookId': {
+      id: '/(reader)/read/$bookId'
+      path: '/read/$bookId'
+      fullPath: '/read/$bookId'
+      preLoaderRoute: typeof readerReadBookIdRouteImport
+      parentRoute: typeof readerRouteRoute
+    }
+    '/(public)/books/$bookSlug': {
+      id: '/(public)/books/$bookSlug'
+      path: '/books/$bookSlug'
+      fullPath: '/books/$bookSlug'
+      preLoaderRoute: typeof publicBooksBookSlugRouteImport
+      parentRoute: typeof publicRouteRoute
+    }
+    '/(admin)/admin/users': {
+      id: '/(admin)/admin/users'
       path: '/admin/users'
       fullPath: '/admin/users'
-      preLoaderRoute: typeof AdminUsersRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof adminAdminUsersRouteImport
+      parentRoute: typeof adminRouteRoute
     }
-    '/admin/ingestion': {
-      id: '/admin/ingestion'
+    '/(admin)/admin/ingestion': {
+      id: '/(admin)/admin/ingestion'
       path: '/admin/ingestion'
       fullPath: '/admin/ingestion'
-      preLoaderRoute: typeof AdminIngestionRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof adminAdminIngestionRouteImport
+      parentRoute: typeof adminRouteRoute
     }
-    '/admin/books': {
-      id: '/admin/books'
+    '/(admin)/admin/books': {
+      id: '/(admin)/admin/books'
       path: '/admin/books'
       fullPath: '/admin/books'
-      preLoaderRoute: typeof AdminBooksRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof adminAdminBooksRouteImport
+      parentRoute: typeof adminRouteRoute
     }
-    '/admin/audit': {
-      id: '/admin/audit'
+    '/(admin)/admin/audit': {
+      id: '/(admin)/admin/audit'
       path: '/admin/audit'
       fullPath: '/admin/audit'
-      preLoaderRoute: typeof AdminAuditRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof adminAdminAuditRouteImport
+      parentRoute: typeof adminRouteRoute
     }
   }
 }
 
-const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  AboutRoute: AboutRoute,
-  LibraryRoute: LibraryRoute,
-  AdminAuditRoute: AdminAuditRoute,
-  AdminBooksRoute: AdminBooksRoute,
-  AdminIngestionRoute: AdminIngestionRoute,
-  AdminUsersRoute: AdminUsersRoute,
+interface adminRouteRouteChildren {
+  adminAdminAuditRoute: typeof adminAdminAuditRoute
+  adminAdminBooksRoute: typeof adminAdminBooksRoute
+  adminAdminIngestionRoute: typeof adminAdminIngestionRoute
+  adminAdminUsersRoute: typeof adminAdminUsersRoute
+  adminAdminIndexRoute: typeof adminAdminIndexRoute
+}
+
+const adminRouteRouteChildren: adminRouteRouteChildren = {
+  adminAdminAuditRoute: adminAdminAuditRoute,
+  adminAdminBooksRoute: adminAdminBooksRoute,
+  adminAdminIngestionRoute: adminAdminIngestionRoute,
+  adminAdminUsersRoute: adminAdminUsersRoute,
+  adminAdminIndexRoute: adminAdminIndexRoute,
+}
+
+const adminRouteRouteWithChildren = adminRouteRoute._addFileChildren(
+  adminRouteRouteChildren,
+)
+
+interface appRouteRouteChildren {
+  appLibraryRoute: typeof appLibraryRoute
+}
+
+const appRouteRouteChildren: appRouteRouteChildren = {
+  appLibraryRoute: appLibraryRoute,
+}
+
+const appRouteRouteWithChildren = appRouteRoute._addFileChildren(
+  appRouteRouteChildren,
+)
+
+interface publicRouteRouteChildren {
+  publicAboutRoute: typeof publicAboutRoute
+  publicIndexRoute: typeof publicIndexRoute
+  publicBooksBookSlugRoute: typeof publicBooksBookSlugRoute
+}
+
+const publicRouteRouteChildren: publicRouteRouteChildren = {
+  publicAboutRoute: publicAboutRoute,
+  publicIndexRoute: publicIndexRoute,
+  publicBooksBookSlugRoute: publicBooksBookSlugRoute,
+}
+
+const publicRouteRouteWithChildren = publicRouteRoute._addFileChildren(
+  publicRouteRouteChildren,
+)
+
+interface readerRouteRouteChildren {
+  readerReadBookIdRoute: typeof readerReadBookIdRoute
+  readerReadIndexRoute: typeof readerReadIndexRoute
+}
+
+const readerRouteRouteChildren: readerRouteRouteChildren = {
+  readerReadBookIdRoute: readerReadBookIdRoute,
+  readerReadIndexRoute: readerReadIndexRoute,
+}
+
+const readerRouteRouteWithChildren = readerRouteRoute._addFileChildren(
+  readerRouteRouteChildren,
+)
+
+interface AuthRouteRouteChildren {
+  AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
+  AuthSigninRoute: typeof AuthSigninRoute
+  AuthSignupRoute: typeof AuthSignupRoute
+}
+
+const AuthRouteRouteChildren: AuthRouteRouteChildren = {
   AuthForgotPasswordRoute: AuthForgotPasswordRoute,
   AuthSigninRoute: AuthSigninRoute,
   AuthSignupRoute: AuthSignupRoute,
-  BooksBookSlugRoute: BooksBookSlugRoute,
-  ReadBookIdRoute: ReadBookIdRoute,
-  AdminIndexRoute: AdminIndexRoute,
-  ReadIndexRoute: ReadIndexRoute,
+}
+
+const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
+  AuthRouteRouteChildren,
+)
+
+const rootRouteChildren: RootRouteChildren = {
+  adminRouteRoute: adminRouteRouteWithChildren,
+  appRouteRoute: appRouteRouteWithChildren,
+  publicRouteRoute: publicRouteRouteWithChildren,
+  readerRouteRoute: readerRouteRouteWithChildren,
+  AuthRouteRoute: AuthRouteRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

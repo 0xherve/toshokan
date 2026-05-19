@@ -1,11 +1,14 @@
 import { useState, useEffect } from "react";
-import { Link, useParams } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { useBook, useChapters } from "../hooks/useBooks";
 import { localDb } from "../lib/localDb";
 import type { BookItem } from "../hooks/useBooks";
 
-export function BookDetailPage() {
-  const { bookSlug } = useParams({ from: "/books/$bookSlug" });
+interface BookDetailPageProps {
+  bookSlug: string;
+}
+
+export function BookDetailPage({ bookSlug }: BookDetailPageProps) {
   const { book, isLoading, error } = useBook(bookSlug);
 
   return (
