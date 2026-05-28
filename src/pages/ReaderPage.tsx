@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import App from "../App";
+import ReaderView from "../ReaderView";
 import { useBook } from "../hooks/useBooks";
 
 interface ReaderPageProps {
@@ -38,6 +38,6 @@ export function ReaderPage({ bookId, ch }: ReaderPageProps) {
   }
 
   return (
-    <App bookId={book.id} bookTitle={book.title} chapterCount={book.chapterCount} initialChapter={ch} />
+    <ReaderView bookId={book.id} bookTitle={book.title} chapterCount={book.chapterCount} initialChapter={ch} />
   );
 }

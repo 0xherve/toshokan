@@ -12,7 +12,7 @@ export function BookDetailPage({ bookSlug }: BookDetailPageProps) {
   const { book, isLoading, error } = useBook(bookSlug);
 
   return (
-    <div className="max-w-[860px] mx-auto px-4 md:px-10 pt-22 pb-20 animate-[fadeIn_0.3s_ease]">
+    <div className="max-w-5xl mx-auto px-4 md:px-10 pt-22 pb-20 animate-[fadeIn_0.3s_ease]">
       <Link
         to="/library"
         className="back-btn font-ui text-[0.8125rem] font-medium text-foreground-muted inline-flex items-center gap-1.5 mb-5"
@@ -120,7 +120,14 @@ function BookContent({ book }: { book: BookItem }) {
         </div>
         <div className="bg-surface rounded-[10px] border border-border overflow-hidden">
           {chaptersLoading && (
-            <p className="font-ui text-sm text-foreground-muted p-5">Loading chapters...</p>
+            <div className="p-2">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <div key={i} className="flex items-center gap-3 px-5 py-3 border-b border-border last:border-b-0 animate-pulse">
+                  <div className="w-8 h-3 rounded bg-elevated" />
+                  <div className="flex-1 h-3 rounded bg-elevated" />
+                </div>
+              ))}
+            </div>
           )}
           {!chaptersLoading && chapters.length === 0 && (
             <p className="font-ui text-sm text-foreground-muted p-5">No chapters available.</p>

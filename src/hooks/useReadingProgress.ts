@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { localDb } from "../lib/localDb";
-import { upsertProgress } from "@server/functions/progress/upsertProgress";
-import { getProgress } from "@server/functions/progress/getProgress";
+import { upsertProgress, getProgress } from "@server/functions/progress";
 
 const SYNC_DEBOUNCE_MS = 2000;
 
@@ -57,18 +56,29 @@ export function useReadingProgress(bookId: string, totalChapters = 0, initialCha
     loadProgress();
   }, [bookId, totalChapters, initialChapter]);
 
-  // Restore scroll position when chapter changes
   useEffect(() => {
-    if (!scrollContainerRef.current) return;
+    const el = scrollContainerRef.current;
+    if (!el) return;
+    let disposed = false;
     localDb.readingProgress.get(bookId).then((saved) => {
-      if (!saved || saved.chapterIndex !== currentChapter) return;
-      requestAnimationFrame(() => {
-        if (!scrollContainerRef.current) return;
-        const el = scrollContainerRef.current;
+      if (disposed || !saved || saved.chapterIndex !== currentChapter) return;
+      const applyScroll = () => {
         const maxScroll = el.scrollHeight - el.clientHeight;
-        el.scrollTop = maxScroll * saved.scrollPercent;
-      });
+        if (maxScroll > 0) {
+          el.scrollTop = maxScroll * saved.scrollPercent;
+        }
+      };
+      if (el.scrollHeight > el.clientHeight) {
+        requestAnimationFrame(applyScroll);
+      } else {
+        const observer = new MutationObserver(() => {
+          observer.disconnect();
+          requestAnimationFrame(applyScroll);
+        });
+        observer.observe(el, { childList: true, subtree: true });
+      }
     });
+    return () => { disposed = true; };
   }, [currentChapter, bookId]);
 
   const saveToLocal = useCallback(

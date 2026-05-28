@@ -1,6 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import {
   createContext,
+  useCallback,
   useContext,
   useMemo,
   type ReactNode,
@@ -38,15 +39,15 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const session = authClient.useSession();
 
-  const signInWithPassword = async (email: string, password: string) => {
+  const signInWithPassword = useCallback(async (email: string, password: string) => {
     const { error } = await authClient.signIn.email({
       email: email.trim().toLowerCase(),
       password,
     });
     return error?.message ?? null;
-  };
+  }, []);
 
-  const signUpWithPassword = async (
+  const signUpWithPassword = useCallback(async (
     name: string,
     email: string,
     password: string,
@@ -57,28 +58,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       password,
     });
     return error?.message ?? null;
-  };
+  }, []);
 
-  const forgotPassword = async (email: string) => {
+  const forgotPassword = useCallback(async (email: string) => {
     const { error } = await authClient.forgetPassword({
       email: email.trim().toLowerCase(),
       redirectTo: "/auth/reset-password",
     });
     return error?.message ?? null;
-  };
+  }, []);
 
-  const signOut = async () => {
+  const signOut = useCallback(async () => {
     const { error } = await authClient.signOut();
     return error?.message ?? null;
-  };
+  }, []);
 
-  const signInWithGoogle = async (callbackURL = "/library") => {
+  const signInWithGoogle = useCallback(async (callbackURL = "/library") => {
     const { error } = await authClient.signIn.social({
       provider: "google",
       callbackURL,
     });
     return error?.message ?? null;
-  };
+  }, []);
 
   const value = useMemo<AuthContextValue>(() => {
     const user = session.data?.user as { email?: string; role?: string } | undefined;
@@ -102,6 +103,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     session.error?.message,
     session.isPending,
     session.isRefetching,
+    signInWithPassword,
+    signUpWithPassword,
+    signInWithGoogle,
+    forgotPassword,
+    signOut,
   ]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

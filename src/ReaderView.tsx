@@ -5,8 +5,8 @@ import { useTheme } from "./hooks/useTheme";
 import { useReadingProgress } from "./hooks/useReadingProgress";
 import { useBookmarks, type Bookmark } from "./hooks/useBookmarks";
 import { useWakeLock } from "./hooks/useWakeLock";
-import { getSettings, saveSettings } from "./lib/storage";
-import { saveLastBookId } from "./lib/storage";
+import { useInstallPrompt } from "./hooks/useInstallPrompt";
+import { getSettings, saveSettings, saveLastBookId } from "./lib/storage";
 import { LoadingScreen } from "./components/LoadingScreen";
 import { Reader } from "./components/Reader";
 import { TopBar } from "./components/TopBar";
@@ -18,11 +18,6 @@ import { InstallToast } from "./components/InstallToast";
 
 type Panel = "none" | "chapters" | "settings" | "bookmarks";
 
-type BeforeInstallPromptEvent = Event & {
-  prompt: () => Promise<void>;
-  userChoice: Promise<{ outcome: "accepted" | "dismissed"; platform: string }>;
-};
-
 interface ReaderAppProps {
   bookId: string;
   bookTitle: string;
@@ -30,7 +25,7 @@ interface ReaderAppProps {
   initialChapter?: number;
 }
 
-export default function App({ bookId, bookTitle, chapterCount, initialChapter }: ReaderAppProps) {
+export default function ReaderView({ bookId, bookTitle, chapterCount, initialChapter }: ReaderAppProps) {
   const navigate = useNavigate();
   const { theme, setTheme } = useTheme();
 
@@ -58,8 +53,7 @@ export default function App({ bookId, bookTitle, chapterCount, initialChapter }:
   const [fontSize, setFontSizeState] = useState(() => getSettings().fontSize);
   const [chapterQuery, setChapterQuery] = useState("");
   const [chapterRange, setChapterRange] = useState(0);
-  const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
-  const [showInstallToast, setShowInstallToast] = useState(false);
+  const { showInstallToast, handleInstall, handleDismiss: handleInstallDismiss } = useInstallPrompt();
 
   const totalChapters = chapters.length || chapterCount;
 
@@ -74,55 +68,12 @@ export default function App({ bookId, bookTitle, chapterCount, initialChapter }:
     setChapterRange(Math.min(currentRange, Math.max(0, chapterRangesCount - 1)));
   }, [currentChapter, totalChapters, chapterRangesCount]);
 
-  useEffect(() => {
-    document.documentElement.className = theme;
-  }, [theme]);
-
-  useEffect(() => {
-    const dismissed = localStorage.getItem("sr-install-dismissed") === "1";
-    if (dismissed) return;
-
-    const onBeforeInstallPrompt = (event: Event) => {
-      event.preventDefault();
-      setInstallPrompt(event as BeforeInstallPromptEvent);
-      setShowInstallToast(true);
-    };
-
-    const onAppInstalled = () => {
-      localStorage.setItem("sr-install-dismissed", "1");
-      setShowInstallToast(false);
-      setInstallPrompt(null);
-    };
-
-    window.addEventListener("beforeinstallprompt", onBeforeInstallPrompt);
-    window.addEventListener("appinstalled", onAppInstalled);
-    return () => {
-      window.removeEventListener("beforeinstallprompt", onBeforeInstallPrompt);
-      window.removeEventListener("appinstalled", onAppInstalled);
-    };
-  }, []);
-
   const toggleUI = useCallback(() => setUiVisible((v) => !v), []);
   const openPanel = useCallback((panel: Panel) => {
     setActivePanel(panel);
     setUiVisible(false);
   }, []);
   const closePanel = useCallback(() => setActivePanel("none"), []);
-
-  const handleInstall = useCallback(async () => {
-    if (!installPrompt) return;
-    await installPrompt.prompt();
-    await installPrompt.userChoice;
-    localStorage.setItem("sr-install-dismissed", "1");
-    setShowInstallToast(false);
-    setInstallPrompt(null);
-  }, [installPrompt]);
-
-  const handleInstallDismiss = useCallback(() => {
-    localStorage.setItem("sr-install-dismissed", "1");
-    setShowInstallToast(false);
-    setInstallPrompt(null);
-  }, []);
 
   const handleFontSizeChange = useCallback((size: number) => {
     setFontSizeState(size);
@@ -140,9 +91,8 @@ export default function App({ bookId, bookTitle, chapterCount, initialChapter }:
       setActivePanel("none");
       return;
     }
-    const div = document.createElement("div");
-    div.innerHTML = ch.html;
-    const text = div.textContent || "";
+    const doc = new DOMParser().parseFromString(ch.html, "text/html");
+    const text = doc.body.textContent || "";
     const charPos = Math.floor(text.length * scrollPercent);
     const start = Math.max(0, charPos - 60);
     const excerpt = text.slice(start, start + 120).trim();
@@ -153,15 +103,16 @@ export default function App({ bookId, bookTitle, chapterCount, initialChapter }:
   const handleSelectBookmark = useCallback(
     (bookmark: Bookmark) => {
       setCurrentChapter(bookmark.chapterIndex);
-      requestAnimationFrame(() => {
+      const el = scrollContainerRef.current;
+      if (!el) return;
+      const observer = new MutationObserver(() => {
+        observer.disconnect();
         requestAnimationFrame(() => {
-          if (scrollContainerRef.current) {
-            const el = scrollContainerRef.current;
-            const maxScroll = el.scrollHeight - el.clientHeight;
-            el.scrollTop = maxScroll * bookmark.scrollPercent;
-          }
+          const maxScroll = el.scrollHeight - el.clientHeight;
+          el.scrollTop = maxScroll * bookmark.scrollPercent;
         });
       });
+      observer.observe(el, { childList: true, subtree: true });
     },
     [setCurrentChapter, scrollContainerRef],
   );
@@ -209,6 +160,7 @@ export default function App({ bookId, bookTitle, chapterCount, initialChapter }:
       />
 
       <TopBar
+        visible={uiVisible}
         chapterTitle={bookTitle}
         onLibraryClick={() => navigate({ to: "/library" })}
         onMenuClick={() => openPanel("chapters")}
@@ -266,7 +218,7 @@ export default function App({ bookId, bookTitle, chapterCount, initialChapter }:
       />
 
       <InstallToast
-        open={showInstallToast && !!installPrompt}
+        open={showInstallToast}
         onInstall={handleInstall}
         onDismiss={handleInstallDismiss}
       />

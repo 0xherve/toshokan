@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { AdminScaffold } from "../components/AdminScaffold";
-import { getUsers } from "@server/functions/admin/getUsers";
+import { getUsers } from "@server/functions/admin";
 
 type User = Awaited<ReturnType<typeof getUsers>>[number];
 

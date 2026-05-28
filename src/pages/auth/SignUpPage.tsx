@@ -66,7 +66,7 @@ export function SignUpPage() {
 
       <AuthDivider />
 
-      <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+      <form onSubmit={(e) => { e.preventDefault(); void handleSubmit(); }} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
         <div>
           <label style={{ fontFamily: "var(--font-ui)", fontSize: "0.75rem", fontWeight: 500, color: "var(--foreground-soft)", display: "block", marginBottom: 6 }}>
             Name
@@ -89,8 +89,8 @@ export function SignUpPage() {
         </div>
 
         <button
+          type="submit"
           className="cta-primary"
-          onClick={() => { void handleSubmit(); }}
           disabled={isSubmitting}
           style={{
             width: "100%",
@@ -104,12 +104,13 @@ export function SignUpPage() {
             color: "#fff",
             letterSpacing: "0.02em",
             marginTop: 4,
+            cursor: "pointer",
             opacity: isSubmitting ? 0.6 : 1,
           }}
         >
           {isSubmitting ? "…" : "Create Account"}
         </button>
-      </div>
+      </form>
 
       {message && (
         <p style={{ fontFamily: "var(--font-ui)", fontSize: "0.8125rem", color: "var(--foreground-soft)", marginTop: 14, textAlign: "center" }}>

@@ -1,7 +1,6 @@
-import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
-import { getSessionInfo } from "@server/functions/auth/getSession";
-import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
+import { createFileRoute, redirect } from "@tanstack/react-router";
+import { getSessionInfo } from "@server/functions/auth";
+import { ShellLayout } from "@/components/ShellLayout";
 
 export const Route = createFileRoute("/(admin)")({
   beforeLoad: async ({ location }) => {
@@ -13,13 +12,5 @@ export const Route = createFileRoute("/(admin)")({
       throw redirect({ to: "/library" });
     }
   },
-  component: () => (
-    <div className="min-h-dvh flex flex-col">
-      <Navbar />
-      <div className="flex-1">
-        <Outlet />
-      </div>
-      <Footer />
-    </div>
-  ),
+  component: ShellLayout,
 });

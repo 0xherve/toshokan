@@ -25,7 +25,7 @@ export function saveSettings(settings: Settings): void {
 export function getLastBookId(): string | null {
   if (!hasStorage()) return null;
   try {
-    return localStorage.getItem("sr-last-book") || null;
+    return localStorage.getItem(STORAGE_KEYS.LAST_BOOK) || null;
   } catch {
     return null;
   }
@@ -33,5 +33,5 @@ export function getLastBookId(): string | null {
 
 export function saveLastBookId(bookId: string): void {
   if (!hasStorage()) return;
-  localStorage.setItem("sr-last-book", bookId);
+  localStorage.setItem(STORAGE_KEYS.LAST_BOOK, bookId);
 }

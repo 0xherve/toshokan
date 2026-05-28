@@ -1,8 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { localDb, type LocalBookmark } from "../lib/localDb";
-import { getBookmarks } from "@server/functions/bookmarks/getBookmarks";
-import { createBookmark } from "@server/functions/bookmarks/createBookmark";
-import { deleteBookmark } from "@server/functions/bookmarks/deleteBookmark";
+import { getBookmarks, createBookmark, deleteBookmark } from "@server/functions/bookmarks";
 
 export type { LocalBookmark as Bookmark };
 

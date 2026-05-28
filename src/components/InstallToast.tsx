@@ -1,3 +1,5 @@
+import { IconX } from "@tabler/icons-react";
+
 interface InstallToastProps {
   open: boolean;
   onInstall: () => void;
@@ -22,10 +24,7 @@ export function InstallToast({ open, onInstall, onDismiss }: InstallToastProps) 
             className="p-1 rounded-lg transition-colors text-foreground-muted"
             aria-label="Dismiss"
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
+            <IconX size={16} />
           </button>
         </div>
         <div className="mt-3 flex items-center gap-2">

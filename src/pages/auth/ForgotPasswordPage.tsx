@@ -37,7 +37,7 @@ export function ForgotPasswordPage() {
       }
     >
       {!forgotSent && (
-        <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+        <form onSubmit={(e) => { e.preventDefault(); void handleSubmit(); }} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
           <div>
             <label style={{ fontFamily: "var(--font-ui)", fontSize: "0.75rem", fontWeight: 500, color: "var(--foreground-soft)", display: "block", marginBottom: 6 }}>
               Email
@@ -45,8 +45,8 @@ export function ForgotPasswordPage() {
             <input className="auth-input" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" />
           </div>
           <button
+            type="submit"
             className="cta-primary"
-            onClick={() => { void handleSubmit(); }}
             disabled={isSubmitting}
             style={{
               width: "100%",
@@ -60,6 +60,7 @@ export function ForgotPasswordPage() {
               color: "#fff",
               letterSpacing: "0.02em",
               marginTop: 4,
+              cursor: "pointer",
               opacity: isSubmitting ? 0.6 : 1,
             }}
           >
@@ -70,7 +71,7 @@ export function ForgotPasswordPage() {
               {message}
             </p>
           )}
-        </div>
+        </form>
       )}
 
       {forgotSent && (

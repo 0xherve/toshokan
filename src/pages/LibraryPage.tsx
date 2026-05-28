@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Link } from "@tanstack/react-router";
 import { useAuth } from "../lib/auth";
 import { useBooks } from "../hooks/useBooks";
@@ -7,6 +7,7 @@ import { getLastBookId, saveLastBookId } from "../lib/storage";
 
 function useLocalCompletion(bookIds: string[]) {
   const [completion, setCompletion] = useState<Record<string, number>>({});
+  const stableKey = useMemo(() => bookIds.slice().sort().join("|"), [bookIds]);
 
   useEffect(() => {
     if (bookIds.length === 0) return;
@@ -22,7 +23,7 @@ function useLocalCompletion(bookIds: string[]) {
         setCompletion(map);
       })
       .catch(() => {});
-  }, [bookIds.join(",")]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [stableKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return completion;
 }
@@ -41,7 +42,7 @@ export function LibraryPage() {
     return (chaptersRead[bookId] ?? 0) / chapterCount;
   }
 
-  const lastBookId = getLastBookId();
+  const lastBookId = useMemo(() => getLastBookId(), []);
   const currentBook =
     (lastBookId ? books.find((b) => b.id === lastBookId) : null) ?? books[0];
 

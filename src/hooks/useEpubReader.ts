@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { localDb } from "../lib/localDb";
-import { getChapters } from "@server/functions/books/getChapters";
-import { getChapterRange } from "@server/functions/books/getChapterRange";
+import { getChapters, getChapterRange } from "@server/functions/books";
 import type { ChapterData } from "../lib/constants";
 
 const PREFETCH_BACK = 5;

@@ -1,8 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { getBooks } from "@server/functions/books/getBooks";
-import { getAllBooks } from "@server/functions/books/getAllBooks";
-import { getBook } from "@server/functions/books/getBook";
-import { getChapters } from "@server/functions/books/getChapters";
+import { getBooks, getAllBooks, getBook, getChapters } from "@server/functions/books";
 
 export type BookStatus = "draft" | "published" | "archived";
 

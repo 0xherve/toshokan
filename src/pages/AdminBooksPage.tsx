@@ -4,7 +4,7 @@ import type Book from "epubjs/types/book";
 import type Section from "epubjs/types/section";
 import { AdminScaffold } from "../components/AdminScaffold";
 import { useBooks, type BookStatus } from "../hooks/useBooks";
-import { uploadBook } from "@server/functions/books/uploadBook";
+import { uploadBook } from "@server/functions/books";
 import { sanitizeHtml } from "../lib/sanitize";
 
 async function extractChapters(file: File) {

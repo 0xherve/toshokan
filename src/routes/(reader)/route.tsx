@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
-import { getSessionInfo } from "@server/functions/auth/getSession";
+import { getSessionInfo } from "@server/functions/auth";
 
 export const Route = createFileRoute("/(reader)")({
   beforeLoad: async ({ location }) => {

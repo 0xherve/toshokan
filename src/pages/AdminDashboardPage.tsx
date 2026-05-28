@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { AdminScaffold } from "../components/AdminScaffold";
 import { useBooks } from "../hooks/useBooks";
-import { getAdminStats } from "@server/functions/admin/getAdminStats";
+import { getAdminStats } from "@server/functions/admin";
 
 type Stats = Awaited<ReturnType<typeof getAdminStats>>;
 

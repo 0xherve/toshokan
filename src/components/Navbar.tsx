@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "@tanstack/react-router";
+import { IconMenu2, IconX } from "@tabler/icons-react";
 import { useAuth } from "../lib/auth";
 
 export function Navbar() {
@@ -85,18 +86,7 @@ export function Navbar() {
             aria-label="Toggle menu"
             className="flex items-center justify-center w-9 h-9 rounded-lg text-foreground-muted hover:text-foreground transition-colors"
           >
-            {menuOpen ? (
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
-                <line x1="5" y1="5" x2="15" y2="15" />
-                <line x1="15" y1="5" x2="5" y2="15" />
-              </svg>
-            ) : (
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
-                <line x1="3" y1="6" x2="17" y2="6" />
-                <line x1="3" y1="10" x2="17" y2="10" />
-                <line x1="3" y1="14" x2="17" y2="14" />
-              </svg>
-            )}
+            {menuOpen ? <IconX size={20} /> : <IconMenu2 size={20} />}
           </button>
         </div>
       </div>

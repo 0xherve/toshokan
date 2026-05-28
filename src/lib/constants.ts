@@ -1,5 +1,7 @@
 export const STORAGE_KEYS = {
   SETTINGS: "sr-settings",
+  LAST_BOOK: "sr-last-book",
+  INSTALL_DISMISSED: "sr-install-dismissed",
 } as const;
 
 export const DEFAULT_FONT_SIZE = 18;

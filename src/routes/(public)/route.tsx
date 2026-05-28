@@ -1,15 +1,6 @@
-import { createFileRoute, Outlet } from "@tanstack/react-router";
-import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
+import { createFileRoute } from "@tanstack/react-router";
+import { ShellLayout } from "@/components/ShellLayout";
 
 export const Route = createFileRoute("/(public)")({
-  component: () => (
-    <div className="min-h-dvh flex flex-col">
-      <Navbar />
-      <div className="flex-1">
-        <Outlet />
-      </div>
-      <Footer />
-    </div>
-  ),
+  component: ShellLayout,
 });

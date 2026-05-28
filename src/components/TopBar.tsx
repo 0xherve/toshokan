@@ -1,4 +1,7 @@
+import { IconChevronLeft, IconMenu2, IconSun, IconBookmark, IconBookmarkFilled } from "@tabler/icons-react";
+
 interface TopBarProps {
+  visible: boolean;
   chapterTitle: string;
   onLibraryClick?: () => void;
   onMenuClick: () => void;
@@ -8,6 +11,7 @@ interface TopBarProps {
 }
 
 export function TopBar({
+  visible,
   chapterTitle,
   onLibraryClick,
   onMenuClick,
@@ -16,7 +20,10 @@ export function TopBar({
   isBookmarked,
 }: TopBarProps) {
   return (
-    <div className="fixed top-0 left-0 right-0 z-40 safe-area-top border-b border-border bg-surface">
+    <div
+      className="fixed top-0 left-0 right-0 z-40 safe-area-top border-b border-border bg-surface transition-transform duration-300"
+      style={{ transform: visible ? "translateY(0)" : "translateY(-100%)" }}
+    >
       <div className="flex items-center justify-between px-4 h-12 font-ui">
         <div className="flex items-center gap-1">
           {onLibraryClick && (
@@ -25,9 +32,7 @@ export function TopBar({
               className="p-2 -ml-2 rounded-lg transition-colors text-foreground"
               aria-label="Back to library"
             >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M15 18l-6-6 6-6" />
-              </svg>
+              <IconChevronLeft size={20} />
             </button>
           )}
           <button
@@ -35,11 +40,7 @@ export function TopBar({
             className="p-2 rounded-lg transition-colors text-foreground"
             aria-label="Table of contents"
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="3" y1="6" x2="21" y2="6" />
-              <line x1="3" y1="12" x2="15" y2="12" />
-              <line x1="3" y1="18" x2="18" y2="18" />
-            </svg>
+            <IconMenu2 size={20} />
           </button>
         </div>
 
@@ -53,10 +54,7 @@ export function TopBar({
             className="p-2 rounded-lg transition-colors text-foreground-soft"
             aria-label="Theme"
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="12" r="4" />
-              <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
-            </svg>
+            <IconSun size={20} />
           </button>
           <button
             onClick={onBookmarkClick}
@@ -64,14 +62,7 @@ export function TopBar({
             aria-label="Bookmark"
             aria-pressed={isBookmarked}
           >
-            <svg
-              width="20" height="20" viewBox="0 0 24 24"
-              fill={isBookmarked ? "currentColor" : "none"}
-              stroke="currentColor" strokeWidth="2"
-              strokeLinecap="round" strokeLinejoin="round"
-            >
-              <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
-            </svg>
+            {isBookmarked ? <IconBookmarkFilled size={20} /> : <IconBookmark size={20} />}
           </button>
         </div>
       </div>

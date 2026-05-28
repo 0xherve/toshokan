@@ -34,7 +34,7 @@ export function sanitizeHtml(rawHtml: string): string {
       }
       if (
         (name === "href" || name === "src" || name === "xlink:href") &&
-        value.startsWith("javascript:")
+        (value.startsWith("javascript:") || value.startsWith("data:"))
       ) {
         node.removeAttribute(attr.name);
       }
